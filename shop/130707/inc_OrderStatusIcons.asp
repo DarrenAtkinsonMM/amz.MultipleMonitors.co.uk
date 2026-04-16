@@ -1,0 +1,42 @@
+<%
+'// Determine order processing and payment status and load corresponding icons
+	select case porderstatus
+	case "1"
+	  response.Write "<img src=""images/purpledot.gif"" alt=""Incomplete"" title=""Incomplete"">"
+	case "2"
+	  response.write "<img src=""images/bluedot.gif"" alt=""Pending"" title=""Pending"">" 
+	case "3"
+	  response.write "<img src=""images/yellowdot.gif"" alt=""Processed"" title=""Processed"">" 
+	case "4"
+	  response.write "<img src=""images/greendot.gif"" alt=""Shipped"" title=""Shipped"">" 
+	case "5"
+	  response.write "<img src=""images/reddot.gif"" alt=""Canceled"" title=""Canceled"">" 
+	case "6"
+	  response.write "<img src=""images/orangedot.gif"" alt=""Return"" title=""Return"">" 
+	case "7"
+	  response.write "<img src=""images/7dot.gif"" alt=""Partially Shipped"" title=""Partially Shipped"">"
+	case "8"
+	  response.write "<img src=""images/8dot.gif"" alt=""Shipping"" title=""Shipping"">"
+	case "9"
+	  response.write "<img src=""images/9dot.gif"" alt=""Partially Return"" title=""Partially Return"">"
+	case "10"
+	  response.write "<img src=""images/greendot.gif"" alt=""Delivered"" title=""Delivered"">" 
+	case "11"
+	  response.write "<img src=""images/reddot.gif"" alt=""Will Not Deliver"" title=""Will Not Deliver"">" 
+	case "12"
+	  response.write "<img src=""images/greendot.gif"" alt=""Archived"" title=""Archived"">"
+	end select
+	response.write "&nbsp;"
+	select case pcv_PaymentStatus
+	case "0"
+	  response.write "<img src=""images/blueflag.gif"" width=""15"" height=""13"" alt=""Pending"" title=""Pending"">" 
+	case "1"
+	  response.write "<img src=""images/yellowflag.gif"" width=""15"" height=""13"" alt=""Authorized"" title=""Authorized"">" 
+	case "2"
+	  response.write "<img src=""images/greenflag.gif"" width=""15"" height=""13"" alt=""Paid"" title=""Paid"">" 
+	case "6"
+	  response.write "<img src=""images/darkgreenflag.gif"" width=""15"" height=""13"" alt=""Refunded"" title=""Refunded"">" 
+	case "8"
+	  response.write "<img src=""images/redflag.gif"" width=""15"" height=""13"" alt=""Voided"" title=""Voided"">" 
+	end select
+%>

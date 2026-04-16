@@ -1,0 +1,80 @@
+
+
+/* Conditional comment for validation purposes 
+=========================================================================================== */
+body {
+	behavior: url(styles/csshover2.htc);
+}
+
+
+
+/* Main Navigation 
+=========================================================================================== */
+	#mainNav ul li {
+		width:157px;
+	}	
+	.detailFeature-Holder {
+		display:inline; margin-right:0;
+	}	
+	#featurePanel-holder {
+	float:left; width: 932px; margin:0 10px;
+}
+.featureFrame {
+	float:left; position:relative; display:inline; width: 297px; margin:0 3px;
+}
+
+
+/* Content 
+=========================================================================================== */
+#featurePanel-holder {
+	margin-left:10px;
+}
+.featureFrame {
+	margin:0 6px;
+}
+
+.detail-holder {
+	width:906px; padding:14px;
+	background:url(../images/generic/detail-holder-bg.jpg) top left no-repeat;
+}
+
+ul.listColumn {
+	float:left; display:inline; width:22%; list-style:disc;
+}
+ul.detailColumn {
+	float:left; width:18%; font-weight:bold; list-style:none;
+}
+#testimonial p#title { 
+	margin-left:-470px;
+}
+
+
+
+.featurePanel.special {
+	height:136px;
+	background:#5086a8 url(../images/generic/special-panel-top.jpg) top no-repeat;
+}
+.featurePanel-bottom.specialBot {
+	height:6px;
+}
+.newsletterArea {
+	margin-top:0px;
+	}
+	.newsletterArea input.field {
+		float:left; font-size:130%; line-height:120%; padding:4px 3px 3px 3px; width:160px; color:#333333;
+	}
+	.newsletterArea input.signup {
+		margin-left:-1px;
+	}
+
+
+
+/* Apply png fix directly to required panels to speed up ie6 page load times 
+=========================================================================================== */
+.featurePanel img {
+	behavior: url(styles/iepngfix.htc);
+}
+.detailFeature img {
+	behavior: url(styles/iepngfix.htc);
+}
+		

@@ -1,0 +1,58 @@
+a:hover,a:focus {color: #0291cc;}
+.con1 > div, .con2 > div, .con3 > div { background-color: #0291cc;}
+.scrollup:hover {background: #6bbb03;}
+
+/* sections */
+.bg-smog{background-color:#f4f4f4;}
+.bg-lyt{background-color:#f9f9f9;}
+.bd-wrap,.bd-product,.bg-white{background-color:#ffffff; border:1px solid #ebebeb;}
+
+/* button */
+.btn-skin {background-color: #0291cc;border-color: #0291cc;}
+.pg-blue-btn{}
+.pg-green-btn{background-color:#6bbb03;}
+.green-link a,.green-link{color:#6bbb03;}
+
+/* top */
+.top-area {background: #0291cc;}
+
+/* menu */
+.navbar-custom ul.nav ul.dropdown-menu li a:hover {color: #0291cc;}
+.navbar-custom.top-nav-collapse .nav li a:hover,.navbar-custom .nav li a:hover,.navbar-custom .nav li.active a,.navbar-custom.top-nav-collapse .nav li.active a  {color: #0291cc;}
+.owl-theme .owl-controls .owl-page.active span,.owl-theme .owl-controls.clickable .owl-page:hover span {background-color: #0291cc;}
+.bg-skin {background: #0291cc;}
+.highlight-color {background-color: #0291cc;}
+.color {	color: #0291cc;}
+.modal-header{background-color: #0291cc;}
+
+/* Header */
+.h-contact-heading{color:#ffc703;}
+.tm-heading{color:#999999;}
+.pt-content{background-color: #f4f4f4;}
+
+/* Text */
+.color-med{color:#3a5371;}
+.color-focus{color:#0291cc;}
+.rubric{color:#50ae36;}
+.xmas-red{color:#C00;}
+
+/* footer */
+footer {background-color: #404040;}
+.footer-submit:hover{background-color: #6bbb03; color:#fff;}
+ul.footer-menu li a:hover {	color: #0291cc;}
+
+.bundle-pt-content {padding-top:0px;}
+
+.video-responsive{
+    overflow:hidden;
+    padding-bottom:56.25%;
+    position:relative;
+    height:0;
+}
+.video-responsive iframe{
+    left:0;
+    top:0;
+    height:100%;
+    width:100%;
+    position:absolute;
+}

@@ -1,0 +1,1 @@
+<div>Use the "Settings > Generate Navigation" feature in the Control Panel to create the category tree. Use &lt;ul&gt; class "dropdown-menu" for Twitter Bootstrap themes.</div>

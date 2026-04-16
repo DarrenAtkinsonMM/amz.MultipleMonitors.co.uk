@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/Private/Sites/amz.MultipleMonitors.co.uk -name \"dbError.asp\" -exec ls -la {} \\\\;)"
+    ]
+  }
+}

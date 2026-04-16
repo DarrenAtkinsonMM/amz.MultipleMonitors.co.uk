@@ -1,0 +1,67 @@
+/*
+ProductCart Shopping Cart Software, Copyright Early Impact LLC 2006, All Rights Reserved
+Use this stylesheet to change the look of the default header and footer that ship with ProductCart.
+
+If styles modified using this page do not appear in your storefront, please check the following
+two items before anything else:
+*/
+
+
+/*-----------------------------------------------------------------------------------------
+ ProductCart Conflict Management Add-on
+----------------------------------------------------------------------------------------*/	
+
+.highslide-container div {
+	padding:0px 0px 0px 0px;
+}
+.highslide-html {
+	background-color: #FCF8E3;
+	background-image:url(../images/pcCM_alert.png);
+	background-position:6px 6px;
+	background-repeat:no-repeat;
+	border-color: #FAEBCC;
+	border-radius: 15px;
+	color: #8A6D3B;
+	font-size: 15px;
+	margin: 0px;
+	min-width: 50%;
+	moz-border-radius: 15px;
+	padding: 5px;
+	text-align: left;
+	webkit-border-radius: 15px;
+	width: auto;
+}
+.highslide-wrapper {
+    background: none;
+}
+.highslide-wrapper .highslide-html-content {
+    width: 400px;
+    padding: 10px 10px 10px 46px;
+}
+.highslide-wrapper .highslide-header ul {
+	display: none;
+}
+.highslide-wrapper .highslide-header ul li {
+	display: none;
+}
+.highslide-wrapper .highslide-header ul li.highslide-previous, .highslide-wrapper .highslide-header ul li.highslide-next {
+    display: none;
+}
+.highslide-wrapper .highslide-header a {
+    display: none;
+}
+.highslide-wrapper .highslide-header a:hover {
+	display: none;
+}
+.highslide-wrapper .highslide-header .highslide-move a {
+	display: none;
+}
+.highslide-wrapper .highslide-footer {
+	display: none;
+}
+.highslide-wrapper .highslide-footer .highslide-resize {
+	display: none;
+}
+.highslide-wrapper .submit {
+
+}

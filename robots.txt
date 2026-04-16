@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /shop/pc/viewprd.asp
+Disallow: /shop/pc/viewcontent.asp
+Disallow: /shop/pc/viewcategories.asp
+Disallow: /shop/pc/viewcart.asp
+Disallow: /shop/pc/

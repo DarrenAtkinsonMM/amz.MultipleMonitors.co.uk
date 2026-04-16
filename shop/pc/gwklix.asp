@@ -1,0 +1,131 @@
+<%
+'This file is part of ProductCart, an ecommerce application developed and sold by NetSource Commerce. ProductCart, its source code, the ProductCart name and logo are property of NetSource Commerce. Copyright 2001-2015. All rights reserved. You are not allowed to use, alter, distribute and/or resell any parts of ProductCart's source code without the written consent of NetSource Commerce. To contact NetSource Commerce, please visit www.productcart.com.
+%>
+<% response.Buffer=true %>
+<!--#include file="../includes/common.asp"-->
+<!--#include file="header_wrapper.asp"-->
+<% 
+'//Set redirect page to the current file name
+session("redirectPage")="gwKlix.asp"
+session("redirectPage2")="gwKlixSubmit.asp"
+session("GWSessionID")=Session.SessionID 
+
+'//Declare and Retrieve Customer's IP Address	
+Dim pcCustIpAddress
+pcCustIpAddress = Request.ServerVariables("HTTP_X_FORWARDED_FOR")
+If pcCustIpAddress="" Then pcCustIpAddress = Request.ServerVariables("REMOTE_ADDR")
+	
+'//Declare URL path to gwSubmit.asp	
+Dim tempURL
+If scSSL="" OR scSSL="0" Then
+	tempURL=replace((scStoreURL&"/"&scPcFolder&"/pc/gwSubmit.asp"),"//","/")
+	tempURL=replace(tempURL,"https:/","https://")
+	tempURL=replace(tempURL,"http:/","http://") 
+Else
+	tempURL=replace((scSslURL&"/"&scPcFolder&"/pc/gwSubmit.asp"),"//","/")
+	tempURL=replace(tempURL,"https:/","https://")
+	tempURL=replace(tempURL,"http:/","http://")
+End If
+		
+'//Get Order ID
+if session("GWOrderId")="" then
+	session("GWOrderId")=request("idOrder")
+end if
+
+'//Retrieve customer data from the database using the current session id		
+pcGatewayDataIdOrder=session("GWOrderID")
+%>
+<!--#include file="pcGateWayData.asp"-->
+<% '//Set customer session - we may now be on a different server where this session was lost
+session("idCustomer")=pcIdCustomer
+
+'//Retrieve any gateway specific data from database or hard-code the variables
+query="SELECT CVV FROM klix Where idKlix=1;"
+set rs=server.CreateObject("ADODB.RecordSet")
+set rs=connTemp.execute(query)
+
+if err.number<>0 then
+	call LogErrorToDatabase()
+	set rs=nothing
+	call closedb()
+	response.redirect "techErr.asp?err="&pcStrCustRefID
+end if
+
+'// Set gateway specific variables
+pcv_CVV=rs("CVV")
+
+set rs=nothing
+%>
+<div id="pcMain">
+	<div class="pcMainContent">
+				<form method="POST" action="<%=session("redirectPage2")%>" name="PaymentForm" class="pcForms">
+
+            <% If msg<>"" Then %>
+                <div class="pcErrorMessage"><%=msg%></div>
+            <% End If %>
+                    
+                    <% call pcs_showBillingAddress %>
+
+            <div class="pcFormItem">
+                <div class="pcFormLabel"><%=dictLanguage.Item(Session("language")&"_GateWay_7")%></div>
+                <div class="pcFormField"><input type="text" name="CardNumber" value="" autocomplete="off"></div>
+            </div>
+
+					<div class="pcFormItem">
+						<div class="pcFormLabel"><%=dictLanguage.Item(Session("language")&"_GateWay_8")%></div>
+						<div class="pcFormField"><%=dictLanguage.Item(Session("language")&"_GateWay_9")%> 
+							<select name="expMonth">
+								<option value="01">1</option>
+								<option value="02">2</option>
+								<option value="03">3</option>
+								<option value="04">4</option>
+								<option value="05">5</option>
+								<option value="06">6</option>
+								<option value="07">7</option>
+								<option value="08">8</option>
+								<option value="09">9</option>
+								<option value="10">10</option>
+								<option value="11">11</option>
+								<option value="12">12</option>
+							</select>
+							<% dtCurYear=Year(date()) %>
+							&nbsp;<%=dictLanguage.Item(Session("language")&"_GateWay_10")%> 
+							<select name="expYear">
+								<option value="<%=right(dtCurYear,2)%>" selected><%=dtCurYear%></option>
+								<option value="<%=right(dtCurYear+1,2)%>"><%=dtCurYear+1%></option>
+								<option value="<%=right(dtCurYear+2,2)%>"><%=dtCurYear+2%></option>
+								<option value="<%=right(dtCurYear+3,2)%>"><%=dtCurYear+3%></option>
+								<option value="<%=right(dtCurYear+4,2)%>"><%=dtCurYear+4%></option>
+								<option value="<%=right(dtCurYear+5,2)%>"><%=dtCurYear+5%></option>
+								<option value="<%=right(dtCurYear+6,2)%>"><%=dtCurYear+6%></option>
+								<option value="<%=right(dtCurYear+7,2)%>"><%=dtCurYear+7%></option>
+								<option value="<%=right(dtCurYear+8,2)%>"><%=dtCurYear+8%></option>
+								<option value="<%=right(dtCurYear+9,2)%>"><%=dtCurYear+9%></option>
+								<option value="<%=right(dtCurYear+10,2)%>"><%=dtCurYear+10%></option>
+							</select>
+						</div>
+					</div>
+                    
+					<% If pcv_CVV="1" Then %>
+                <div class="pcFormItem">
+                    <div class="pcFormLabel"><%=dictLanguage.Item(Session("language")&"_GateWay_11")%></div>
+                    <div class="pcFormField"><input name="CVV" type="text" id="CVV" value="" size="4" maxlength="4"></div>
+                </div> 
+                <div class="pcFormItem">
+                    <div class="pcFormLabel">&nbsp;</div>
+                    <div class="pcFormField"><img src="<%=pcf_getImagePath("images","CVC.gif")%>" alt="cvc code" width="212" height="155"></div>
+                </div>
+					<% End If %>
+
+            <div class="pcFormItem"> 
+			    <div class="pcFormLabel"><%=dictLanguage.Item(Session("language")&"_GateWay_4")%></div>
+                <div class="pcFormField"><%= scCurSign & money(pcBillingTotal)%></div> 
+            </div>
+					
+            <div class="pcFormButtons">
+                <!--#include file="inc_gatewayButtons.asp"-->
+            </div>
+        </form>
+    </div>
+</div>
+<!--#include file="footer_wrapper.asp"-->

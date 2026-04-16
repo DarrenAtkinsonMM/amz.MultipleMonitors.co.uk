@@ -1,0 +1,97 @@
+.shadetabs{
+	padding: 3px 0; list-style-type: none; text-align: left; 
+}
+.shadetabs li {
+	font-size:150%; display:inline; margin: 0;
+}
+.shadetabs li a {
+	text-decoration: underline;  z-index: 1; 
+	padding: 4px 12px; border: 1px solid #e1e1e1; border-bottom:#A1B047 1px solid;
+	color: #666 !important; background:#f4f4f6 url(../images/generic/shade.gif) bottom repeat-x;
+}
+.shadetabs li a:visited{
+	color: #fff;
+}
+.shadetabs li a:hover{
+	text-decoration: none; color: #fff;
+}
+.shadetabs li a.selected{ /*selected main tab style */
+	position: relative; height:40px; padding-bottom:5px; text-decoration:none; top:-2px;
+	border-left:#A1B047 1px solid; border-top:#A1B047 1px solid; border-right:#A1B047 1px solid;
+	color:#fff !important; background:#A1B047 url(../images/generic/activeshade2.gif) bottom repeat-x;	
+}
+.shadetabs li a.selected{ /*selected main tab style */
+	border-bottom-color: #A1B047;
+}
+.shadetabs li a.selected:hover{ /*selected main tab style */
+	text-decoration: none;
+}
+.tabcontent{
+	display:none;
+}
+
+.menuBase {
+	position:relative; border:#A1B047 3px solid; width:auto; margin:0; padding: 15px 10px 30px 12px; 
+	text-align:left; min-height:200px; width:893px; background:#fff url(../images/generic/menuBase-bg-upg.jpg) top left no-repeat;
+}
+	.menuBase h3 {
+		color:#058dc2; font-size:230%; line-height:130%; font-weight:normal; clear:left;
+	}
+	.menuBase p {
+		font-size:130%; line-height:140%; color:#666666;
+	}
+		.menuBase p strong {
+			color:#494949;
+		}
+		.menuBase img {
+			border:1px solid #999999;
+			margin-bottom:7px;
+		}
+		.menuBase ul {
+			margin:10px; list-style:disc;
+		}
+			.menuBase ul li {
+				margin:10px; font-size:120%; color:#666666; line-height:100%;	
+			}
+				.menuBase ul li a {
+					color:#889923; text-decoration:underline;	
+				}
+					.menuBase ul li a:hover {
+						color:#325d78; text-decoration:none;	
+					}
+	.menuBase a {
+		color:#889923; text-decoration:underline;
+	}
+					
+ul.listColumn {
+	float:left; display:inline; width:24%; list-style:disc;
+}
+	ul.listColumn li {
+		line-height:120%;
+	}
+ul.detailColumn {
+	float:left; width:19%; font-weight:bold; list-style:none;
+}
+	ul.detailColumn li {
+		color:#494949;
+		line-height:120%;
+	}
+	
+	
+	
+.techHeader {
+	margin:0 0 20px 10px; width:590px;
+}
+	.techHeader p {
+		font-size:230%; line-height:130%; color:#325d78;
+	}
+img.opt-qm {
+	height:12px; border:none; margin:0 0 0 7px;
+}
+	
+
+
+	
+	
+
+

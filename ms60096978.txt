@@ -1,0 +1,5 @@
+﻿{
+  "Description": "Domain ownership verification file for Microsoft 365 - place in the website root",
+  "Domain": "multiplemonitors.co.uk",
+  "Id": "ad277eb1-5177-4d1e-a32c-e0e48f41957c"
+}

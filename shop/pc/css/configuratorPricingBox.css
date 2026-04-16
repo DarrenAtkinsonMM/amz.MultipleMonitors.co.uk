@@ -1,0 +1,304 @@
+/******
+DEFAULT
+*******/
+
+/**** GENERAL ****/
+body.footerFixedPricing {
+height: auto;
+}
+button.pcButton.pcButtonSaveQuote {
+margin-bottom: 23px;
+}
+body.footerFixedPricing.pcBTOsmall {
+	margin-bottom: 64px;
+}
+body.footerFixedPricing {
+	margin-bottom: 82px;
+}
+
+/**** PRICING FOOTER ANIMATION PREPARATION ***/
+#pcBTOfloatPrices,
+.footerFixedPricing .addtocart {
+	visibility: hidden;
+}
+#pcBTOfloatPrices.initial,
+.footerFixedPricing .addtocart.initial {
+	visibility: visible;
+}
+#pcBTOfloatPrices .pcTable .pcTableRowFull {
+	-webkit-transition: all ease .7s;
+	-moz-transition: all ease .7s;
+	-o-transition: all ease .7s;
+	transition: all ease .7s;
+}
+
+/**** PRICING FOOTER ***/
+#pcBTOfloatPrices {
+	position: fixed;
+	bottom: 0;
+	z-index: 1050;
+	width: 100% !important;
+	left: 0;
+	top: auto !important;
+	margin: 0 !important;
+	border: none !important;
+	box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.25) !important;
+	background-color: #EDF0F4;
+	opacity: 1 !important;
+	border-radius: 0 !important;
+}
+#pcBTOfloatPrices .pcTable .pcTableColumn60 {
+	width: 44%;
+}
+
+/**** DEFAULT AND CUSTOMIZATIONS PRICES | CSS FOR COLLAPSE ANIMATION ***/
+#pcBTOfloatPrices .pcTable .defaultPrice {
+	height: 0px;
+	overflow: hidden;
+}
+#pcBTOfloatPrices .pcTable .customizationPrice {
+	height: 0px;
+	overflow: hidden;
+}
+#pcBTOfloatPrices .pcTable .discountPrice, #pcBTOfloatPrices .pcTable .QdiscountPrice, #pcBTOfloatPrices .pcTable .additionalCharges {
+	height: 0px;
+	overflow: hidden;
+}
+div.pcBTOfloatPricesControls {
+	width: 40%;
+	text-align: right;
+	font-size: 20px;
+	position: absolute;
+	bottom: 40px;
+}
+#pcBTOfloatPrices div.pcBTOfloatPricesControls a 
+{
+    color: #666;
+}
+a#openPricing,
+a#closePricing {
+	position: absolute;
+	top:0;
+	right: 0;
+	width: 244px;
+	text-align: left;
+	color: #E1E7F0;
+}
+
+/**** GRAND TOTAL CSS ****/
+#pcBTOfloatPrices .grandTotal {
+	padding-top: 0px;
+}
+
+#pcBTOfloatPrices .grandTotal b,
+#pcBTOfloatPrices .grandTotal input {
+	color: #222;
+	font-size: 16px !important;
+}
+
+#pcBTOfloatPrices .priceItem input[type="TEXT"],
+#pcBTOfloatPrices .grandTotal input[type="TEXT"] {
+	width: 110px;
+}
+
+/**** DEFAULT AND CUSTOMIZATIONS PRICES CSS ****/
+#pcBTOfloatPrices .priceItem b,
+#pcBTOfloatPrices .priceItem input {
+	color: #666;
+	font-size: 12px;
+}
+
+/**** IF ADD TO CART BTN ****/
+.footerFixedPricing .addtocart {
+	position: fixed;
+	bottom: 9px;
+	z-index: 1051;
+	right: 21%;
+}
+.footerFixedPricing .addtocart input {
+	position: relative;
+	top: 0px;
+	right: 0px;
+	z-index: 1052;
+	margin-bottom: 2px;
+}
+
+/*** TABLET & DESKTOP ***/
+@media screen and (min-width:768px) {
+	/**** PRICING FOOTER ***/
+	#pcBTOfloatPrices .pcTable .pcTableColumn60 {
+		width: 53%;
+	}
+	
+	/**** DEFAULT AND CUSTOMIZATIONS PRICES | CSS FOR COLLAPSE ANIMATION ***/
+	div.pcBTOfloatPricesControls {
+		display: none;
+	}
+	
+	/**** GRAND TOTAL CSS ****/
+	#pcBTOfloatPrices .grandTotal {
+		padding-bottom: 54px;
+		float: left;
+	}
+	
+	#pcBTOfloatPrices .grandTotal.pcBTOsmall {
+		padding-bottom: 24px;
+	}
+	
+	/**** DEFAULT AND CUSTOMIZATIONS PRICES CSS ****/
+	#pcBTOfloatPrices .defaultPrice {
+		height: 17px !important;
+		margin-bottom: -40px;
+		position: relative;
+		top: 17px;
+	}
+	#pcBTOfloatPrices .customizationPrice {
+		height: 17px !important;
+		float: left;
+		margin-bottom: -40px;
+		position: relative;
+		top: 34px;
+	}
+	
+	#pcBTOfloatPrices .discountPrice,  
+	#pcBTOfloatPrices .additionalCharges {
+		height: 17px !important;
+		float: left;
+		margin-bottom: -40px;
+		position: relative;
+		top: 51px;
+	}
+	
+	#pcBTOfloatPrices .QdiscountPrice {
+		height: 17px !important;
+		float: left;
+		margin-bottom: -40px;
+		position: relative;
+		top: 68px;
+	}
+	
+	/**** IF ADD TO CART BTN ****/
+	.footerFixedPricing .addtocart {
+		margin-bottom: 8px; 
+	}
+	#pcBTOfloatPrices.addtocart .pcTable .pcTableColumn60 {
+		width: 40%;
+	}
+}
+
+/*** TABLET ***/
+@media screen and (min-width:768px) and (max-width:991px) {
+	/**** PRICING FOOTER ***/
+	#pcBTOfloatPrices .pcTable .pcTableColumn60 {
+		width: 53%;
+	}
+	#pcBTOfloatPrices {
+		padding-left: 0 !important;
+		padding-right: 0 !important;	
+	}
+	
+	/**** DEFAULT AND CUSTOMIZATIONS PRICES | CSS FOR COLLAPSE ANIMATION ***/
+	div.pcBTOfloatPricesControls {
+		width: 37%;
+		bottom: 40px;
+	}
+	#pcBTOfloatPrices.open .pcTable .defaultPrice,
+	#pcBTOfloatPrices.open .pcTable .customizationPrice { 
+		/*margin: 0;*/
+	}
+	#pcBTOfloatPrices.open .pcTable .defaultPrice {
+		margin-top: 0px;
+	}
+	
+	/**** IF ADD TO CART BTN ****/
+	#pcBTOfloatPrices.addtocart .pcTable .pcTableColumn60 {
+		width: 37%;
+	}
+	.footerFixedPricing .addtocart {
+		right: 6%;
+	}
+}
+
+/*** PHONE ***/
+@media screen and (max-width:767px) {
+	/**** PRICING FOOTER ***/
+	#pcBTOfloatPrices {
+		padding-bottom: 11px !important;
+		padding-left: 0 !important;
+		padding-right: 0 !important;	
+	}
+	#pcBTOfloatPrices .pcTable .pcTableRowFull input {
+		font-size: 12px;
+	}
+	
+    #pcBTOfloatPrices.open .defaultPrice {
+	    height: 20px;
+	    overflow: hidden;
+	    background-color: #e0e0e0;
+    }
+    #pcBTOfloatPrices.open .pcTable .customizationPrice {
+	    height: 20px;
+	    overflow: hidden;
+	    background-color: #e0e0e0;
+    }
+    #pcBTOfloatPrices.open .pcTable .discountPrice,
+	#pcBTOfloatPrices.open .pcTable .QdiscountPrice,
+    #pcBTOfloatPrices.open .pcTable .additionalCharges {
+	    height: 20px;
+	    overflow: hidden;
+	    background-color: #e0e0e0;
+    }
+	
+	/**** DEFAULT AND CUSTOMIZATIONS PRICES | CSS FOR COLLAPSE ANIMATION ***/
+	div.pcBTOfloatPricesControls {
+		width: 24px;
+		bottom: 40px;
+	}
+	a#openPricing,
+	a#closePricing {
+		width: auto;
+	}
+	#pcBTOfloatPrices.open .pcTable .grandTotal {
+		padding-top: 14px;
+	}
+	#pcBTOfloatPrices.open .pcTable .defaultPrice,
+	#pcBTOfloatPrices.open .pcTable .customizationPrice,
+	#pcBTOfloatPrices.open .pcTable .discountPrice,
+	#pcBTOfloatPrices.open .pcTable .QdiscountPrice,
+	#pcBTOfloatPrices.open .pcTable .additionalCharges { 
+		margin: 0;
+	}
+	
+	/**** GRAND TOTAL CSS ****/
+	#pcBTOfloatPrices .grandTotal .pcTableColumn39 input,
+	#pcBTOfloatPrices .defaultPrice .pcTableColumn39 input,
+	#pcBTOfloatPrices .customizationPrice .pcTableColumn39 input,
+	#pcBTOfloatPrices .discountPrice .pcTableColumn39 input,
+	#pcBTOfloatPrices .QdiscountPrice .pcTableColumn39 input,
+	#pcBTOfloatPrices .additionalCharges .pcTableColumn39 input {
+		width: 100%;
+	}
+	#pcBTOfloatPrices .pcTable .grandTotal b {
+		display: none;
+	}
+	
+	#pcBTOfloatPrices .pcTable .grandTotal input[type="TEXT"] {
+		width: 101px;
+		text-align: left !important;
+		float: left;
+		margin-left: 26px;
+	}
+	
+	/**** IF ADD TO CART BTN ****/
+	.footerFixedPricing .addtocart {
+		right:3px;
+	}
+	/*.footerFixedPricing .addtocart input {
+		top: -2px;
+		width: 50px;
+	}
+	#addtocart.pcButton .pcButtonText,
+	.pcButtonSaveQuote .pcButtonText{
+		font-size: 11px;
+	}*/
+}

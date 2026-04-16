@@ -1,0 +1,285 @@
+@charset "UTF-8";
+
+label.error {
+	display: block;
+	position: relative;
+	margin-left: .3em;    
+	border-color: #EBCCD1;
+	border-radius: 3px;
+	color: #A94442;
+	font-size: 10px;
+	moz-border-radius: 3px;
+	text-align: left;
+	webkit-border-radius: 3px;  
+}
+
+
+/* Selected Option Display Box */
+.editbox {
+    line-height: 20px;
+    font-weight: 600;
+    width: 50%;
+    min-width: 50%;
+    margin: 10px;
+    padding: 0px;
+} 
+
+
+/* Tabbed Shipping Panels */
+#acc1 {
+  margin-top: 10px;  
+  margin-bottom: 20px;
+}
+
+#acc1 .StatusIndicators {
+  float: right;
+  margin-top: 2px;
+  margin-right: 10px;
+}
+
+#TabbedPanelsShipping {
+
+}
+
+
+/* Gift Area */
+#GiftArea .pcLeftColumn {
+    width: 40%;
+} 
+#GiftArea .pcRightColumn {
+    width: 40%;
+}
+#GiftArea .pcSingleColumn {
+    width: 100%;
+}
+
+
+/* Shipping Options Buttonset */
+#acc1 .btn-group label { 
+    width: 100% !important;
+}
+#acc1 .btn-group {
+    width: 50% !important; 
+}
+#opcShippingRadios .btn {
+    text-align: left !important;
+    -moz-border-radius: 0px !important;
+    -webkit-border-radius: 0px !important;
+    border-radius: 0px !important;
+    margin: 0px !important;
+	padding-top: 12px !important;
+	padding-bottom: 12px !important;
+	padding-left: 12px !important;
+}
+#opcShippingRadios {    
+    margin-bottom: 20px;
+    width: 100%;
+    display: table;
+}
+#opcShippingRadios .pcCheckBox {
+	padding-right: 8px !important;
+    width: 24px;
+    display: inline-block;
+}
+
+
+#ButtonArea {
+	text-align: center;  
+    margin-top: 20px;  
+}
+
+#DiscArea {
+	margin-top: 6px;
+	margin-bottom: 16px;
+	border-bottom: 1px dashed #CCC;
+	padding-bottom: 6px;
+	-moz-border-radius: 5pt
+	
+}
+
+#PwdArea {
+	padding-bottom: 6px;
+	margin-bottom: 16px;
+	border-bottom: 1px dashed #CCC;
+}
+
+#OtherArea {
+	padding-bottom: 16px;
+	margin-bottom: 16px;
+	border-bottom: 1px dashed #CCC;
+}
+
+
+#PwdNoThanks {
+    display: inline;
+    margin-left: 6px;
+}
+
+#TotalBoxHolder {
+	position:absolute;
+	bottom:100px;
+}
+
+#TotalBoxHolder .TotalBox {
+	padding: 0 0 10px 10px; 
+	margin-top: 6px;
+	margin-bottom: 4px;
+	border: 1px solid #EEE; 
+	background:#e8e8ff;
+	-moz-border-radius: 5pt;
+	position:fixed;
+}
+
+#pcCartItems .pcTable {
+  margin-bottom: 4px;
+  padding-bottom: 4px; 
+}
+
+.pcCheckoutTitle {
+    padding-left: 5px;
+    font-weight: 600 !important;
+}
+
+.pcCheckoutSubTitle {
+	/*
+  color:#666;
+	border-bottom: 1px dashed #CCC;
+  */
+	font-size: 15px;
+	padding: 3px;
+	margin-bottom: 10px;
+	text-align: left;
+}
+
+#pcOPCtotal {
+    
+	border-bottom: 1px solid #204b8f;
+    border-right: 1px solid #204b8f;    
+	background-color: #3D78D4;
+	padding: 4px 12px 4px 12px;
+	margin-top: -10px;
+	margin-right: 20px;
+	float: right;
+	position: relative;
+    border-radius: 6px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+}
+
+#pcOPCtotalAmount {
+	font-size: 16px;
+	color: #FFF;
+}
+	
+#pcOPCtotalTitle {
+	color: #FFF;
+}
+
+#PayList {
+	list-style-type: none;
+  margin: 0px;
+  padding: 0px; 
+}
+
+#PayList li {
+ 	padding: 3px; 
+}
+
+#PayList li input[type="radio"] {
+	margin: 2px;
+}
+
+/*#pcShowLoginFields2 {
+  border-left: 1px dashed #CCC; 
+  padding: 0px 8px;
+} */
+  
+/* Checkout Ship Rates Styles */
+
+.pcShip_ServiceType {
+  width: 35%;  float:left; clear:left;
+}
+
+.pcShip_ServiceTypeL {
+  width: 80%; 
+}
+
+.pcShip_DeliveryTime {
+  width: 45%;  float:left;
+}
+
+.pcShip_Rate {
+  width: 15%; float:left;
+}
+
+/* Inputs */
+
+.AccordionPanelContent input {
+  /*font-size: 14px;*/
+  max-width: 94%;
+}
+
+.AccordionPanelContent input.error { 
+	color: #CC3333;
+	border: 1px solid #CC3333;
+	background-color: #FF9F9F;
+}
+	
+.AccordionPanelContent select {
+  /*font-size: 14px;*/
+  max-width: 94%;
+}
+
+/* One Page Checkout Fieldsets */
+.opcFormField {
+    width: 50%;  
+    float: left;
+}
+
+.opcFormField .pcFormLabel {
+    width: 35%; 
+}
+
+.opcFormField .pcFormField {
+    width: 55%; 
+}
+
+#opcLoginFormFields {
+    width: 100%;  
+    float: left;
+}
+
+#opcLoginFormFields .pcFormLabel {
+    width: 30%; 
+}
+
+#opcLoginFormFields .pcFormField {
+    width: 70%; 
+}
+
+
+
+/* DEFINE FULL WIDTH ITEMS HERE */
+.opcFormRow { 
+    float: left;
+    width: 100%;
+}
+
+.opcFormRow .pcFormLabel {
+    width: 18%; 
+    float: left;
+}
+
+.opcFormRow .pcFormField {
+    width: 82%; 
+    float: left;
+}
+
+.opcRow
+{
+  width: 100%;
+}
+.opcRow .pcFormItem 
+{
+  width: 50%; 
+}

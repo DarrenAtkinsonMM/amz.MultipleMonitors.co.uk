@@ -1,0 +1,35 @@
+<%
+private const pTaxonCharges=1
+private const pTaxonFees=0
+private const ptaxfile=0
+private const ptaxsetup=1
+private const ptaxshippingaddress="0"
+private const ptaxseparate="0"
+private const ptaxwholesale="0"
+private const pshowVatID="1"
+private const pVatIdReq="0"
+private const pshowSSN="0"
+private const pSSNReq="0"
+private const ptaxVATrate="20"
+private const ptaxVATRate_Code=""
+private const ptaxVAT="1"
+private const ptaxdisplayVAT="0"
+private const ptaxRateDefault=", "
+private const ptaxRateState=", "
+private const ptaxSNH=", "
+private const ptaxCanada=""
+private const ptaxfilename=""
+private const ptaxAvalara=0
+private const ptaxAvalaraAccount=""
+private const ptaxAvalaraLicense=""
+private const ptaxAvalaraCode=""
+private const ptaxAvalaraProductCode=""
+private const ptaxAvalaraShippingCode=""
+private const ptaxAvalaraHandlingCode=""
+private const ptaxAvalaraURL=""
+private const ptaxAvalaraEnabled=0
+private const ptaxAvalaraLog=0
+private const ptaxAvalaraAddressValidation=0
+private const ptaxAvalaraCommit=0
+private const ptaxAvalaraReason=""
+%>

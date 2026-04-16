@@ -1,0 +1,144 @@
+1*****SKU*****
+2*****Name*****
+3*****Description*****
+4*****Short Description*****
+5*****Product Type*****
+6*****Online Price*****
+7*****List Price*****
+8*****Wholesale Price*****
+9*****Weight*****
+10*****Stock*****
+11*****Category Name*****
+12*****Category Small Image*****
+13*****Category Large Image*****
+14*****Parent Category*****
+15*****Additional Category 1*****
+16*****Parent Category 1*****
+17*****Additional Category 2*****
+18*****Parent Category 2*****
+19*****Brand Name*****
+20*****Brand Logo*****
+21*****Thumbnail Image*****
+22*****General Image*****
+23*****Detail view Image*****
+24*****Active*****
+25*****Show savings*****
+26*****Special*****
+27*****Non-taxable*****
+28*****No shipping charge*****
+29*****Not for sale*****
+30*****Not for sale copy*****
+31*****Disregard stock*****
+32*****Display No Shipping Text*****
+33*****
+34*****
+35*****
+36*****Downloadable File Location*****
+37*****Make Download URL expire*****
+38*****URL Expiration in Days*****
+39*****Use License Generator*****
+40*****Local Generator*****
+41*****Remote Generator*****
+42*****License Field Label (1)*****
+43*****License Field Label (2)*****
+44*****License Field Label (3)*****
+45*****License Field Label (4)*****
+46*****License Field Label (5)*****
+47*****Additional copy*****
+48*****Short Category Description*****
+49*****Long Category Description*****
+50*****Minimum Quantity customers can buy*****
+51*****Reward Points*****
+52*****Oversized Product Details*****
+53*****Option 1*****
+54*****Attributes 1*****
+55*****Option 1 Required*****
+56*****Option 2*****
+57*****Attributes 2*****
+58*****Option 2 Required*****
+59*****Apparel Product*****
+60*****Show out of stock items*****
+61*****Out of stock items message*****
+62*****
+63*****Display type*****
+64*****Size chart text link*****
+65*****Size chart description*****
+66*****Size chart image file*****
+67*****Size chart image URL*****
+68*****Force purchase of multiples of minimum*****
+69*****Product Cost*****
+70*****
+71*****
+72*****Back-Order*****
+73*****Ship within N Days*****
+74*****Low inventory notification*****
+75*****Reorder Level*****
+76*****Is Drop-shipped*****
+77*****Supplier ID*****
+78*****Drop-Shipper ID*****
+79*****
+80*****Option 1 Order*****
+81*****Option 2 Order*****
+82*****Option 3*****
+83*****Attributes 3*****
+84*****Option 3 Required*****
+85*****Option 3 Order*****
+86*****Option 4*****
+87*****Attributes 4*****
+88*****Option 4 Required*****
+89*****Option 4 Order*****
+90*****Option 5*****
+91*****Attributes 5*****
+92*****Option 5 Required*****
+93*****Option 5 Order*****
+94*****Downloadable Product*****
+95*****Gift Certificate*****
+96*****Gift Certificate Expiration*****
+97*****Electronic Only (Gift Certificate)*****
+98*****Use Generator (Gift Certificate)*****
+99*****Expiration Date (Gift Certificate)*****
+100*****Expire N days (Gift Certificate)*****
+101*****Custom Generator Filename (Gift Certificate)*****
+102*****Hide BTO Prices*****
+103*****Hide Default Configuration*****
+104*****Disallow Purchasing*****
+105*****Skip Product Details Page*****
+106*****Short Category Description 1*****
+107*****Long Category Description 1*****
+108*****Category Small Image 1*****
+109*****Category Large Image 1*****
+110*****Short Category Description 2*****
+111*****Long Category Description 2*****
+112*****Category Small Image 2*****
+113*****Category Large Image 2*****
+114*****Meta Tags - Title*****
+115*****Meta Tags - Description*****
+116*****Meta Tags - Keywords*****
+117*****Featured*****
+118*****Units to make 1 lb*****
+119*****First Unit Surcharge*****
+120*****Additional Unit(s) Surcharge*****
+121*****Product Notes*****
+122*****Enable Image Magnifier*****
+123*****Page Layout*****
+124*****Hide SKU on the product details page*****
+125*****Google Product Category*****
+126*****Google Shopping - Gender*****
+127*****Google Shopping - Age*****
+128*****Google Shopping - Color*****
+129*****Google Shopping - Size*****
+130*****Google Shopping - Pattern*****
+131*****Google Shopping - Material*****
+132*****Product Layout - Top Area*****
+133*****Product Layout - Top-Left Area*****
+134*****Product Layout - Top-Right Area*****
+135*****Product Layout - Middle Area*****
+136*****Product Layout - Tabs Area*****
+137*****Product Layout - Bottom Area*****
+138*****
+139*****
+140*****
+141*****
+142*****
+143*****Hide Additional Images*****
+144*****Alt Tag Text*****

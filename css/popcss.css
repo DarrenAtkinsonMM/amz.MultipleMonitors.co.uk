@@ -1,0 +1,29 @@
+@charset "utf-8";
+/* CSS Document */
+#pop-page p {
+			font-size:95%; line-height:135%; color:#666666; font-weight:normal; margin-bottom:10px;
+	}
+#pop-page h3 {
+			font-size:150%; line-height:130%; color:#058dc2; font-weight:normal; margin-top:10px;
+		}
+
+#pop-page a {
+	color:#028bc4;
+	}
+#pop-page a:hover {
+	text-decoration:none;
+}
+#pop-page img {
+	float:right;
+	padding:3px;
+	}
+#pop-page ul {
+	margin:0 0 0 26px;
+	font-size:95%;
+	line-height:135%; 
+	color:#666666; 
+	font-weight:normal;
+}
+#pop-page li {
+	margin:0 0 6px 0;
+}

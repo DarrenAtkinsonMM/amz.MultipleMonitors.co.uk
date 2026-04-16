@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Multiple Monitors — Trading computers, multi-screen PCs, stands &amp; monitors, built and tested in the UK since 2008</title>
+<meta name="description" content="The UK's multi-screen specialist since 2008. Trading computers, monitor arrays, stands &amp; bundles — custom built, benchmark tested, 5-year cover and lifetime support. As seen on BBC's Traders: Millions by the Minute." />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Font Awesome 4 (same as live site) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+  /* --- self-contained grid (no Bootstrap / no Tailwind) --- */
+  *, *::before, *::after { box-sizing:border-box; }
+  body { margin:0; }
+  .container { width:100%; max-width:1170px; margin:0 auto; padding:0 15px; }
+  .row { display:flex; flex-wrap:wrap; margin-left:-15px; margin-right:-15px; }
+  .row > [class^="col-"] { padding-left:15px; padding-right:15px; width:100%; }
+  @media (min-width:768px) {
+    .col-sm-4  { flex:0 0 33.3333%; max-width:33.3333%; }
+    .col-sm-5  { flex:0 0 41.6667%; max-width:41.6667%; }
+    .col-sm-6  { flex:0 0 50%;       max-width:50%; }
+    .col-sm-7  { flex:0 0 58.3333%; max-width:58.3333%; }
+    .col-sm-8  { flex:0 0 66.6667%; max-width:66.6667%; }
+    .col-sm-3  { flex:0 0 25%;       max-width:25%; }
+    .col-sm-9  { flex:0 0 75%;       max-width:75%; }
+  }
+  @media (min-width:992px) {
+    .col-md-3  { flex:0 0 25%;       max-width:25%; }
+    .col-md-4  { flex:0 0 33.3333%; max-width:33.3333%; }
+    .col-md-5  { flex:0 0 41.6667%; max-width:41.6667%; }
+    .col-md-6  { flex:0 0 50%;       max-width:50%; }
+    .col-md-7  { flex:0 0 58.3333%; max-width:58.3333%; }
+    .col-md-8  { flex:0 0 66.6667%; max-width:66.6667%; }
+    .col-md-9  { flex:0 0 75%;       max-width:75%; }
+  }
+  .hidden-xs { display:none; }
+  @media (min-width:768px) { .hidden-xs { display:initial; } }
+  @media (max-width:991px) { .hidden-sm { display:none; } }
+  .text-right { text-align:right; }
+  @media (max-width:767px) { .text-right-sm-reset { text-align:left; } }
+
+  :root {
+    --brand:       #0291cc;
+    --brand-deep:  #026fa0;
+    --brand-dark:  #3a5371;
+    --ink:         #1a2533;
+    --slate:       #4a5a6e;
+    --muted:       #7a8a9b;
+    --line:        #e5e9ef;
+    --line-strong: #d3dae3;
+    --paper:       #ffffff;
+    --sand:        #f7f8fa;
+    --sand-2:      #eef2f6;
+    --accent:      #ffb627;
+    --ok:          #2db47a;
+
+    --radius:      6px;
+    --radius-lg:   10px;
+    --shadow-sm:   0 1px 2px rgba(16,30,50,.05);
+    --shadow:      0 2px 10px rgba(16,30,50,.06), 0 1px 2px rgba(16,30,50,.04);
+    --shadow-lg:   0 12px 30px rgba(16,30,50,.10), 0 2px 6px rgba(16,30,50,.05);
+  }
+
+  /* Base ------------------------------------------------------------ */
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    font-size:15px;
+    line-height:1.55;
+  }
+  h1,h2,h3,h4,h5,h6 {
+    font-family:'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    color:var(--brand-dark);
+    letter-spacing:-0.015em;
+    margin:0 0 .6em;
+    font-weight:700;
+  }
+  h1 { font-size:44px; line-height:1.1; font-weight:800; letter-spacing:-0.025em; }
+  h2 { font-size:30px; line-height:1.2; }
+  h3 { font-size:22px; line-height:1.3; }
+  h4 { font-size:17px; }
+  h5 { font-size:14px; text-transform:uppercase; letter-spacing:.08em; font-weight:600; color:var(--muted); }
+  p  { margin:0 0 1em; color:var(--slate); }
+  a  { color:var(--brand); text-decoration:none; }
+  a:hover { color:var(--brand-deep); text-decoration:none; }
+  .accent { color:var(--brand); }
+  .ink    { color:var(--brand-dark); }
+
+  /* Buttons --------------------------------------------------------- */
+  .btn {
+    display:inline-flex; align-items:center; justify-content:center; gap:.5em;
+    font-family:'Manrope', sans-serif; font-weight:600; font-size:14px;
+    padding:12px 22px; border-radius:var(--radius); border:1px solid transparent;
+    transition:all .18s ease; cursor:pointer; text-decoration:none;
+    line-height:1; white-space:nowrap;
+  }
+  .btn-primary { background:var(--brand); color:#fff; border-color:var(--brand); }
+  .btn-primary:hover { background:var(--brand-deep); border-color:var(--brand-deep); color:#fff; box-shadow:var(--shadow); }
+  .btn-ghost { background:transparent; color:#fff; border-color:rgba(255,255,255,.45); }
+  .btn-ghost:hover { background:rgba(255,255,255,.12); color:#fff; border-color:#fff; }
+  .btn-outline { background:transparent; color:var(--brand-dark); border-color:var(--line-strong); }
+  .btn-outline:hover { background:var(--sand); color:var(--brand-dark); border-color:var(--brand-dark); }
+  .btn-lg { padding:15px 28px; font-size:15px; }
+  .btn-sm { padding:9px 16px; font-size:13px; }
+
+  /* Top announcement bar -------------------------------------------- */
+  .topbar {
+    background:var(--brand-dark);
+    color:#dfe6ef;
+    font-size:13px;
+    padding:8px 0;
+    border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .topbar a { color:#fff; font-weight:500; }
+  .topbar .sep { color:rgba(255,255,255,.25); margin:0 10px; }
+  .topbar .fa { margin-right:6px; opacity:.8; }
+  .topbar-right { text-align:right; }
+  @media (max-width:767px) { .topbar-right { text-align:left; margin-top:4px; } }
+
+  /* Nav ------------------------------------------------------------- */
+  .navwrap { background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:50; }
+  .nav-inner { display:flex; align-items:center; justify-content:space-between; padding:14px 0; }
+  .brand img { height:40px; display:block; }
+  .mainnav { display:none; align-items:center; gap:4px; }
+  @media (min-width:992px) { .mainnav { display:flex; } }
+  .mainnav a {
+    font-family:'Manrope', sans-serif; font-weight:600; font-size:14px;
+    color:var(--brand-dark); padding:10px 14px; border-radius:var(--radius);
+    transition:background .15s ease, color .15s ease;
+  }
+  .mainnav a:hover { background:var(--sand); color:var(--brand); }
+  .mainnav a.active { color:var(--brand); }
+  .mainnav a.active::after {
+    content:""; display:block; height:2px; background:var(--brand);
+    margin-top:4px; border-radius:2px;
+  }
+  .cart-btn { display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:var(--radius); border:1px solid var(--line); color:var(--brand-dark); font-weight:600; font-size:14px; }
+  .cart-btn:hover { border-color:var(--brand); color:var(--brand); }
+  .cart-btn .count { background:var(--brand); color:#fff; border-radius:999px; padding:2px 7px; font-size:11px; font-weight:700; }
+
+  /* Tagline bar ----------------------------------------------------- */
+  .taglinebar {
+    background:var(--sand);
+    border-bottom:1px solid var(--line);
+    padding:10px 0; font-size:13px;
+    color:var(--slate);
+  }
+  .taglinebar .bbc {
+    display:inline-flex; align-items:center; gap:8px;
+    font-weight:600; color:var(--brand-dark);
+  }
+  .taglinebar .bbc-pill {
+    display:inline-block; background:#111; color:#fff;
+    font-family:'Manrope', sans-serif; font-weight:800; letter-spacing:.05em;
+    padding:2px 7px; font-size:11px; border-radius:3px;
+  }
+  .taglinebar .signup { text-align:right; }
+  .taglinebar .signup a { font-weight:600; }
+  @media (max-width:767px){ .taglinebar .signup{ text-align:left; margin-top:6px; } }
+
+  /* Hero ------------------------------------------------------------ */
+  .hero {
+    position:relative; overflow:hidden;
+    background:
+      radial-gradient(1200px 500px at 85% -10%, rgba(2,145,204,.25), transparent 60%),
+      radial-gradient(900px 400px at 10% 110%, rgba(255,182,39,.10), transparent 60%),
+      linear-gradient(180deg, #0c2a42 0%, #0e3d5d 55%, #0a2a42 100%);
+    color:#fff;
+    padding:72px 0 90px;
+  }
+  .hero::before{
+    content:""; position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse at 50% 40%, #000 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 40%, transparent 80%);
+    opacity:.5; pointer-events:none;
+  }
+  .hero .container { position:relative; z-index:1; }
+  .eyebrow {
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'Manrope', sans-serif; font-size:12px; font-weight:700;
+    letter-spacing:.15em; text-transform:uppercase;
+    color:#8dd1f0; margin-bottom:18px;
+  }
+  .eyebrow .dot { width:7px; height:7px; border-radius:999px; background:#8dd1f0; box-shadow:0 0 0 4px rgba(141,209,240,.18); }
+  .hero h1 { color:#fff; font-size:46px; line-height:1.08; font-weight:800; margin-bottom:20px; }
+  .hero h1 em { color:var(--accent); font-style:normal; }
+  .hero .lede { color:#c8d6e2; font-size:17px; max-width:540px; margin-bottom:28px; }
+  .hero-ctas { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:36px; }
+  .hero-contact { display:flex; flex-wrap:wrap; gap:24px; font-size:14px; color:#c8d6e2; }
+  .hero-contact a { color:#fff; font-weight:600; }
+  .hero-contact .fa { color:var(--accent); margin-right:6px; }
+  .hero-img-wrap {
+    position:relative; text-align:center; padding-top:20px;
+    max-width:460px; margin:0 0 0 auto;
+  }
+  .hero-img-wrap img { max-width:100%; width:100%; height:auto; display:block; filter: drop-shadow(0 30px 40px rgba(0,0,0,.45)); }
+  .hero-img-wrap::after {
+    content:""; position:absolute; left:10%; right:10%; bottom:-10px; height:20px;
+    background:radial-gradient(ellipse at center, rgba(0,0,0,.5), transparent 70%);
+    filter:blur(8px);
+  }
+  .hero-floatcard {
+    position:absolute; background:#fff; color:var(--ink);
+    border-radius:var(--radius); padding:12px 14px;
+    box-shadow:var(--shadow-lg); font-size:13px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .hero-floatcard .icon {
+    width:36px; height:36px; border-radius:50%;
+    background:var(--sand); display:flex; align-items:center; justify-content:center;
+    color:var(--brand); font-size:16px;
+  }
+  .hero-floatcard strong { display:block; color:var(--brand-dark); font-family:'Manrope',sans-serif; font-size:13px; }
+  .hero-floatcard span { color:var(--muted); font-size:12px; }
+  .hero-floatcard.tp  { top:18px; right:-6px; }
+  .hero-floatcard.yrs { bottom:30px; left:-14px; }
+
+  @media (max-width:767px){
+    .hero { padding:56px 0 64px; }
+    .hero h1 { font-size:34px; }
+    .hero-img-wrap { margin:36px auto 0; max-width:420px; }
+    .hero-floatcard.tp,.hero-floatcard.yrs{ display:none; }
+  }
+  @media (min-width:768px) and (max-width:991px){
+    .hero h1 { font-size:36px; }
+    .hero-img-wrap { max-width:340px; }
+    .hero-floatcard.tp,.hero-floatcard.yrs{ display:none; }
+  }
+
+  /* Trust strip (under hero) --------------------------------------- */
+  .trust-strip {
+    background:#fff;
+    border-bottom:1px solid var(--line);
+    margin-top:-30px; position:relative; z-index:2;
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+    padding:22px 10px;
+  }
+  .trust-strip-wrap {
+    display:grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-items:center;
+    gap:8px;
+  }
+  .trust-cell {
+    display:flex; align-items:center; justify-content:center; gap:12px;
+    padding:0 14px;
+    border-right:1px solid var(--line);
+    min-height:56px;
+    text-align:left;
+  }
+  .trust-cell:last-child { border-right:none; }
+  .trust-cell .fa { color:var(--brand); font-size:22px; }
+  .trust-cell strong { display:block; font-family:'Manrope',sans-serif; color:var(--brand-dark); font-size:14px; line-height:1.2; }
+  .trust-cell span  { display:block; color:var(--muted); font-size:12px; line-height:1.3; }
+  .tp-stars { color:#00b67a; font-size:16px; letter-spacing:1px; }
+  .bbc-chip {
+    background:#111; color:#fff; font-family:'Manrope',sans-serif; font-weight:800;
+    letter-spacing:.06em; padding:4px 8px; border-radius:3px; font-size:12px;
+  }
+  @media (max-width:991px){
+    .trust-strip-wrap { grid-template-columns: repeat(2, 1fr); }
+    .trust-cell { border-right:none; border-bottom:1px solid var(--line); padding:12px; }
+    .trust-cell:nth-last-child(-n+2) { border-bottom:none; }
+  }
+
+  /* Journey picker -------------------------------------------------- */
+  .journey { padding:72px 0 24px; }
+  .section-head { text-align:center; max-width:720px; margin:0 auto 40px; }
+  .section-head .eyebrow { color:var(--brand); justify-content:center; }
+  .section-head .eyebrow .dot { background:var(--brand); box-shadow:0 0 0 4px rgba(2,145,204,.18); }
+  .section-head h2 { color:var(--brand-dark); }
+  .section-head p { color:var(--slate); font-size:16px; }
+
+  .journey-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; }
+  @media (max-width:900px){ .journey-grid { grid-template-columns:1fr; } }
+  .journey-card {
+    position:relative;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    padding:28px 26px 26px;
+    transition:all .2s ease;
+    display:flex; flex-direction:column;
+  }
+  .journey-card:hover { border-color:var(--brand); transform:translateY(-3px); box-shadow:var(--shadow-lg); }
+  .journey-num {
+    position:absolute; top:-14px; left:24px;
+    width:28px; height:28px; border-radius:50%;
+    background:var(--brand); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Manrope',sans-serif; font-weight:700; font-size:13px;
+    box-shadow:0 0 0 4px #fff;
+  }
+  .journey-card .icon {
+    width:54px; height:54px; border-radius:12px;
+    background:linear-gradient(135deg, rgba(2,145,204,.14), rgba(2,145,204,.04));
+    color:var(--brand); display:flex; align-items:center; justify-content:center;
+    font-size:26px; margin-bottom:18px;
+  }
+  .journey-card h3 { color:var(--brand-dark); font-size:20px; margin-bottom:8px; }
+  .journey-card p  { color:var(--slate); font-size:14.5px; flex:1; }
+  .journey-card .fromprice { color:var(--muted); font-size:13px; margin-bottom:14px; display:block; }
+  .journey-card .fromprice strong { color:var(--brand-dark); font-family:'Manrope',sans-serif; font-size:16px; }
+  .journey-card .jlink {
+    color:var(--brand); font-family:'Manrope',sans-serif; font-weight:600; font-size:14px;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .journey-card .jlink .fa { transition:transform .2s ease; }
+  .journey-card:hover .jlink .fa { transform:translateX(4px); }
+
+  /* Welcome ------------------------------------------------------- */
+  .welcome { padding:72px 0; background:var(--sand); border-top:1px solid var(--line); }
+  .welcome h5 { margin-bottom:10px; }
+  .welcome h2 { color:var(--brand-dark); margin-bottom:20px; }
+  .welcome p { color:var(--slate); font-size:16px; }
+  .welcome .stats { display:flex; gap:34px; margin-top:28px; }
+  .welcome .stat strong { display:block; font-family:'Manrope',sans-serif; color:var(--brand); font-size:30px; font-weight:800; letter-spacing:-.02em; line-height:1; }
+  .welcome .stat span { color:var(--muted); font-size:13px; }
+  .welcome-photo {
+    position:relative; border-radius:var(--radius-lg); overflow:hidden;
+    background:linear-gradient(135deg, #e8edf3, #fff);
+    border:1px solid var(--line);
+    aspect-ratio:4/3;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:var(--shadow);
+  }
+  .welcome-photo img { width:100%; height:100%; object-fit:cover; display:block; }
+  .welcome-photo .caption {
+    position:absolute; left:16px; bottom:16px;
+    background:rgba(12,42,66,.9); color:#fff; font-size:12px;
+    padding:6px 10px; border-radius:4px; backdrop-filter:blur(4px);
+  }
+  .welcome-photo .photo-ph {
+    color:var(--muted); font-family:'Manrope',sans-serif; font-size:13px;
+    text-align:center; padding:30px;
+  }
+  .welcome-photo .photo-ph .fa { font-size:32px; color:var(--brand); opacity:.4; margin-bottom:10px; display:block; }
+
+  /* Bundle savings band ------------------------------------------- */
+  .bundle-band {
+    background:linear-gradient(135deg, var(--brand-dark) 0%, #22456b 55%, #0f2b45 100%);
+    color:#fff;
+    padding:56px 0;
+    position:relative; overflow:hidden;
+  }
+  .bundle-band::after {
+    content:""; position:absolute; right:-80px; top:-80px;
+    width:320px; height:320px; border-radius:50%;
+    background:radial-gradient(circle, rgba(2,145,204,.35), transparent 70%);
+    pointer-events:none;
+  }
+  .bundle-band .container { position:relative; z-index:1; }
+  .bundle-band h2 { color:#fff; margin-bottom:6px; }
+  .bundle-band h2 em { color:var(--accent); font-style:normal; }
+  .bundle-band p { color:#c8d6e2; max-width:560px; margin-bottom:0; }
+  .bundle-pills { display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+  .bundle-pill {
+    background:rgba(255,255,255,.08); color:#fff;
+    border:1px solid rgba(255,255,255,.16);
+    padding:8px 14px; border-radius:999px; font-size:13px; font-weight:500;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .bundle-pill .fa { color:var(--accent); }
+  .bundle-right { text-align:right; }
+  .bundle-savings {
+    display:inline-block; background:#fff; color:var(--brand-dark);
+    border-radius:var(--radius-lg); padding:18px 22px; text-align:center; min-width:180px;
+    box-shadow:var(--shadow-lg);
+    margin-bottom:18px;
+  }
+  .bundle-savings .amount { font-family:'Manrope',sans-serif; font-weight:800; font-size:40px; color:var(--brand); letter-spacing:-.03em; line-height:1; }
+  .bundle-savings .label  { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.1em; margin-top:6px; display:block; }
+  @media (max-width:767px){ .bundle-right { text-align:left; margin-top:22px; } }
+
+  /* Services -------------------------------------------------------- */
+  .services { padding:80px 0; }
+  .services-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; }
+  @media (max-width:900px){ .services-grid { grid-template-columns:1fr; } }
+  .service-card {
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius-lg);
+    padding:26px; transition:all .2s ease;
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .service-card:hover { border-color:var(--brand); box-shadow:var(--shadow); transform:translateY(-2px); }
+  .service-card h4 { color:var(--brand-dark); margin-bottom:0; font-size:18px; }
+  .service-card p { font-size:14.5px; }
+  .service-card .icon {
+    width:44px; height:44px; border-radius:10px;
+    background:var(--sand-2); color:var(--brand);
+    display:flex; align-items:center; justify-content:center; font-size:20px;
+  }
+  .service-card .slink {
+    margin-top:auto; color:var(--brand); font-family:'Manrope',sans-serif; font-weight:600; font-size:14px;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+
+  /* Benchmark strip ------------------------------------------------- */
+  .bench {
+    padding:76px 0; background:#fff;
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  }
+  .bench-eyebrow { color:var(--brand); }
+  .bench h2 { max-width:560px; }
+  .bench h2 em { color:var(--brand); font-style:normal; }
+  .bench-bars { display:flex; flex-direction:column; gap:14px; margin-top:8px; }
+  .bench-row { display:grid; grid-template-columns: 150px 1fr 60px; gap:14px; align-items:center; font-size:13.5px; }
+  .bench-row .name { color:var(--brand-dark); font-family:'Manrope',sans-serif; font-weight:600; }
+  .bench-row .barwrap { background:var(--sand-2); border-radius:999px; height:12px; overflow:hidden; position:relative; }
+  .bench-row .bar { height:100%; border-radius:999px; background:linear-gradient(90deg, var(--brand), #5cc4ea); transition:width 1.2s ease; }
+  .bench-row .bar.alt { background:linear-gradient(90deg, #aab8c6, #cfd7e0); }
+  .bench-row .val { color:var(--brand-dark); font-family:'Manrope',sans-serif; font-weight:700; text-align:right; font-size:13px; }
+  .bench-caption { font-size:12.5px; color:var(--muted); margin-top:14px; }
+  .bench-caption a { font-weight:600; }
+
+  /* Reviews (Trustpilot-style) ------------------------------------ */
+  .reviews { padding:80px 0; background:var(--sand); }
+  .reviews-head { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:36px; flex-wrap:wrap; gap:16px; }
+  .reviews-head h2 { margin-bottom:6px; }
+  .reviews-head .tp-summary { display:flex; align-items:center; gap:14px; }
+  .tp-score {
+    display:inline-flex; align-items:center; gap:10px;
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+    padding:10px 14px; font-size:13px;
+  }
+  .tp-score .stars { color:#00b67a; font-size:14px; letter-spacing:1px; }
+  .tp-score strong { font-family:'Manrope',sans-serif; color:var(--brand-dark); }
+  .tp-logo-mini {
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; color:var(--brand-dark);
+  }
+  .tp-logo-mini::before {
+    content:"\2605"; color:#00b67a; font-size:18px; line-height:1;
+  }
+
+  .reviews-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; }
+  @media (max-width:900px){ .reviews-grid { grid-template-columns:1fr; } }
+  .review-card {
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius-lg);
+    padding:24px; display:flex; flex-direction:column; gap:14px;
+    transition:all .2s ease;
+  }
+  .review-card:hover { box-shadow:var(--shadow); }
+  .review-stars { color:#00b67a; font-size:16px; letter-spacing:2px; }
+  .review-title { font-family:'Manrope',sans-serif; font-weight:700; color:var(--brand-dark); font-size:16px; margin:0; }
+  .review-body { color:var(--slate); font-size:14.5px; margin:0; flex:1; line-height:1.55; }
+  .review-meta { display:flex; align-items:center; gap:10px; padding-top:14px; border-top:1px solid var(--line); font-size:13px; }
+  .review-avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg, var(--brand), var(--brand-deep)); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; }
+  .review-meta .who { color:var(--brand-dark); font-weight:600; }
+  .review-meta .when { color:var(--muted); }
+  .reviews-cta { text-align:center; margin-top:28px; }
+
+  /* Buyers guide band ---------------------------------------------- */
+  .guide-band {
+    padding:64px 0;
+    background:
+      linear-gradient(135deg, #fdf7e9 0%, #fffdf5 50%, #fdf7e9 100%);
+    border-top:1px solid #f3ecd4;
+    border-bottom:1px solid #f3ecd4;
+    position:relative; overflow:hidden;
+  }
+  .guide-card {
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius-lg);
+    padding:36px 40px; display:grid; grid-template-columns: 1.1fr 1fr; gap:36px;
+    align-items:center; box-shadow:var(--shadow);
+  }
+  @media (max-width:767px){ .guide-card{ grid-template-columns:1fr; padding:28px; } }
+  .guide-card h5 { color:var(--brand); margin-bottom:10px; }
+  .guide-card h2 { font-size:26px; margin-bottom:10px; }
+  .guide-card p  { font-size:15px; }
+  .guide-form { display:flex; gap:8px; margin-top:16px; }
+  .guide-form input {
+    flex:1; padding:13px 16px; border:1px solid var(--line-strong); border-radius:var(--radius);
+    font-size:14px; font-family:inherit; color:var(--ink);
+  }
+  .guide-form input:focus { outline:none; border-color:var(--brand); box-shadow:0 0 0 3px rgba(2,145,204,.15); }
+  .guide-mock {
+    background:#fff; border-radius:var(--radius); box-shadow:var(--shadow-lg);
+    padding:0; position:relative; aspect-ratio:4/5; max-width:260px; margin:0 auto;
+    overflow:hidden;
+    background:linear-gradient(160deg, #0c2a42 0%, #1b4971 100%);
+    color:#fff; display:flex; flex-direction:column; justify-content:space-between;
+    padding:22px 20px;
+    transform:rotate(-3deg);
+    transition:transform .3s ease;
+  }
+  .guide-mock:hover { transform:rotate(-1deg) translateY(-4px); }
+  .guide-mock::before {
+    content:""; position:absolute; inset:0;
+    background:
+      radial-gradient(400px 200px at 80% 20%, rgba(2,145,204,.3), transparent),
+      linear-gradient(180deg, transparent 0%, rgba(0,0,0,.2) 100%);
+    pointer-events:none;
+  }
+  .guide-mock .tag { font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); font-family:'Manrope',sans-serif; font-weight:700; position:relative; z-index:1; }
+  .guide-mock .title { font-family:'Manrope',sans-serif; font-weight:800; font-size:22px; line-height:1.15; position:relative; z-index:1; }
+  .guide-mock .foot { font-size:11px; color:#c8d6e2; position:relative; z-index:1; display:flex; justify-content:space-between; }
+
+  /* Darren CTA ----------------------------------------------------- */
+  .darren {
+    background:#fff; padding:72px 0; border-top:1px solid var(--line);
+  }
+  .darren-card {
+    display:grid; grid-template-columns: 200px 1fr auto; gap:28px; align-items:center;
+    background:linear-gradient(135deg, var(--sand), #fff);
+    border:1px solid var(--line); border-radius:var(--radius-lg);
+    padding:28px 32px;
+  }
+  @media (max-width:767px){ .darren-card{ grid-template-columns:1fr; text-align:center; } }
+  .darren-avatar {
+    width:160px; height:160px; border-radius:50%;
+    background:linear-gradient(135deg, #e8edf3, #c7d2de);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--muted); font-size:56px;
+    border:4px solid #fff; box-shadow:var(--shadow);
+    margin:0 auto;
+  }
+  .darren-card h3 { margin-bottom:6px; color:var(--brand-dark); }
+  .darren-card p  { margin-bottom:0; font-size:15px; }
+  .darren-card .sig { font-family:'Manrope',sans-serif; font-weight:700; color:var(--brand-dark); font-size:14px; margin-top:8px; display:block; }
+  .darren-card .sig span { color:var(--muted); font-weight:500; }
+
+  /* Footer --------------------------------------------------------- */
+  footer {
+    background:#0c2132; color:#c1cbd6; padding:60px 0 0;
+    border-top:4px solid var(--brand);
+  }
+  footer h5 { color:#fff; font-family:'Manrope',sans-serif; font-size:13px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:16px; font-weight:700; }
+  footer ul { list-style:none; padding:0; margin:0; }
+  footer ul li { margin-bottom:8px; font-size:14px; }
+  footer ul li a { color:#c1cbd6; }
+  footer ul li a:hover { color:#fff; }
+  footer .contact-large a { color:#fff; font-family:'Manrope',sans-serif; font-weight:700; font-size:20px; display:inline-flex; align-items:center; gap:10px; }
+  footer .contact-large a .fa { color:var(--brand); }
+  footer .foot-sub {
+    border-top:1px solid rgba(255,255,255,.08);
+    margin-top:50px; padding:22px 0; font-size:13px;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:14px;
+    color:#8a98a8;
+  }
+  footer .foot-sub a { color:#8a98a8; margin-left:18px; }
+  footer .foot-sub a:hover { color:#fff; }
+  footer .tp-foot {
+    background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07);
+    border-radius:var(--radius); padding:12px 14px; display:inline-flex; align-items:center; gap:10px;
+    color:#fff; font-size:13px;
+  }
+  footer .tp-foot .stars { color:#00b67a; letter-spacing:2px; }
+
+  /* Utilities ------------------------------------------------------ */
+  .reveal { opacity:0; transform:translateY(12px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity:1; transform:none; }
+  .row-flex { display:flex; flex-wrap:wrap; }
+  .mt-40 { margin-top:40px; }
+  .mb-0 { margin-bottom:0 !important; }
+</style>
+</head>
+
+<body>
+
+<!-- TOP ANNOUNCEMENT ------------------------------------------------ -->
+<div class="topbar">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <i class="fa fa-phone"></i><a href="tel:03302236655">0330 223 66 55</a>
+        <span class="sep">|</span>
+        <i class="fa fa-envelope"></i><a href="mailto:sales@multiplemonitors.co.uk">sales@multiplemonitors.co.uk</a>
+      </div>
+      <div class="col-sm-5 topbar-right">
+        <i class="fa fa-truck"></i> Free UK delivery on bundles
+        <span class="sep">|</span>
+        <i class="fa fa-shield"></i> 5-year cover &amp; lifetime support
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV ------------------------------------------------------------ -->
+<div class="navwrap">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="/" class="brand"><img src="/images/logo.png" alt="Multiple Monitors Ltd" /></a>
+      <nav class="mainnav">
+        <a href="/" class="active">Home</a>
+        <a href="/computers/">Computers</a>
+        <a href="/display-systems/">Monitor Arrays</a>
+        <a href="/bundles/">Bundles</a>
+        <a href="/stands/">Stands</a>
+        <a href="/blog/">Blog</a>
+      </nav>
+      <a href="#" class="cart-btn"><i class="fa fa-shopping-cart"></i> Cart <span class="count">0</span></a>
+    </div>
+  </div>
+</div>
+
+<!-- TAGLINE BAR (BBC made visible) --------------------------------- -->
+<div class="taglinebar">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-8">
+        <span class="bbc">
+          <span class="bbc-pill">BBC</span>
+          As featured on BBC&rsquo;s <em>Traders: Millions by the Minute</em>
+        </span>
+      </div>
+      <div class="col-sm-4 signup">
+        Get exclusive offers &mdash; <a href="/pages/email-signup/">Sign up &rarr;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO ----------------------------------------------------------- -->
+<header class="hero">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <div class="eyebrow reveal"><span class="dot"></span>UK Multi-Screen Specialist &mdash; Est. 2008</div>
+        <h1 class="reveal">Trading computers &amp; multi-screen setups, <em>built and tested</em> in the UK since 2008.</h1>
+        <p class="lede reveal">Custom-built PCs, monitor arrays, stands and bundles &mdash; engineered for traders, analysts and anyone serious about multi-screen performance. Everything tested to work together, out of the box.</p>
+        <div class="hero-ctas reveal">
+          <a href="/trading-computers/" class="btn btn-primary btn-lg">Shop Trading PCs <i class="fa fa-angle-right"></i></a>
+          <a href="/bundles/" class="btn btn-ghost btn-lg">Explore Bundles</a>
+        </div>
+        <div class="hero-contact reveal">
+          <span><i class="fa fa-phone"></i><a href="tel:03302236655">0330 223 66 55</a></span>
+          <span><i class="fa fa-envelope"></i><a href="mailto:sales@multiplemonitors.co.uk">sales@multiplemonitors.co.uk</a></span>
+        </div>
+      </div>
+      <div class="col-sm-5">
+        <div class="hero-img-wrap reveal">
+          <img src="/images/pages/trading-image.png" alt="Multi-monitor trading setup" onerror="this.style.display='none'" />
+          <div class="hero-floatcard tp">
+            <div class="icon"><i class="fa fa-star"></i></div>
+            <div>
+              <strong>5.0 on Trustpilot</strong>
+              <span>Verified buyer reviews</span>
+            </div>
+          </div>
+          <div class="hero-floatcard yrs">
+            <div class="icon"><i class="fa fa-shield"></i></div>
+            <div>
+              <strong>5-year hardware cover</strong>
+              <span>Lifetime UK phone support</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- TRUST STRIP (floating over hero bottom) ------------------------ -->
+<div class="container">
+  <div class="trust-strip">
+    <div class="trust-strip-wrap">
+      <div class="trust-cell">
+        <span class="bbc-chip">BBC</span>
+        <div>
+          <strong>Featured on</strong>
+          <span>BBC Traders Millions by the Minute</span>
+        </div>
+      </div>
+      <div class="trust-cell">
+        <span class="tp-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <div>
+          <strong>5.0 Trustpilot</strong>
+          <span>Based on 480+ reviews</span>
+        </div>
+      </div>
+      <div class="trust-cell">
+        <i class="fa fa-calendar-check-o"></i>
+        <div>
+          <strong>17+ years</strong>
+          <span>UK multi-screen specialist</span>
+        </div>
+      </div>
+      <div class="trust-cell">
+        <i class="fa fa-shield"></i>
+        <div>
+          <strong>5-year cover</strong>
+          <span>Lifetime UK phone support</span>
+        </div>
+      </div>
+      <div class="trust-cell">
+        <i class="fa fa-line-chart"></i>
+        <div>
+          <strong>Benchmark tested</strong>
+          <span>By TraderSpec.com</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY CTAs --------------------------------------------------- -->
+<section class="journey">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot"></span>Where should we start?</div>
+      <h2>Tell us what you need and we&rsquo;ll point you the right way</h2>
+      <p>Everything we sell is built to work together. Start wherever suits &mdash; or call and talk it through.</p>
+    </div>
+
+    <div class="journey-grid">
+      <a href="/trading-computers/" class="journey-card reveal">
+        <span class="journey-num">1</span>
+        <div class="icon"><i class="fa fa-line-chart"></i></div>
+        <h3>I want a trading PC</h3>
+        <p>Purpose-built trading computers benchmarked for MT4, NinjaTrader, TradeStation, Bloomberg and more. CPUs and GPUs chosen on real-world test data &mdash; not marketing specs.</p>
+        <span class="fromprice"><strong>From &pound;1,045</strong> &middot; Trader PC or Trader Pro</span>
+        <span class="jlink">Configure a Trader PC <i class="fa fa-arrow-right"></i></span>
+      </a>
+
+      <a href="/bundles/" class="journey-card reveal">
+        <span class="journey-num">2</span>
+        <div class="icon"><i class="fa fa-cubes"></i></div>
+        <h3>I want a complete bundle</h3>
+        <p>PC, stand, screens and every cable you need &mdash; assembled, tested and delivered in one box. Save &pound;200+ versus buying separately.</p>
+        <span class="fromprice"><strong>From &pound;1,395</strong> &middot; Dual, triple &amp; 6-screen bundles</span>
+        <span class="jlink">Compare bundles <i class="fa fa-arrow-right"></i></span>
+      </a>
+
+      <a href="/display-systems/" class="journey-card reveal">
+        <span class="journey-num">3</span>
+        <div class="icon"><i class="fa fa-desktop"></i></div>
+        <h3>I just need screens &amp; stands</h3>
+        <p>Upgrading an existing setup? Matched monitor arrays, heavy-duty desk and freestanding stands, plus every cable and adapter &mdash; tested together.</p>
+        <span class="fromprice"><strong>From &pound;395</strong> &middot; Arrays, stands &amp; accessories</span>
+        <span class="jlink">Browse arrays &amp; stands <i class="fa fa-arrow-right"></i></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- WELCOME -------------------------------------------------------- -->
+<section class="welcome">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="reveal">
+          <h5>Welcome to MultipleMonitors</h5>
+          <h2>The UK&rsquo;s number one source for <span class="accent">multi-screen computers &amp; arrays</span></h2>
+          <p>We don&rsquo;t dabble. Seventeen years in, multi-screen is the only thing we do &mdash; which is why we&rsquo;re the only UK builder with our own published benchmark data on trading workloads. We&rsquo;ll spec a machine that fits your work, and we&rsquo;ll happily talk you out of an upgrade you don&rsquo;t need.</p>
+          <p>Every order is custom-built in our UK workshop, stress-tested under real trading software, backed by 5-year hardware cover and lifetime UK phone support.</p>
+          <div class="stats">
+            <div class="stat"><strong>17+</strong><span>Years specialising</span></div>
+            <div class="stat"><strong>8,000+</strong><span>UK systems delivered</span></div>
+            <div class="stat"><strong>5.0&#9733;</strong><span>Trustpilot rating</span></div>
+          </div>
+          <div class="mt-40">
+            <a href="/pages/about-us/" class="btn btn-outline">Learn more about us <i class="fa fa-angle-right"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="welcome-photo reveal">
+          <div class="photo-ph">
+            <i class="fa fa-camera"></i>
+            Workshop / bench-testing photo here<br/>
+            <span style="font-size:11px; color:var(--muted);">(audit &sect;3.6 &mdash; real photos of the workshop, Darren &amp; the test rig)</span>
+          </div>
+          <div class="caption">UK workshop &middot; Darren testing a Trader Pro build</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUNDLE SAVINGS BAND ------------------------------------------- -->
+<section class="bundle-band">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="reveal">
+          <h5 style="color:var(--accent); letter-spacing:.1em;">BUNDLE &amp; SAVE</h5>
+          <h2>Buy a bundle, <em>save &pound;200+</em> and get a setup that works out of the box.</h2>
+          <p>Every bundle ships with everything you need &mdash; and we bin-test the whole thing together before it goes out the door. No missing cables, no surprises.</p>
+          <div class="bundle-pills">
+            <span class="bundle-pill"><i class="fa fa-check"></i> Free cables for every screen</span>
+            <span class="bundle-pill"><i class="fa fa-check"></i> Free wifi card &amp; speakers</span>
+            <span class="bundle-pill"><i class="fa fa-check"></i> Free UK delivery</span>
+            <span class="bundle-pill"><i class="fa fa-check"></i> Bundle discount up to &pound;100</span>
+          </div>
+          <div style="margin-top:26px;">
+            <a href="/bundles/" class="btn btn-primary btn-lg">See bundle savings <i class="fa fa-angle-right"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4 bundle-right">
+        <div class="reveal">
+          <div class="bundle-savings">
+            <div class="amount">&pound;214</div>
+            <span class="label">Avg. savings on a 6-screen bundle</span>
+          </div>
+          <p style="color:#c8d6e2; font-size:13px;">vs. piecing it together from Scan, Amazon &amp; a stand vendor</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES ------------------------------------------------------- -->
+<section class="services">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot"></span>How we work</div>
+      <h2>Custom-built, tested and supported &mdash; by the people who built it</h2>
+      <p>Not a drop-shipper. Not a reseller. Every machine is assembled in our UK workshop and tested against real trading workloads before it leaves.</p>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="icon"><i class="fa fa-wrench"></i></div>
+        <h4><a href="/pages/build-process/">Build process &amp; guarantee</a></h4>
+        <p>Quality parts, hand-built in the UK, burn-in tested before shipping. 30-day money-back guarantee, 5-year hardware cover and lifetime phone support.</p>
+        <a href="/pages/build-process/" class="slink">See how we build <i class="fa fa-arrow-right"></i></a>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="icon"><i class="fa fa-line-chart"></i></div>
+        <h4><a href="/pages/trading-computers/">Trading computers</a></h4>
+        <p>Benchmark data, not marketing specs. Single-thread, multi-thread and per-platform tested on the software traders actually use &mdash; MT4, NT8, TradeStation, Bloomberg.</p>
+        <a href="/pages/trading-computers/" class="slink">Explore trading PCs <i class="fa fa-arrow-right"></i></a>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="icon"><i class="fa fa-desktop"></i></div>
+        <h4><a href="/pages/dual-monitor-pc/">Dual &amp; multi-monitor PCs</a></h4>
+        <p>Dual, triple, quad and six-screen setups for CAD, analysis, security ops &mdash; anyone who&rsquo;s done trying to make Windows cooperate with four displays on their own.</p>
+        <a href="/pages/dual-monitor-pc/" class="slink">See multi-monitor PCs <i class="fa fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENCHMARK PROOF ------------------------------------------------ -->
+<section class="bench">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-5">
+        <div class="reveal">
+          <div class="eyebrow bench-eyebrow"><span class="dot" style="background:var(--brand); box-shadow:0 0 0 4px rgba(2,145,204,.18);"></span>TraderSpec.com data</div>
+          <h2>The only UK builder with <em>published trading benchmarks</em>.</h2>
+          <p>We run every CPU through the workloads that actually matter &mdash; single-thread chart rendering, multi-thread backtests, real-world MT4 and NinjaTrader loops. Most competitors pick the CPU with the biggest box. We pick the one that wins the test.</p>
+          <a href="/pages/trading-computers/" class="btn btn-outline" style="margin-top:8px;">See the full benchmarks <i class="fa fa-angle-right"></i></a>
+        </div>
+      </div>
+      <div class="col-sm-7">
+        <div class="reveal" style="padding-left:10px;">
+          <h5 style="color:var(--muted); margin-bottom:20px;">Single-thread chart performance &mdash; higher is better</h5>
+          <div class="bench-bars">
+            <div class="bench-row">
+              <span class="name">Trader Pro (ours)</span>
+              <div class="barwrap"><div class="bar" style="width:96%"></div></div>
+              <span class="val">96</span>
+            </div>
+            <div class="bench-row">
+              <span class="name">Trader PC (ours)</span>
+              <div class="barwrap"><div class="bar" style="width:84%"></div></div>
+              <span class="val">84</span>
+            </div>
+            <div class="bench-row">
+              <span class="name">Scan 3XS equiv.</span>
+              <div class="barwrap"><div class="bar alt" style="width:72%"></div></div>
+              <span class="val">72</span>
+            </div>
+            <div class="bench-row">
+              <span class="name">Generic i9 build</span>
+              <div class="barwrap"><div class="bar alt" style="width:68%"></div></div>
+              <span class="val">68</span>
+            </div>
+          </div>
+          <p class="bench-caption">Indicative figures for mockup purposes. Full test methodology and live data on <a href="https://traderspec.com" target="_blank" rel="noopener">TraderSpec.com</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS (Trustpilot style) ------------------------------------ -->
+<section class="reviews">
+  <div class="container">
+    <div class="reviews-head reveal">
+      <div>
+        <div class="eyebrow" style="color:#00b67a;"><span class="dot" style="background:#00b67a; box-shadow:0 0 0 4px rgba(0,182,122,.18);"></span>Trustpilot reviews</div>
+        <h2>What our customers say</h2>
+      </div>
+      <div class="tp-summary">
+        <div class="tp-score">
+          <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <span><strong>Excellent</strong> &middot; 482 reviews</span>
+        </div>
+        <span class="tp-logo-mini">Trustpilot</span>
+      </div>
+    </div>
+
+    <div class="reviews-grid">
+      <article class="review-card reveal">
+        <span class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <h4 class="review-title">Best purchase I&rsquo;ve made for my trading setup</h4>
+        <p class="review-body">Ordered a 6-screen Trader Pro bundle. Darren actually talked me out of a spec upgrade I didn&rsquo;t need &mdash; saved me around &pound;300. It arrived on a Friday, plugged in, worked. Seven months later, still flawless running NinjaTrader 8 with live data on all six screens.</p>
+        <div class="review-meta">
+          <div class="review-avatar">TB</div>
+          <div>
+            <div class="who">Tom Boszko &middot; Futures trader</div>
+            <div class="when">Verified purchase &middot; 12 March 2026</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="review-card reveal">
+        <span class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <h4 class="review-title">Proper specialists &mdash; not a generic PC shop</h4>
+        <p class="review-body">Spoke to three other UK builders first, all of them just sold me specs. Darren&rsquo;s team asked what platform I run, what chart count, whether I backtest overnight &mdash; then spec&rsquo;d accordingly. The detail in the pre-sale conversation alone was worth the price difference.</p>
+        <div class="review-meta">
+          <div class="review-avatar">GW</div>
+          <div>
+            <div class="who">Geoff Wheeler &middot; FX trader, London</div>
+            <div class="when">Verified purchase &middot; 04 February 2026</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="review-card reveal">
+        <span class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <h4 class="review-title">Support is genuinely for life</h4>
+        <p class="review-body">Bought my Trader PC in 2021. Called last month with a Windows Update issue, fully expecting to be told the machine was too old. Got through to a real person in under 5 minutes, walked me through the fix. Five years on and the support still works &mdash; rare.</p>
+        <div class="review-meta">
+          <div class="review-avatar">DC</div>
+          <div>
+            <div class="who">David Coomber &middot; Analyst, Edinburgh</div>
+            <div class="when">Verified purchase &middot; 19 January 2026</div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="reviews-cta">
+      <a href="#" class="btn btn-outline">See all 482 reviews on Trustpilot <i class="fa fa-external-link"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- BUYERS GUIDE BAND --------------------------------------------- -->
+<section class="guide-band">
+  <div class="container">
+    <div class="guide-card reveal">
+      <div>
+        <h5>Free buyer&rsquo;s guide</h5>
+        <h2>Not ready to buy? Grab the free buyer&rsquo;s guide.</h2>
+        <p>32 pages, plain English: CPU choices that actually matter for multi-screen work, screen count sweet-spots by use case, what the bundle&rsquo;s worth vs. building it yourself, and the five questions to ask any PC builder before you hand over &pound;2,000.</p>
+        <form class="guide-form" onsubmit="event.preventDefault(); this.querySelector('input').value=''; this.querySelector('input').placeholder='Thanks &mdash; check your inbox \u2713';">
+          <input type="email" placeholder="you@example.com" required />
+          <button type="submit" class="btn btn-primary">Send me the guide</button>
+        </form>
+        <p style="font-size:12px; color:var(--muted); margin-top:10px;">No spam. One email to deliver the guide, then only occasional product updates. Unsubscribe anytime.</p>
+      </div>
+      <div>
+        <div class="guide-mock">
+          <div>
+            <span class="tag">The Multi-Screen Buyer&rsquo;s Guide</span>
+          </div>
+          <div class="title">How to buy a multi-screen PC without getting burned.</div>
+          <div class="foot">
+            <span>2026 edition</span>
+            <span>32 pages</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TALK TO DARREN ------------------------------------------------- -->
+<section class="darren">
+  <div class="container">
+    <div class="darren-card reveal">
+      <div class="darren-avatar"><i class="fa fa-user"></i></div>
+      <div>
+        <h5 style="color:var(--brand); margin-bottom:6px;">Still deciding?</h5>
+        <h3>Book a free 15-minute call with Darren.</h3>
+        <p>Spending &pound;1,500+ is a decision worth a proper conversation. Tell me what you trade / work in and how many screens you want &mdash; I&rsquo;ll tell you whether we&rsquo;re the right shop for you, or point you somewhere else if we&rsquo;re not.</p>
+        <span class="sig">Darren &mdash; founder <span>&middot; MultipleMonitors Ltd</span></span>
+      </div>
+      <div>
+        <a href="#" class="btn btn-primary btn-lg">Book a 15-min call <i class="fa fa-calendar"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER --------------------------------------------------------- -->
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-6 col-md-3" style="margin-bottom:30px;">
+        <h5>Policies &amp; legal</h5>
+        <ul>
+          <li><a href="/pages/delivery/">Delivery information</a></li>
+          <li><a href="/pages/international/">International orders</a></li>
+          <li><a href="/pages/warranty/">Warranty information</a></li>
+          <li><a href="/pages/returns/">Returns policy</a></li>
+          <li><a href="/pages/privacy-policy/">Privacy policy</a></li>
+          <li><a href="/pages/terms/">Terms &amp; conditions</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-6 col-md-3" style="margin-bottom:30px;">
+        <h5>Shop</h5>
+        <ul>
+          <li><a href="/computers/">Computers</a></li>
+          <li><a href="/display-systems/">Monitor arrays</a></li>
+          <li><a href="/bundles/">Bundles</a></li>
+          <li><a href="/stands/">Stands</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/pages/about-us/">About us</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-6 col-md-3" style="margin-bottom:30px;">
+        <h5>Get in touch</h5>
+        <div class="contact-large">
+          <a href="tel:03302236655"><i class="fa fa-phone"></i> 0330 223 66 55</a>
+        </div>
+        <p style="margin-top:10px;"><a href="mailto:sales@multiplemonitors.co.uk" style="color:#fff;"><i class="fa fa-envelope"></i> sales@multiplemonitors.co.uk</a></p>
+        <p style="font-size:13px; color:#8a98a8;">Mon&ndash;Fri 9am&ndash;5:30pm. UK workshop, UK phone support.</p>
+      </div>
+      <div class="col-sm-6 col-md-3" style="margin-bottom:30px;">
+        <h5>Trusted by traders</h5>
+        <div class="tp-foot">
+          <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <span><strong>5.0</strong> &middot; 482 reviews on Trustpilot</span>
+        </div>
+        <p style="margin-top:16px; font-size:13px;">Featured on BBC&rsquo;s <em>Traders: Millions by the Minute</em>.</p>
+      </div>
+    </div>
+
+    <div class="foot-sub">
+      <div>&copy; <span id="yr"></span> MultipleMonitors Ltd. All rights reserved. Registered in England.</div>
+      <div>
+        <a href="/">Home</a>
+        <a href="/blog/">Blog</a>
+        <a href="/pages/contact-us/">Contact</a>
+        <a href="/pages/testimonials/">Testimonials</a>
+        <a href="/pages/site-map/">Sitemap</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Dynamic copyright year (audit §3.1)
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // Reveal on scroll
+  (function(){
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(function(el){ el.classList.add('in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    els.forEach(function(el){ io.observe(el); });
+  })();
+</script>
+
+</body>
+</html>
