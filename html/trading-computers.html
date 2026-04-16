@@ -14,627 +14,16 @@
 <!-- Font Awesome 4 -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+<!-- Bootstrap 3 — loaded on live to give the chrome its .container/.row grid.
+     Mirrored here so the mockup renders under the same cascade as production. -->
+<link rel="stylesheet" href="../css/bootstrap.min.css">
+
+<!-- 2026 design-system stylesheet -->
+<link rel="stylesheet" href="../css/mm-2026.css">
+
 <style>
-  /* --- self-contained grid (no Bootstrap / no Tailwind) --- */
-  *, *::before, *::after { box-sizing:border-box; }
-  body { margin:0; }
-  .container { width:100%; max-width:1170px; margin:0 auto; padding:0 15px; }
-  .container-narrow { max-width:880px; margin:0 auto; padding:0 15px; }
-  .row { display:flex; flex-wrap:wrap; margin-left:-15px; margin-right:-15px; }
-  .row > [class^="col-"] { padding-left:15px; padding-right:15px; width:100%; }
-  @media (min-width:768px) {
-    .col-sm-4  { flex:0 0 33.3333%; max-width:33.3333%; }
-    .col-sm-5  { flex:0 0 41.6667%; max-width:41.6667%; }
-    .col-sm-6  { flex:0 0 50%;       max-width:50%; }
-    .col-sm-7  { flex:0 0 58.3333%; max-width:58.3333%; }
-    .col-sm-8  { flex:0 0 66.6667%; max-width:66.6667%; }
-    .col-sm-3  { flex:0 0 25%;       max-width:25%; }
-    .col-sm-9  { flex:0 0 75%;       max-width:75%; }
-  }
-  @media (min-width:992px) {
-    .col-md-3  { flex:0 0 25%;       max-width:25%; }
-    .col-md-4  { flex:0 0 33.3333%; max-width:33.3333%; }
-    .col-md-5  { flex:0 0 41.6667%; max-width:41.6667%; }
-    .col-md-6  { flex:0 0 50%;       max-width:50%; }
-    .col-md-7  { flex:0 0 58.3333%; max-width:58.3333%; }
-    .col-md-8  { flex:0 0 66.6667%; max-width:66.6667%; }
-    .col-md-9  { flex:0 0 75%;       max-width:75%; }
-  }
-  .text-right { text-align:right; }
-
-  :root {
-    --brand:       #0291cc;
-    --brand-deep:  #026fa0;
-    --brand-dark:  #3a5371;
-    --ink:         #1a2533;
-    --slate:       #4a5a6e;
-    --muted:       #7a8a9b;
-    --line:        #e5e9ef;
-    --line-strong: #d3dae3;
-    --paper:       #ffffff;
-    --sand:        #f7f8fa;
-    --sand-2:      #eef2f6;
-    --accent:      #ffb627;
-    --ok:          #2db47a;
-    --star:        #f6a623;
-
-    --radius:      6px;
-    --radius-lg:   10px;
-    --shadow-sm:   0 1px 2px rgba(16,30,50,.05);
-    --shadow:      0 2px 10px rgba(16,30,50,.06), 0 1px 2px rgba(16,30,50,.04);
-    --shadow-lg:   0 12px 30px rgba(16,30,50,.10), 0 2px 6px rgba(16,30,50,.05);
-  }
-
-  html { scroll-behavior:smooth; }
-  body {
-    font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    color:var(--ink);
-    background:var(--paper);
-    -webkit-font-smoothing:antialiased;
-    text-rendering:optimizeLegibility;
-    font-size:15px;
-    line-height:1.55;
-  }
-  h1,h2,h3,h4,h5,h6 {
-    font-family:'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
-    color:var(--brand-dark);
-    letter-spacing:-0.015em;
-    margin:0 0 .6em;
-    font-weight:700;
-  }
-  h1 { font-size:46px; line-height:1.08; font-weight:800; letter-spacing:-0.025em; }
-  h2 { font-size:32px; line-height:1.15; letter-spacing:-0.02em; }
-  h3 { font-size:22px; line-height:1.3; }
-  h4 { font-size:17px; }
-  h5 { font-size:14px; text-transform:uppercase; letter-spacing:.08em; font-weight:600; color:var(--muted); }
-  p  { margin:0 0 1em; color:var(--slate); }
-  a  { color:var(--brand); text-decoration:none; }
-  a:hover { color:var(--brand-deep); text-decoration:none; }
-  .accent { color:var(--brand); }
-
-  .btn {
-    display:inline-flex; align-items:center; justify-content:center; gap:.5em;
-    font-family:'Manrope', sans-serif; font-weight:600; font-size:14px;
-    padding:12px 22px; border-radius:var(--radius); border:1px solid transparent;
-    transition:all .18s ease; cursor:pointer; text-decoration:none;
-    line-height:1; white-space:nowrap;
-  }
-  .btn-primary { background:var(--brand); color:#fff; border-color:var(--brand); }
-  .btn-primary:hover { background:var(--brand-deep); border-color:var(--brand-deep); color:#fff; box-shadow:var(--shadow); }
-  .btn-ghost { background:transparent; color:#fff; border-color:rgba(255,255,255,.45); }
-  .btn-ghost:hover { background:rgba(255,255,255,.12); color:#fff; border-color:#fff; }
-  .btn-outline { background:transparent; color:var(--brand-dark); border-color:var(--line-strong); }
-  .btn-outline:hover { background:var(--sand); color:var(--brand-dark); border-color:var(--brand-dark); }
-  .btn-accent { background:var(--accent); color:#1a2533; border-color:var(--accent); }
-  .btn-accent:hover { background:#f4a50f; border-color:#f4a50f; color:#1a2533; }
-  .btn-lg { padding:15px 28px; font-size:15px; }
-  .btn-sm { padding:9px 16px; font-size:13px; }
-
-  /* Top announcement bar -------------------------------------------- */
-  .topbar { background:var(--brand-dark); color:#dfe6ef; font-size:13px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.06); }
-  .topbar a { color:#fff; font-weight:500; }
-  .topbar .sep { color:rgba(255,255,255,.25); margin:0 10px; }
-  .topbar .fa { margin-right:6px; opacity:.8; }
-  .topbar-right { text-align:right; }
-  @media (max-width:767px) { .topbar-right { text-align:left; margin-top:4px; } }
-
-  /* Nav ------------------------------------------------------------- */
-  .navwrap { background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:50; }
-  .nav-inner { display:flex; align-items:center; justify-content:space-between; padding:14px 0; }
-  .brand img { height:40px; display:block; }
-  .mainnav { display:none; align-items:center; gap:4px; }
-  @media (min-width:992px) { .mainnav { display:flex; } }
-  .mainnav a {
-    font-family:'Manrope', sans-serif; font-weight:600; font-size:14px;
-    color:var(--brand-dark); padding:10px 14px; border-radius:var(--radius);
-    transition:background .15s ease, color .15s ease;
-  }
-  .mainnav a:hover { background:var(--sand); color:var(--brand); }
-  .mainnav a.active { color:var(--brand); }
-  .mainnav a.active::after { content:""; display:block; height:2px; background:var(--brand); margin-top:4px; border-radius:2px; }
-  .cart-btn { display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:var(--radius); border:1px solid var(--line); color:var(--brand-dark); font-weight:600; font-size:14px; }
-  .cart-btn:hover { border-color:var(--brand); color:var(--brand); }
-  .cart-btn .count { background:var(--brand); color:#fff; border-radius:999px; padding:2px 7px; font-size:11px; font-weight:700; }
-
-  /* Tagline bar ----------------------------------------------------- */
-  .taglinebar { background:var(--sand); border-bottom:1px solid var(--line); padding:10px 0; font-size:13px; color:var(--slate); }
-  .taglinebar .bbc { display:inline-flex; align-items:center; gap:8px; font-weight:600; color:var(--brand-dark); }
-  .taglinebar .bbc-pill { display:inline-block; background:#111; color:#fff; font-family:'Manrope', sans-serif; font-weight:800; letter-spacing:.05em; padding:2px 7px; font-size:11px; border-radius:3px; }
-  .taglinebar .signup { text-align:right; }
-  .taglinebar .signup a { font-weight:600; }
-  @media (max-width:767px){ .taglinebar .signup{ text-align:left; margin-top:6px; } }
-
-  /* Breadcrumb ---------------------------------------------------- */
-  .crumbs { padding:16px 0; font-size:13px; color:var(--muted); background:#fff; border-bottom:1px solid var(--line); }
-  .crumbs a { color:var(--muted); }
-  .crumbs a:hover { color:var(--brand); }
-  .crumbs .fa { margin:0 8px; font-size:10px; opacity:.6; }
-  .crumbs strong { color:var(--brand-dark); font-weight:600; }
-
-  /* Hero — proof-led ---------------------------------------------- */
-  .hero {
-    position:relative; overflow:hidden;
-    background:
-      radial-gradient(1200px 500px at 85% -10%, rgba(2,145,204,.28), transparent 60%),
-      radial-gradient(900px 400px at 10% 110%, rgba(255,182,39,.10), transparent 60%),
-      linear-gradient(180deg, #0c2a42 0%, #0e3d5d 55%, #0a2a42 100%);
-    color:#fff;
-    padding:78px 0 96px;
-  }
-  .hero::before{
-    content:""; position:absolute; inset:0;
-    background-image:
-      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
-    background-size: 56px 56px;
-    mask-image: radial-gradient(ellipse at 50% 40%, #000 40%, transparent 80%);
-    -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 40%, transparent 80%);
-    opacity:.5; pointer-events:none;
-  }
-  .hero .container { position:relative; z-index:1; }
-  .eyebrow {
-    display:inline-flex; align-items:center; gap:8px;
-    font-family:'Manrope', sans-serif; font-size:12px; font-weight:700;
-    letter-spacing:.15em; text-transform:uppercase;
-    color:#8dd1f0; margin-bottom:18px;
-  }
-  .eyebrow .dot { width:7px; height:7px; border-radius:999px; background:#8dd1f0; box-shadow:0 0 0 4px rgba(141,209,240,.18); }
-  .hero h1 { color:#fff; font-size:46px; line-height:1.08; font-weight:800; margin-bottom:20px; }
-  .hero h1 em { color:var(--accent); font-style:normal; }
-  .hero .lede { color:#c8d6e2; font-size:17px; max-width:560px; margin-bottom:28px; }
-  .hero-ctas { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:28px; }
-  .hero-proofs {
-    display:flex; flex-wrap:wrap; gap:18px 28px;
-    padding-top:22px; border-top:1px solid rgba(255,255,255,.12);
-    font-size:14px; color:#c8d6e2;
-    margin-top:6px;
-  }
-  .hero-proofs .hp { display:inline-flex; align-items:center; gap:8px; }
-  .hero-proofs .hp strong { color:#fff; font-family:'Manrope',sans-serif; }
-  .hero-proofs .fa { color:var(--accent); }
-
-  /* Hero chart card (proof visual) */
-  .hero-chart {
-    background:rgba(255,255,255,.04);
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:var(--radius-lg);
-    padding:22px;
-    backdrop-filter:blur(6px);
-    color:#fff;
-    box-shadow:0 25px 60px rgba(0,0,0,.45);
-    max-width:480px;
-    margin:0 0 0 auto;
-  }
-  .hero-chart h5 { color:rgba(255,255,255,.7); font-size:11px; letter-spacing:.12em; margin-bottom:6px; }
-  .hero-chart .chart-title {
-    font-family:'Manrope',sans-serif; font-weight:700; font-size:15px;
-    color:#fff; margin-bottom:16px;
-    display:flex; justify-content:space-between; align-items:center; gap:8px;
-  }
-  .hero-chart .chart-title .fa { color:var(--accent); }
-  .hc-bars { display:flex; flex-direction:column; gap:11px; }
-  .hc-row { display:grid; grid-template-columns: 115px 1fr 42px; gap:10px; align-items:center; font-size:12.5px; }
-  .hc-row .name { color:#c8d6e2; font-family:'Manrope',sans-serif; font-weight:600; }
-  .hc-row .name.ours { color:#fff; }
-  .hc-row .barwrap { background:rgba(255,255,255,.08); border-radius:999px; height:10px; overflow:hidden; position:relative; }
-  .hc-row .bar {
-    height:100%; border-radius:999px;
-    background:linear-gradient(90deg, var(--brand), #5cc4ea);
-    box-shadow:0 0 20px rgba(2,145,204,.5);
-  }
-  .hc-row .bar.alt { background:linear-gradient(90deg, #56677b, #8894a5); box-shadow:none; }
-  .hc-row .val { color:#fff; font-family:'Manrope',sans-serif; font-weight:700; text-align:right; font-size:12.5px; }
-  .hc-foot { font-size:11px; color:rgba(255,255,255,.55); margin-top:14px; border-top:1px solid rgba(255,255,255,.08); padding-top:10px; }
-  .hc-foot a { color:var(--accent); }
-
-  @media (max-width:767px){
-    .hero { padding:56px 0 64px; }
-    .hero h1 { font-size:34px; }
-    .hero-chart { max-width:100%; margin:30px auto 0; }
-  }
-  @media (min-width:768px) and (max-width:991px){
-    .hero h1 { font-size:36px; }
-    .hero-chart { max-width:100%; }
-  }
-
-  /* Trust strip — trader-specific --------------------------------- */
-  .trust-strip {
-    background:#fff;
-    border-bottom:1px solid var(--line);
-    margin-top:-30px; position:relative; z-index:2;
-    border-radius:var(--radius-lg);
-    box-shadow:var(--shadow);
-    padding:22px 10px;
-  }
-  .trust-strip-wrap {
-    display:grid;
-    grid-template-columns: repeat(4, 1fr);
-    align-items:center;
-    gap:8px;
-  }
-  .trust-cell {
-    display:flex; align-items:center; justify-content:center; gap:12px;
-    padding:0 14px;
-    border-right:1px solid var(--line);
-    min-height:56px;
-    text-align:left;
-  }
-  .trust-cell:last-child { border-right:none; }
-  .trust-cell .fa { color:var(--brand); font-size:22px; }
-  .trust-cell strong { display:block; font-family:'Manrope',sans-serif; color:var(--brand-dark); font-size:14px; line-height:1.2; }
-  .trust-cell span  { display:block; color:var(--muted); font-size:12px; line-height:1.3; }
-  .tp-stars { color:#00b67a; font-size:16px; letter-spacing:1px; }
-  .bbc-chip { background:#111; color:#fff; font-family:'Manrope',sans-serif; font-weight:800; letter-spacing:.06em; padding:4px 8px; border-radius:3px; font-size:12px; }
-  @media (max-width:991px){
-    .trust-strip-wrap { grid-template-columns: repeat(2, 1fr); }
-    .trust-cell { border-right:none; border-bottom:1px solid var(--line); padding:12px; }
-    .trust-cell:nth-last-child(-n+2) { border-bottom:none; }
-  }
-
-  /* Trader firms logo strip --------------------------------------- */
-  .firms { padding:44px 0 52px; background:#fff; border-bottom:1px solid var(--line); }
-  .firms h5 { text-align:center; color:var(--muted); margin-bottom:22px; }
-  .logo-strip { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:44px; }
-  .logo-ph {
-    font-family:'Manrope',sans-serif; font-weight:800;
-    color:#b1bcc9; font-size:17px; letter-spacing:.02em;
-    opacity:.75; transition:all .2s ease;
-    padding:6px 10px; border-radius:4px;
-  }
-  .logo-ph:hover { color:var(--brand-dark); opacity:1; }
-  .logo-ph small { font-family:'Inter',sans-serif; font-weight:500; font-size:10px; text-transform:uppercase; letter-spacing:.12em; display:block; color:inherit; opacity:.7; margin-top:2px; }
-
-  /* Section shell ------------------------------------------------- */
-  section.section { padding:88px 0; }
-  .section-head { text-align:center; max-width:780px; margin:0 auto 48px; }
-  .section-head .eyebrow { color:var(--brand); justify-content:center; }
-  .section-head .eyebrow .dot { background:var(--brand); box-shadow:0 0 0 4px rgba(2,145,204,.18); }
-  .section-head h2 { color:var(--brand-dark); }
-  .section-head p { color:var(--slate); font-size:16px; }
-  .section-alt { background:var(--sand); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
-
-  /* Benchmarks full -------------------------------------------- */
-  .bench-panels { display:grid; grid-template-columns: 1fr 1fr; gap:22px; }
-  @media (max-width:900px){ .bench-panels { grid-template-columns:1fr; } }
-  .bench-panel {
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:var(--radius-lg);
-    padding:28px;
-    box-shadow:var(--shadow-sm);
-  }
-  .bench-panel h4 { color:var(--brand-dark); margin-bottom:4px; font-size:17px; }
-  .bench-panel .sub { color:var(--muted); font-size:12.5px; font-family:'Manrope',sans-serif; letter-spacing:.05em; text-transform:uppercase; margin-bottom:20px; display:block; }
-  .bench-bars { display:flex; flex-direction:column; gap:12px; margin-top:8px; }
-  .bench-row { display:grid; grid-template-columns: 140px 1fr 52px; gap:12px; align-items:center; font-size:13px; }
-  .bench-row .name { color:var(--brand-dark); font-family:'Manrope',sans-serif; font-weight:600; font-size:13px; }
-  .bench-row .name.ours { color:var(--brand); }
-  .bench-row .barwrap { background:var(--sand-2); border-radius:999px; height:11px; overflow:hidden; position:relative; }
-  .bench-row .bar { height:100%; border-radius:999px; background:linear-gradient(90deg, var(--brand), #5cc4ea); }
-  .bench-row .bar.alt { background:linear-gradient(90deg, #aab8c6, #cfd7e0); }
-  .bench-row .val { color:var(--brand-dark); font-family:'Manrope',sans-serif; font-weight:700; text-align:right; font-size:12.5px; }
-  .bench-caption { font-size:12.5px; color:var(--muted); margin-top:14px; border-top:1px dashed var(--line); padding-top:12px; }
-  .bench-caption a { font-weight:600; }
-
-  /* Comparison table (Trader PC vs Trader Pro) ------------------- */
-  .compare-wrap { background:#fff; border:1px solid var(--line); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow); }
-  .compare {
-    width:100%; border-collapse:separate; border-spacing:0;
-    font-size:14px;
-  }
-  .compare th, .compare td { padding:16px 22px; vertical-align:middle; text-align:left; }
-  .compare thead th { background:var(--sand); border-bottom:1px solid var(--line); }
-  .compare thead th:first-child { width:32%; }
-  .compare .col-name {
-    font-family:'Manrope',sans-serif; font-weight:700; color:var(--brand-dark);
-    font-size:13px; letter-spacing:.04em;
-  }
-  .compare .col-head {
-    font-family:'Manrope',sans-serif; font-weight:800; color:var(--brand-dark);
-    font-size:20px; letter-spacing:-.01em;
-  }
-  .compare .col-head .price { color:var(--brand); font-size:15px; font-weight:700; display:block; letter-spacing:-.01em; margin-top:2px; font-family:'Manrope',sans-serif; }
-  .compare .col-head .price small { color:var(--muted); font-weight:500; font-size:11px; }
-  .compare .col-head .badge-pop {
-    display:inline-block; background:var(--accent); color:#1a2533;
-    font-family:'Manrope',sans-serif; font-weight:800; font-size:10.5px; letter-spacing:.08em;
-    padding:3px 8px; border-radius:3px; margin-left:6px; vertical-align:middle;
-  }
-  .compare tbody tr { border-top:1px solid var(--line); }
-  .compare tbody tr:nth-child(even) { background:#fcfdfe; }
-  .compare tbody td { color:var(--slate); border-top:1px solid var(--line); }
-  .compare tbody td.label {
-    font-family:'Manrope',sans-serif; color:var(--brand-dark); font-weight:600; font-size:13.5px;
-  }
-  .compare tbody td.label small { display:block; color:var(--muted); font-weight:400; font-size:12px; font-family:'Inter',sans-serif; margin-top:2px; }
-  .compare .stars { color:var(--star); letter-spacing:2px; font-size:15px; }
-  .compare .stars .faint { color:#e5e5e5; }
-  .compare .row-foot td { background:var(--sand); padding:22px; }
-  .compare-cta-row { display:flex; gap:10px; }
-  @media (max-width:767px) {
-    .compare thead th:first-child, .compare tbody td.label { display:none; }
-    .compare th, .compare td { padding:12px 14px; font-size:13px; }
-    .compare .col-head { font-size:17px; }
-  }
-
-  /* Decision quiz ---------------------------------------------- */
-  .quiz-wrap {
-    background:linear-gradient(135deg, #f7f9fc 0%, #fff 60%);
-    border:1px solid var(--line); border-radius:var(--radius-lg);
-    padding:40px;
-    box-shadow:var(--shadow);
-    position:relative; overflow:hidden;
-  }
-  .quiz-wrap::after {
-    content:""; position:absolute; right:-80px; top:-80px;
-    width:260px; height:260px; border-radius:50%;
-    background:radial-gradient(circle, rgba(2,145,204,.08), transparent 70%);
-    pointer-events:none;
-  }
-  .quiz { position:relative; z-index:1; }
-  .quiz-steps {
-    display:flex; align-items:center; gap:8px;
-    font-family:'Manrope',sans-serif; font-size:12px; color:var(--muted);
-    margin-bottom:20px; letter-spacing:.04em;
-  }
-  .quiz-steps .step {
-    width:28px; height:28px; border-radius:50%;
-    border:1px solid var(--line-strong); background:#fff;
-    display:inline-flex; align-items:center; justify-content:center;
-    color:var(--muted); font-weight:700;
-    transition:all .2s ease;
-  }
-  .quiz-steps .step.active { background:var(--brand); color:#fff; border-color:var(--brand); }
-  .quiz-steps .step.done { background:var(--ok); color:#fff; border-color:var(--ok); }
-  .quiz-steps .bar {
-    flex:1; height:2px; background:var(--line-strong); border-radius:2px;
-  }
-  .quiz-steps .bar.done { background:var(--brand); }
-
-  .quiz-panel { display:none; animation: fadeUp .4s ease; }
-  .quiz-panel.active { display:block; }
-  @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
-  .quiz-panel h3 { font-size:22px; color:var(--brand-dark); margin-bottom:8px; }
-  .quiz-panel > p { font-size:14px; color:var(--slate); margin-bottom:20px; }
-  .quiz-opts { display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; }
-  @media (min-width:768px){ .quiz-opts.three { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width:520px){ .quiz-opts { grid-template-columns:1fr; } }
-  .quiz-opt {
-    padding:16px 18px;
-    background:#fff; border:1.5px solid var(--line); border-radius:var(--radius);
-    font-family:'Manrope',sans-serif; font-weight:600; font-size:14px;
-    color:var(--brand-dark); text-align:left;
-    cursor:pointer; transition:all .15s ease;
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
-  }
-  .quiz-opt:hover { border-color:var(--brand); background:#f3fbfe; }
-  .quiz-opt.sel { border-color:var(--brand); background:rgba(2,145,204,.06); }
-  .quiz-opt .fa { color:var(--brand); opacity:0; transition:opacity .15s ease; }
-  .quiz-opt.sel .fa { opacity:1; }
-  .quiz-nav { display:flex; justify-content:space-between; margin-top:24px; gap:10px; flex-wrap:wrap; }
-  .quiz-skip { color:var(--muted); font-size:13px; background:none; border:none; cursor:pointer; padding:8px 0; }
-  .quiz-skip:hover { color:var(--brand); }
-
-  .quiz-email input[type=email] {
-    width:100%;
-    padding:14px 16px; border:1.5px solid var(--line-strong); border-radius:var(--radius);
-    font-size:15px; font-family:inherit; color:var(--ink); margin-bottom:12px;
-  }
-  .quiz-email input[type=email]:focus { outline:none; border-color:var(--brand); box-shadow:0 0 0 3px rgba(2,145,204,.15); }
-  .quiz-email small { display:block; color:var(--muted); font-size:12px; margin-top:8px; }
-
-  .quiz-result {
-    background:#fff; border:1px solid var(--line); border-radius:var(--radius-lg);
-    padding:28px;
-    text-align:center;
-    display:none;
-  }
-  .quiz-result.active { display:block; animation: fadeUp .4s ease; }
-  .quiz-result .tick {
-    width:56px; height:56px; margin:0 auto 16px;
-    border-radius:50%; background:rgba(45,180,122,.12); color:var(--ok);
-    display:flex; align-items:center; justify-content:center; font-size:26px;
-  }
-  .quiz-result h3 { color:var(--brand-dark); margin-bottom:6px; }
-  .quiz-result .reco-card {
-    margin:18px auto 0; max-width:520px;
-    background:linear-gradient(135deg, rgba(2,145,204,.06), rgba(2,145,204,.02));
-    border:1px solid rgba(2,145,204,.25); border-radius:var(--radius);
-    padding:18px 22px; text-align:left;
-  }
-  .quiz-result .reco-card strong { color:var(--brand-dark); font-family:'Manrope',sans-serif; font-size:16px; }
-  .quiz-result .reco-card p { font-size:14px; color:var(--slate); margin:4px 0 12px; }
-
-  /* Inline Darren CTA -------------------------------------------- */
-  .darren-inline {
-    background:linear-gradient(135deg, var(--sand), #fff);
-    border:1px solid var(--line); border-radius:var(--radius-lg);
-    padding:26px 32px;
-    display:grid; grid-template-columns:56px 1fr auto; gap:22px; align-items:center;
-    margin:48px 0 0;
-  }
-  @media (max-width:767px){ .darren-inline { grid-template-columns:1fr; text-align:center; } }
-  .darren-inline .avatar {
-    width:56px; height:56px; border-radius:50%;
-    background:linear-gradient(135deg, var(--brand), var(--brand-deep)); color:#fff;
-    display:flex; align-items:center; justify-content:center; font-size:22px;
-    margin:0 auto;
-  }
-  .darren-inline h4 { color:var(--brand-dark); margin-bottom:4px; font-size:16px; }
-  .darren-inline p { font-size:14px; margin:0; color:var(--slate); }
-
-  /* Bundle band --------------------------------------------- */
-  .bundle-band {
-    background:linear-gradient(135deg, var(--brand-dark) 0%, #22456b 55%, #0f2b45 100%);
-    color:#fff;
-    padding:52px 0;
-    position:relative; overflow:hidden;
-  }
-  .bundle-band::after {
-    content:""; position:absolute; right:-80px; top:-80px;
-    width:320px; height:320px; border-radius:50%;
-    background:radial-gradient(circle, rgba(2,145,204,.35), transparent 70%);
-    pointer-events:none;
-  }
-  .bundle-band .container { position:relative; z-index:1; }
-  .bundle-band h2 { color:#fff; margin-bottom:6px; }
-  .bundle-band h2 em { color:var(--accent); font-style:normal; }
-  .bundle-band p { color:#c8d6e2; max-width:560px; margin-bottom:0; }
-  .bundle-pills { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
-  .bundle-pill { background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.16); padding:8px 14px; border-radius:999px; font-size:13px; font-weight:500; display:inline-flex; align-items:center; gap:8px; }
-  .bundle-pill .fa { color:var(--accent); }
-  .bundle-right { text-align:right; }
-  .bundle-savings {
-    display:inline-block; background:#fff; color:var(--brand-dark);
-    border-radius:var(--radius-lg); padding:18px 22px; text-align:center; min-width:180px;
-    box-shadow:var(--shadow-lg);
-    margin-bottom:14px;
-  }
-  .bundle-savings .amount { font-family:'Manrope',sans-serif; font-weight:800; font-size:40px; color:var(--brand); letter-spacing:-.03em; line-height:1; }
-  .bundle-savings .label  { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.1em; margin-top:6px; display:block; }
-  @media (max-width:767px){ .bundle-right { text-align:left; margin-top:22px; } }
-
-  /* Trader reviews ------------------------------------------- */
-  .reviews-head { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:36px; flex-wrap:wrap; gap:16px; }
-  .reviews-head h2 { margin-bottom:6px; }
-  .reviews-head .tp-summary { display:flex; align-items:center; gap:14px; }
-  .tp-score { display:inline-flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:10px 14px; font-size:13px; }
-  .tp-score .stars { color:#00b67a; font-size:14px; letter-spacing:1px; }
-  .tp-score strong { font-family:'Manrope',sans-serif; color:var(--brand-dark); }
-  .tp-logo-mini { display:inline-flex; align-items:center; gap:6px; font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; color:var(--brand-dark); }
-  .tp-logo-mini::before { content:"\2605"; color:#00b67a; font-size:18px; line-height:1; }
-
-  .reviews-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; }
-  @media (max-width:900px){ .reviews-grid { grid-template-columns:1fr; } }
-  .review-card {
-    background:#fff; border:1px solid var(--line); border-radius:var(--radius-lg);
-    padding:24px; display:flex; flex-direction:column; gap:14px;
-    transition:all .2s ease;
-  }
-  .review-card:hover { box-shadow:var(--shadow); }
-  .review-stars { color:#00b67a; font-size:16px; letter-spacing:2px; }
-  .review-platform {
-    display:inline-flex; align-items:center; gap:5px;
-    font-family:'Manrope',sans-serif; font-weight:700; font-size:10.5px; letter-spacing:.1em;
-    color:var(--brand); background:rgba(2,145,204,.08); padding:3px 8px; border-radius:3px;
-    text-transform:uppercase;
-  }
-  .review-title { font-family:'Manrope',sans-serif; font-weight:700; color:var(--brand-dark); font-size:16px; margin:0; }
-  .review-body { color:var(--slate); font-size:14.5px; margin:0; flex:1; line-height:1.55; }
-  .review-meta { display:flex; align-items:center; gap:10px; padding-top:14px; border-top:1px solid var(--line); font-size:13px; }
-  .review-avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg, var(--brand), var(--brand-deep)); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; }
-  .review-meta .who { color:var(--brand-dark); font-weight:600; }
-  .review-meta .when { color:var(--muted); }
-  .reviews-cta { text-align:center; margin-top:28px; }
-
-  /* FAQ accordion ------------------------------------------- */
-  .faq-list { display:flex; flex-direction:column; gap:10px; }
-  .faq-item {
-    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
-    overflow:hidden;
-  }
-  .faq-item[open] { border-color:var(--brand); box-shadow:var(--shadow-sm); }
-  .faq-item summary {
-    list-style:none; cursor:pointer;
-    padding:18px 22px;
-    font-family:'Manrope',sans-serif; font-weight:600; font-size:16px;
-    color:var(--brand-dark);
-    display:flex; justify-content:space-between; align-items:center; gap:16px;
-    transition:background .15s ease;
-  }
-  .faq-item summary::-webkit-details-marker { display:none; }
-  .faq-item summary:hover { background:var(--sand); }
-  .faq-item summary::after {
-    content:"\f107"; font-family:FontAwesome;
-    color:var(--brand); font-size:20px; font-weight:normal;
-    transition:transform .2s ease;
-    flex-shrink:0;
-  }
-  .faq-item[open] summary::after { transform:rotate(180deg); }
-  .faq-body { padding:2px 22px 20px; color:var(--slate); font-size:14.5px; line-height:1.65; }
-  .faq-body p { margin-bottom:10px; }
-  .faq-body p:last-child { margin-bottom:0; }
-  .faq-body strong { color:var(--brand-dark); }
-
-  /* Buyers guide band --------------------------------------- */
-  .guide-band {
-    padding:64px 0;
-    background: linear-gradient(135deg, #fdf7e9 0%, #fffdf5 50%, #fdf7e9 100%);
-    border-top:1px solid #f3ecd4; border-bottom:1px solid #f3ecd4;
-    position:relative; overflow:hidden;
-  }
-  .guide-card {
-    background:#fff; border:1px solid var(--line); border-radius:var(--radius-lg);
-    padding:36px 40px; display:grid; grid-template-columns: 1.1fr 1fr; gap:36px;
-    align-items:center; box-shadow:var(--shadow);
-  }
-  @media (max-width:767px){ .guide-card{ grid-template-columns:1fr; padding:28px; } }
-  .guide-card h5 { color:var(--brand); margin-bottom:10px; }
-  .guide-card h2 { font-size:26px; margin-bottom:10px; }
-  .guide-card p  { font-size:15px; }
-  .guide-form { display:flex; gap:8px; margin-top:16px; }
-  .guide-form input { flex:1; padding:13px 16px; border:1px solid var(--line-strong); border-radius:var(--radius); font-size:14px; font-family:inherit; color:var(--ink); }
-  .guide-form input:focus { outline:none; border-color:var(--brand); box-shadow:0 0 0 3px rgba(2,145,204,.15); }
-  .guide-mock {
-    border-radius:var(--radius); box-shadow:var(--shadow-lg);
-    aspect-ratio:4/5; max-width:260px; margin:0 auto;
-    overflow:hidden;
-    background:linear-gradient(160deg, #0c2a42 0%, #1b4971 100%);
-    color:#fff; display:flex; flex-direction:column; justify-content:space-between;
-    padding:22px 20px;
-    transform:rotate(-3deg);
-    transition:transform .3s ease;
-    position:relative;
-  }
-  .guide-mock:hover { transform:rotate(-1deg) translateY(-4px); }
-  .guide-mock::before {
-    content:""; position:absolute; inset:0;
-    background: radial-gradient(400px 200px at 80% 20%, rgba(2,145,204,.3), transparent), linear-gradient(180deg, transparent 0%, rgba(0,0,0,.2) 100%);
-    pointer-events:none;
-  }
-  .guide-mock .tag { font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); font-family:'Manrope',sans-serif; font-weight:700; position:relative; z-index:1; }
-  .guide-mock .title { font-family:'Manrope',sans-serif; font-weight:800; font-size:22px; line-height:1.15; position:relative; z-index:1; }
-  .guide-mock .foot { font-size:11px; color:#c8d6e2; position:relative; z-index:1; display:flex; justify-content:space-between; }
-
-  /* Sticky configure CTA (desktop only) ----------------------- */
-  .sticky-cta {
-    position:fixed; bottom:24px; right:24px;
-    z-index:60;
-    display:none;
-    background:#fff; border:1px solid var(--line);
-    border-radius:var(--radius-lg); box-shadow:var(--shadow-lg);
-    padding:10px 10px 10px 18px;
-    align-items:center; gap:14px;
-    transform:translateY(20px); opacity:0;
-    transition:transform .3s ease, opacity .3s ease;
-  }
-  .sticky-cta.visible { transform:none; opacity:1; }
-  .sticky-cta .txt {
-    font-family:'Manrope',sans-serif; font-size:13px; color:var(--brand-dark);
-  }
-  .sticky-cta .txt strong { display:block; font-weight:700; font-size:14px; }
-  .sticky-cta .txt span { color:var(--muted); font-size:12px; }
-  .sticky-cta .btn { padding:11px 16px; font-size:13px; }
-  @media (min-width:992px) { .sticky-cta { display:flex; } }
-
-  /* Footer --------------------------------------------------------- */
-  footer { background:#0c2132; color:#c1cbd6; padding:60px 0 0; border-top:4px solid var(--brand); }
-  footer h5 { color:#fff; font-family:'Manrope',sans-serif; font-size:13px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:16px; font-weight:700; }
-  footer ul { list-style:none; padding:0; margin:0; }
-  footer ul li { margin-bottom:8px; font-size:14px; }
-  footer ul li a { color:#c1cbd6; }
-  footer ul li a:hover { color:#fff; }
-  footer .contact-large a { color:#fff; font-family:'Manrope',sans-serif; font-weight:700; font-size:20px; display:inline-flex; align-items:center; gap:10px; }
-  footer .contact-large a .fa { color:var(--brand); }
-  footer .foot-sub { border-top:1px solid rgba(255,255,255,.08); margin-top:50px; padding:22px 0; font-size:13px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:14px; color:#8a98a8; }
-  footer .foot-sub a { color:#8a98a8; margin-left:18px; }
-  footer .foot-sub a:hover { color:#fff; }
-  footer .tp-foot { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:var(--radius); padding:12px 14px; display:inline-flex; align-items:center; gap:10px; color:#fff; font-size:13px; }
-  footer .tp-foot .stars { color:#00b67a; letter-spacing:2px; }
-
-  /* Reveal -------------------------------------------------- */
-  .reveal { opacity:0; transform:translateY(12px); transition: opacity .7s ease, transform .7s ease; }
-  .reveal.in { opacity:1; transform:none; }
+  /* Local overrides / scratch space for this mockup only.
+     All shared rules now live in /css/mm-2026.css */
 </style>
 </head>
 
@@ -644,17 +33,20 @@
 <div class="topbar">
   <div class="container">
     <div class="row">
-      <div class="col-sm-7">
+      <div class="col-sm-6 topbar-left">
         <i class="fa fa-phone"></i><a href="tel:03302236655">0330 223 66 55</a>
         <span class="sep">|</span>
         <i class="fa fa-envelope"></i><a href="mailto:sales@multiplemonitors.co.uk">sales@multiplemonitors.co.uk</a>
       </div>
-      <div class="col-sm-5 topbar-right">
+      <div class="col-sm-6 topbar-right">
         <i class="fa fa-truck"></i> Free UK delivery on bundles
         <span class="sep">|</span>
         <i class="fa fa-shield"></i> 5-year cover &amp; lifetime support
       </div>
     </div>
+    <a href="#" class="topbar-cart" aria-label="View basket, 0 items">
+      <i class="fa fa-shopping-cart"></i><span class="count">0</span> Item(s)<span class="sep">|</span>View Basket
+    </a>
   </div>
 </div>
 
@@ -663,18 +55,51 @@
   <div class="container">
     <div class="nav-inner">
       <a href="/" class="brand"><img src="/images/logo.png" alt="Multiple Monitors Ltd" /></a>
-      <nav class="mainnav">
-        <a href="/">Home</a>
-        <a href="/computers/" class="active">Computers</a>
+      <nav class="mainnav" id="primarynav">
+        <a href="/" class="active">Home</a>
+        <a href="/computers/">Computers</a>
         <a href="/display-systems/">Monitor Arrays</a>
         <a href="/bundles/">Bundles</a>
         <a href="/stands/">Stands</a>
-        <a href="/blog/">Blog</a>
       </nav>
-      <a href="#" class="cart-btn"><i class="fa fa-shopping-cart"></i> Cart <span class="count">0</span></a>
+      <div class="nav-actions">
+        <button type="button" class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="primarynav"><i class="fa fa-bars"></i></button>
+        <a href="#" class="cart-btn" aria-label="Cart, 0 items"><i class="fa fa-shopping-cart"></i> <span class="cart-btn-label">Cart</span> <span class="count">0</span></a>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- Tagline bar -->
+<div class="taglinebar">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-8">
+        <span class="bbc">
+          <span class="bbc-pill">BBC</span>
+          As featured on BBC&rsquo;s <em>Traders: Millions by the Minute</em>
+        </span>
+      </div>
+      <div class="col-sm-4 signup">
+        Get exclusive offers &mdash; <a href="/pages/email-signup/">Sign up &rarr;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Breadcrumbs -->
+<div class="crumbs">
+  <div class="container">
+    <a href="/">Home</a><i class="fa fa-angle-right"></i>
+    <strong>Trading computers</strong>
+  </div>
+</div>
+
+<!-- ==============================================================
+     2026 redesigned content starts here. Everything inside .mm26
+     opts in to the new design system in /css/mm-2026.css.
+     ============================================================== -->
+<div class="mm26">
 
 <!-- HERO — proof-led -->
 <header class="hero">
@@ -686,10 +111,10 @@
         <p class="lede reveal">Here&rsquo;s what 17 years of building for traders has taught us &mdash; turned into open data, comparison tables, and a decision tool you can actually use. Every Trader PC is spec&rsquo;d against the platforms you run, not against a marketing brief.</p>
         <div class="hero-ctas reveal">
           <a href="#compare" class="btn btn-primary btn-lg">Compare Trader PC &amp; Trader Pro <i class="fa fa-angle-right"></i></a>
-          <a href="#quiz" class="btn btn-ghost btn-lg">Help me choose</a>
         </div>
         <div class="hero-proofs reveal">
-          <span class="hp"><i class="fa fa-users"></i><strong>1000s delivered</strong> since 2008</span>
+          <span class="hp"><i class="fa fa-bar-chart"></i><strong>100's of CPUs tested</strong></span>
+          <span class="hp"><i class="fa fa-users"></i><strong>1,500+ Trading PC's delivered</strong></span>
           <span class="hp"><i class="fa fa-shield"></i><strong>5-year cover</strong>, lifetime support</span>
         </div>
       </div>
@@ -717,7 +142,7 @@
 <!-- Trust strip -->
 <div class="container">
   <div class="trust-strip">
-    <div class="trust-strip-wrap">
+    <div class="trust-strip-wrap is-four">
       <div class="trust-cell">
         <span class="bbc-chip">BBC</span>
         <div><strong>As seen on</strong><span>BBC Traders: Millions by the Minute</span></div>
@@ -809,11 +234,16 @@
 
     <div class="compare-wrap reveal">
       <table class="compare">
+        <colgroup>
+          <col class="col-labels">
+          <col class="col-pc">
+          <col class="col-pro">
+        </colgroup>
         <thead>
           <tr>
             <th></th>
-            <th class="col-head">Trader PC<span class="price">From &pound;1,045 <small>inc VAT</small></span></th>
-            <th class="col-head">Trader Pro<span class="badge-pop">POPULAR</span><span class="price">From &pound;1,695 <small>inc VAT</small></span></th>
+            <th class="col-head">Trader PC<span class="price">From &pound;1,045 <small>+ VAT</small></span></th>
+            <th class="col-head">Trader Pro<span class="badge-pop">POPULAR</span><span class="price">From &pound;1,345 <small>+ VAT</small></span></th>
           </tr>
         </thead>
         <tbody>
@@ -824,48 +254,48 @@
           </tr>
           <tr>
             <td class="label">CPU</td>
-            <td>14-core hybrid with high single-thread boost</td>
-            <td>24-core hybrid, overclocked air-cooled</td>
+            <td><select class="tc-spec" data-col="pc"  data-spec="cpu"></select></td>
+            <td><select class="tc-spec" data-col="pro" data-spec="cpu"></select></td>
           </tr>
           <tr>
             <td class="label">RAM</td>
-            <td>32 GB DDR5</td>
-            <td>64 GB DDR5 (upgradeable to 128 GB)</td>
-          </tr>
-          <tr>
-            <td class="label">Storage</td>
-            <td>1 TB NVMe</td>
-            <td>2 TB NVMe + 2 TB SSD</td>
-          </tr>
-          <tr>
-            <td class="label">Max screens supported</td>
-            <td>4 x 4K or 6 x 1440p</td>
-            <td>8 x 4K or 12 x 1440p</td>
+            <td><select class="tc-spec" data-col="pc"  data-spec="ram"></select></td>
+            <td><select class="tc-spec" data-col="pro" data-spec="ram"></select></td>
           </tr>
           <tr>
             <td class="label">MT4 / MT5<small>Retail FX / CFD</small></td>
-            <td><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></td>
-            <td><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></td>
+            <td><span class="stars" data-col="pc"  data-platform="mt4"></span></td>
+            <td><span class="stars" data-col="pro" data-platform="mt4"></span></td>
           </tr>
           <tr>
-            <td class="label">NinjaTrader 8<small>Futures &amp; strategy analyser</small></td>
-            <td><span class="stars">&#9733;&#9733;&#9733;&#9733;<span class="faint">&#9733;</span></span></td>
-            <td><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></td>
+            <td class="label">Trading View<small>8 - 12 charts / tabs</small></td>
+            <td><span class="stars" data-col="pc"  data-platform="tview"></span></td>
+            <td><span class="stars" data-col="pro" data-platform="tview"></span></td>
           </tr>
           <tr>
-            <td class="label">TradeStation<small>Multi-platform backtesting</small></td>
-            <td><span class="stars">&#9733;&#9733;&#9733;<span class="faint">&#9733;&#9733;</span></span></td>
-            <td><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></td>
+            <td class="label">Broker Platforms<small>IG, CMC, Interactive Brokers</small></td>
+            <td><span class="stars" data-col="pc"  data-platform="broker"></span></td>
+            <td><span class="stars" data-col="pro" data-platform="broker"></span></td>
           </tr>
           <tr>
-            <td class="label">Bloomberg Terminal<small>Multi-session workflow</small></td>
-            <td><span class="stars">&#9733;&#9733;&#9733;&#9733;<span class="faint">&#9733;</span></span></td>
-            <td><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></td>
+            <td class="label">NinjaTrader Desktop<small>Futures &amp; strategy analyser</small></td>
+            <td><span class="stars" data-col="pc"  data-platform="ninja"></span></td>
+            <td><span class="stars" data-col="pro" data-platform="ninja"></span></td>
           </tr>
           <tr>
-            <td class="label">Heavy overnight backtesting</td>
-            <td><span class="stars">&#9733;&#9733;&#9733;<span class="faint">&#9733;&#9733;</span></span></td>
-            <td><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></td>
+            <td class="label">TradeStation<small>Stocks, options &amp; futures charting</small></td>
+            <td><span class="stars" data-col="pc"  data-platform="tradestation"></span></td>
+            <td><span class="stars" data-col="pro" data-platform="tradestation"></span></td>
+          </tr>
+          <tr>
+            <td class="label">Bloomberg Workstation<small>Multi-session workflow</small></td>
+            <td><span class="stars" data-col="pc"  data-platform="bloomberg"></span></td>
+            <td><span class="stars" data-col="pro" data-platform="bloomberg"></span></td>
+          </tr>
+          <tr>
+            <td class="label">Backtesting Workloads</td>
+            <td><span class="stars" data-col="pc"  data-platform="backtest"></span></td>
+            <td><span class="stars" data-col="pro" data-platform="backtest"></span></td>
           </tr>
           <tr>
             <td class="label">Warranty</td>
@@ -894,7 +324,7 @@
       <div class="avatar"><i class="fa fa-user"></i></div>
       <div>
         <h4>Still not sure which one?</h4>
-        <p>Book a free 15-minute call with Darren. Tell him what platform you run and how many screens, and he&rsquo;ll spec it properly &mdash; or tell you honestly that the cheaper machine is the right call. (He does that a lot.)</p>
+        <p>Book a free 15-minute call with Darren. Tell him which platforms you run and how many screens, and he&rsquo;ll spec it properly. Don't be surprised if he recommends a cheaper machine, he does that a lot.</p>
       </div>
       <div>
         <a href="#" class="btn btn-primary">Book a 15-min call <i class="fa fa-calendar"></i></a>
@@ -903,114 +333,6 @@
   </div>
 </section>
 
-<!-- DECISION QUIZ -->
-<section class="section" id="quiz">
-  <div class="container-narrow">
-    <div class="section-head reveal">
-      <div class="eyebrow"><span class="dot"></span>Help me choose</div>
-      <h2>Answer 4 questions, get a spec.</h2>
-      <p>Tell us how you trade and we&rsquo;ll tell you which machine &mdash; Trader PC or Trader Pro &mdash; fits, and where to save your money. Recommendation and full buyer&rsquo;s guide emailed to you.</p>
-    </div>
-
-    <div class="quiz-wrap reveal">
-
-      <!-- Progress indicator -->
-      <div class="quiz-steps" id="qsteps">
-        <span class="step active" data-step="1">1</span>
-        <span class="bar" data-seg="1"></span>
-        <span class="step" data-step="2">2</span>
-        <span class="bar" data-seg="2"></span>
-        <span class="step" data-step="3">3</span>
-        <span class="bar" data-seg="3"></span>
-        <span class="step" data-step="4">4</span>
-        <span class="bar" data-seg="4"></span>
-        <span class="step" data-step="5"><i class="fa fa-envelope" style="font-size:12px;"></i></span>
-      </div>
-
-      <div class="quiz" id="quiz">
-
-        <!-- Q1 -->
-        <div class="quiz-panel active" data-panel="1">
-          <h3>Which platform do you primarily use?</h3>
-          <p>Pick the one you spend the most chart time in.</p>
-          <div class="quiz-opts three">
-            <button class="quiz-opt" data-val="mt4">MT4 / MT5 <i class="fa fa-check"></i></button>
-            <button class="quiz-opt" data-val="ninja">NinjaTrader <i class="fa fa-check"></i></button>
-            <button class="quiz-opt" data-val="ts">TradeStation <i class="fa fa-check"></i></button>
-            <button class="quiz-opt" data-val="tv">TradingView <i class="fa fa-check"></i></button>
-            <button class="quiz-opt" data-val="bb">Bloomberg <i class="fa fa-check"></i></button>
-            <button class="quiz-opt" data-val="other">Something else <i class="fa fa-check"></i></button>
-          </div>
-        </div>
-
-        <!-- Q2 -->
-        <div class="quiz-panel" data-panel="2">
-          <h3>How many screens do you want to run?</h3>
-          <p>Count actual screens, not virtual desktops.</p>
-          <div class="quiz-opts">
-            <button class="quiz-opt" data-val="1">1&ndash;2 screens <i class="fa fa-check"></i></button>
-            <button class="quiz-opt" data-val="2">3&ndash;4 screens <i class="fa fa-check"></i></button>
-            <button class="quiz-opt" data-val="3">5&ndash;6 screens <i class="fa fa-check"></i></button>
-            <button class="quiz-opt" data-val="4">7 or more <i class="fa fa-check"></i></button>
-          </div>
-        </div>
-
-        <!-- Q3 -->
-        <div class="quiz-panel" data-panel="3">
-          <h3>Do you run heavy multitasking or backtesting?</h3>
-          <p>Think strategy analysers running overnight, or many chart windows plus Excel plus comms.</p>
-          <div class="quiz-opts three">
-            <button class="quiz-opt" data-val="yes">Yes, frequently <i class="fa fa-check"></i></button>
-            <button class="quiz-opt" data-val="sometimes">Sometimes <i class="fa fa-check"></i></button>
-            <button class="quiz-opt" data-val="no">No, mostly live charts <i class="fa fa-check"></i></button>
-          </div>
-        </div>
-
-        <!-- Q4 -->
-        <div class="quiz-panel" data-panel="4">
-          <h3>Budget guidance?</h3>
-          <p>We&rsquo;ll size the recommendation accordingly &mdash; and tell you if you can go cheaper.</p>
-          <div class="quiz-opts three">
-            <button class="quiz-opt" data-val="low">Under &pound;1,500 <i class="fa fa-check"></i></button>
-            <button class="quiz-opt" data-val="mid">&pound;1,500 &ndash; &pound;2,500 <i class="fa fa-check"></i></button>
-            <button class="quiz-opt" data-val="high">&pound;2,500+ <i class="fa fa-check"></i></button>
-          </div>
-        </div>
-
-        <!-- Email capture -->
-        <div class="quiz-panel" data-panel="5">
-          <h3>Where should we send it?</h3>
-          <p>We&rsquo;ll email your recommendation and our full trader buyer&rsquo;s guide (32 pages, plain English). No spam.</p>
-          <form class="quiz-email" onsubmit="event.preventDefault(); showResult();">
-            <input type="email" placeholder="you@example.com" required id="quizEmail" />
-            <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">Show me my recommendation <i class="fa fa-angle-right"></i></button>
-            <small>One email to deliver the guide, then only occasional product updates. Unsubscribe anytime.</small>
-          </form>
-        </div>
-
-        <!-- Nav -->
-        <div class="quiz-nav">
-          <button class="quiz-skip" id="qback" style="visibility:hidden;"><i class="fa fa-angle-left"></i> Back</button>
-          <span id="qprogress" style="font-family:'Manrope',sans-serif; font-size:12px; color:var(--muted);">Step 1 of 5</span>
-          <button class="quiz-skip" id="qskip">Skip &rarr;</button>
-        </div>
-      </div>
-
-      <!-- Result -->
-      <div class="quiz-result" id="quizResult">
-        <div class="tick"><i class="fa fa-check"></i></div>
-        <h3>Got it &mdash; recommendation on its way.</h3>
-        <p>Here&rsquo;s a preview while you wait for the email.</p>
-        <div class="reco-card">
-          <strong>Recommended: Trader Pro</strong>
-          <p>Based on your answers, the Trader Pro is the better fit &mdash; you&rsquo;ll benefit from the extra cores for backtesting and the headroom for 6+ screens. The full writeup (including where to save on spec) is in your inbox.</p>
-          <a href="/products/trader-pro/" class="btn btn-primary btn-sm">Configure Trader Pro <i class="fa fa-angle-right"></i></a>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
 
 <!-- BUNDLE SAVINGS -->
 <section class="bundle-band">
@@ -1212,6 +534,8 @@
   <a href="#compare" class="btn btn-primary">Compare &amp; configure <i class="fa fa-angle-right"></i></a>
 </div>
 
+</div><!-- /.mm26 -->
+
 <!-- FOOTER -->
 <footer>
   <div class="container">
@@ -1305,52 +629,103 @@
     onScroll();
   })();
 
-  // Quiz logic
-  (function(){
-    var answers = { 1:null, 2:null, 3:null, 4:null };
-    var current = 1;
-    var panels = document.querySelectorAll('.quiz-panel');
-    var steps = document.querySelectorAll('.quiz-steps .step');
-    var segs  = document.querySelectorAll('.quiz-steps .bar');
-    var back  = document.getElementById('qback');
-    var skip  = document.getElementById('qskip');
-    var progress = document.getElementById('qprogress');
-    var result = document.getElementById('quizResult');
-    var quizEl = document.getElementById('quiz');
 
-    function show(step) {
-      current = step;
-      panels.forEach(function(p){ p.classList.toggle('active', +p.dataset.panel === step); });
-      steps.forEach(function(s){
-        var n = +s.dataset.step;
-        s.classList.toggle('active', n === step);
-        s.classList.toggle('done', n < step);
+</script>
+
+<!-- Comparison table: CPU/RAM selectors drive per-platform star ratings -->
+<script>
+  // Single source of truth for the comparison table. Edit values here to tune.
+  const TC_CONFIG = {
+    columns: {
+      pc: {
+        cpu: [
+          { value: 'i51', label: 'Intel Core i5-14400F', score: 4,  default: true },  
+          { value: 'i52', label: 'Intel Core i5-14600KF', score: 6,  default: false },
+          { value: 'i7', label: 'Intel Core i7-14700KF', score: 8,  default: false  },
+          { value: 'i9', label: 'Intel Core i7-14900KF', score: 10,  default: false  }
+        ],
+        ram: [
+          { value: '16', label: '16 GB DDR4', score: 4, default: true },
+          { value: '32', label: '32 GB DDR4', score: 6, default: false  },
+          { value: '64', label: '64 GB DDR4', score: 10, default: false  }
+        ]
+      },
+      pro: {
+        cpu: [
+          { value: 'CU5',   label: 'Intel Core Ultra 5 245KF', score: 8,  default: true },
+          { value: 'CU7',   label: 'Intel Core Ultra 7 265KF', score: 10, default: false  },
+          { value: 'CU9',   label: 'Intel Core Ultra 9 285K',  score: 12, default: false }
+        ],
+        ram: [
+          { value: '32',  label: '32 GB DDR5',  score: 6,  default: true },
+          { value: '64',  label: '64 GB DDR5',  score: 10, default: false  },
+          { value: '128', label: '128 GB DDR5', score: 12, default: false }
+        ]
+      }
+    },
+    // Per-platform thresholds. Index 0 = 5 stars, index 4 = 1 star.
+    platforms: {
+      mt4:          [ {cpu:6,  ram:4}, {cpu:4, ram:3}, {cpu:3, ram:2}, {cpu:2, ram:2}, {cpu:1, ram:1} ],
+      tview:        [ {cpu:6,  ram:4}, {cpu:4, ram:3}, {cpu:3, ram:2}, {cpu:2, ram:2}, {cpu:1, ram:1} ],
+      broker:       [ {cpu:6,  ram:4}, {cpu:4, ram:3}, {cpu:3, ram:2}, {cpu:2, ram:2}, {cpu:1, ram:1} ],
+      ninja:        [ {cpu:8,  ram:6}, {cpu:6, ram:5}, {cpu:5, ram:4}, {cpu:3, ram:3}, {cpu:2, ram:2} ],
+      tradestation: [ {cpu:9,  ram:6}, {cpu:7, ram:5}, {cpu:5, ram:4}, {cpu:3, ram:3}, {cpu:2, ram:2} ],
+      bloomberg:    [ {cpu:10, ram:10}, {cpu:8, ram:6}, {cpu:6, ram:6}, {cpu:6, ram:4}, {cpu:4, ram:4} ],
+      backtest:     [ {cpu:12, ram:10}, {cpu:10, ram:10}, {cpu:8, ram:6}, {cpu:6, ram:6}, {cpu:4, ram:4} ]
+    }
+  };
+
+  (function () {
+    const STAR = '\u2605';
+
+    function populateSelects() {
+      document.querySelectorAll('select.tc-spec').forEach(function (sel) {
+        const col  = sel.dataset.col;
+        const spec = sel.dataset.spec;
+        const opts = TC_CONFIG.columns[col][spec];
+        sel.innerHTML = opts.map(function (o) {
+          return '<option value="' + o.value + '"' + (o.default ? ' selected' : '') + '>' + o.label + '</option>';
+        }).join('');
+        sel.addEventListener('change', function () { recalcColumn(col); });
       });
-      segs.forEach(function(b){ b.classList.toggle('done', +b.dataset.seg < step); });
-      back.style.visibility = step > 1 ? 'visible' : 'hidden';
-      skip.style.visibility = step < 5 ? 'visible' : 'hidden';
-      progress.textContent = 'Step ' + step + ' of 5';
     }
 
-    document.querySelectorAll('.quiz-opt').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var panel = btn.closest('.quiz-panel');
-        var q = +panel.dataset.panel;
-        panel.querySelectorAll('.quiz-opt').forEach(function(b){ b.classList.remove('sel'); });
-        btn.classList.add('sel');
-        answers[q] = btn.dataset.val;
-        setTimeout(function(){ show(q + 1); }, 220);
+    function scoreFor(col, spec) {
+      const sel  = document.querySelector('select.tc-spec[data-col="' + col + '"][data-spec="' + spec + '"]');
+      const opts = TC_CONFIG.columns[col][spec];
+      const match = opts.find(function (o) { return o.value === sel.value; });
+      return match ? match.score : 0;
+    }
+
+    function starsFor(platform, cpuScore, ramScore) {
+      const tiers = TC_CONFIG.platforms[platform];
+      for (let i = 0; i < tiers.length; i++) {
+        if (cpuScore >= tiers[i].cpu && ramScore >= tiers[i].ram) return 5 - i;
+      }
+      return 0;
+    }
+
+    function renderStars(n) {
+      let html = '';
+      for (let i = 1; i <= 5; i++) {
+        html += i <= n ? STAR : '<span class="faint">' + STAR + '</span>';
+      }
+      return html;
+    }
+
+    function recalcColumn(col) {
+      const cpu = scoreFor(col, 'cpu');
+      const ram = scoreFor(col, 'ram');
+      document.querySelectorAll('.compare .stars[data-col="' + col + '"]').forEach(function (span) {
+        span.innerHTML = renderStars(starsFor(span.dataset.platform, cpu, ram));
       });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      populateSelects();
+      recalcColumn('pc');
+      recalcColumn('pro');
     });
-
-    back.addEventListener('click', function(){ if (current > 1) show(current - 1); });
-    skip.addEventListener('click', function(){ if (current < 5) show(current + 1); });
-
-    window.showResult = function(){
-      quizEl.style.display = 'none';
-      document.getElementById('qsteps').style.display = 'none';
-      result.classList.add('active');
-    };
   })();
 </script>
 

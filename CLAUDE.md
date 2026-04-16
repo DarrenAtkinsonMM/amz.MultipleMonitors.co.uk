@@ -61,3 +61,45 @@ The ProductCart vendor (NetSource Commerce) is **sunsetting January 11, 2027** �
 - SagePay payment processing is completely independent of ProductCart licensing
 - `shop/includes/settings.asp` contains all store configuration constants
 - `shop/includes/opendb.asp` manages the database connection
+
+## 2026 Redesign
+
+We are currently implementing a redesign to the main site based off the findings in the audit document  `multiplemonitors-website-audit.md` - this site is actually a subdomain called amz.multiplemonitors.co.uk - we are connected to the main / live DB file as the changes for this project are to code only and will not touch the DB.
+
+We are using the html folder to prototype new page designs before they are finalised and rolled out to the site.
+
+### CSS architecture for the redesign
+
+The redesign introduces a new stylesheet, `css/mm-2026.css`, which sits alongside (not on top of) the legacy stack. It's loaded **last** in `shop/pc/inc_headerCSS.asp`, after Bootstrap 3, `style.css`, `responsive.css`, and `blue.css`.
+
+`mm-2026.css` has two halves:
+
+1. **Sitewide chrome — unscoped.** Topbar, nav, taglinebar, breadcrumb (`.crumbs`), and `footer` rules apply on every page. These are intended to replace the legacy header/footer in the first rollout phase. Note: the `footer` tag selector matches any `<footer>` element sitewide, so the footer HTML swap must land in the same deploy as the stylesheet to avoid a half-styled footer.
+2. **Content design system — scoped under `.mm26`.** All content-area components (hero, trust strip, journey cards, bundle band, services, bench panels, comparison table, quiz, reviews, FAQ, guide, Darren CTA, sticky CTA) only apply when a page wraps its main content in `<div class="mm26">…</div>`. Legacy pages that don't opt in are untouched.
+
+The scoping is deliberate: the mockups' `.container`, `.row`, `.col-*`, and `.btn*` class names collide with Bootstrap 3 and `style.css`. Keeping them under `.mm26` avoids specificity wars with the 53 `!important` declarations in `style.css`.
+
+### Design tokens
+
+`mm-2026.css` defines a `:root` set of CSS custom properties for colours (`--brand`, `--brand-dark`, `--accent`, `--ink`, `--slate`, `--muted`, `--line`, etc.), radii, and shadows. Fonts are Manrope (headings, UI) and Inter (body), loaded via `@import` in the stylesheet and also linked in the mockup `<head>` for faster first paint.
+
+### Rollout plan
+
+1. **Header + footer sitewide.** Add the `<link>` to `mm-2026.css` and swap header/footer HTML in one deploy.
+2. **Page-by-page content migration.** Redesigned landing and product pages wrap their main content in `<div class="mm26">` and use the new component classes.
+3. **All tested on `amz.` staging**, then flipped live in a single cutover.
+4. **Legacy CSS stays put.** Don't edit `style.css`, `responsive.css`, or `blue.css` during the migration. They retire naturally once the last legacy page is migrated.
+
+### Mockup prototyping workflow
+
+Mockups in `html/` (e.g. `index2.html`, `trading-computers2.html`) link to `../css/bootstrap.min.css` and `../css/mm-2026.css` so they render under the same cascade as production. Content between the chrome and footer is wrapped in `<div class="mm26">`. When extracting a new mockup's inline `<style>` into `mm-2026.css`, put shared bits (tokens, buttons, grid) in the top scoped section and page-specific blocks lower down.
+
+### Relevant files
+
+| File | Purpose |
+|------|---------|
+| `css/mm-2026.css` | 2026 design-system stylesheet — sitewide chrome + `.mm26`-scoped content components |
+| `shop/pc/inc_headerCSS.asp` | Storefront `<head>` CSS loader — `mm-2026.css` is the last `<link>` |
+| `html/index2.html` | Homepage mockup — reference implementation of the redesigned layout |
+| `html/trading-computers2.html` | Trading-computers category mockup — adds compare table, quiz, FAQ, sticky CTA |
+| `multiplemonitors-website-audit.md` | Audit document driving redesign priorities |

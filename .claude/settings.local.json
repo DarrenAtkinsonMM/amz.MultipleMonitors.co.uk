@@ -1,7 +1,32 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find /c/Private/Sites/amz.MultipleMonitors.co.uk -name \"dbError.asp\" -exec ls -la {} \\\\;)"
+      "Bash(find /c/Private/Sites/amz.MultipleMonitors.co.uk -name \"dbError.asp\" -exec ls -la {} \\\\;)",
+      "Bash(grep -E \"css$\")",
+      "Bash(ls html/*.html)",
+      "Bash(where py *)",
+      "Bash(curl -s -o /dev/null -w \"bundles html=%{http_code} size=%{size_download}\\\\n\" http://127.0.0.1:8765/html/bundles.html)",
+      "Bash(curl -s -o /dev/null -w \"mm-2026 css=%{http_code} size=%{size_download}\\\\n\" http://127.0.0.1:8765/css/mm-2026.css)",
+      "Bash(curl -s -o /dev/null -w \"bootstrap=%{http_code} size=%{size_download}\\\\n\" http://127.0.0.1:8765/css/bootstrap.min.css)",
+      "Bash(ls images/bundles/*.png)",
+      "Bash(curl -s http://127.0.0.1:8765/html/index2.html -o /dev/null -w \"index2=%{http_code}\\\\n\")",
+      "Bash(curl -s http://127.0.0.1:8765/html/trading-computers2.html -o /dev/null -w \"tc2=%{http_code}\\\\n\")",
+      "Bash(curl -s http://127.0.0.1:8765/html/trading-computers2.html)",
+      "Bash(curl -s http://127.0.0.1:8765/css/mm-2026.css)",
+      "Bash(grep -oP '\\(^|}\\)[^}]*table[^}]{0,120}' \"c:/Private/Sites/amz.MultipleMonitors.co.uk/css/bootstrap.min.css\")",
+      "Bash(grep -oE '\\\\{[^}]{0,60}table-layout[^}]{0,60}\\\\}' \"c:/Private/Sites/amz.MultipleMonitors.co.uk/css/bootstrap.min.css\")",
+      "Bash(grep -oE '[^{}]{0,100}\\\\{[^}]{0,30}\\\\}' \"c:/Private/Sites/amz.MultipleMonitors.co.uk/css/bootstrap.min.css\")",
+      "Bash(grep -iE 'table\\\\s*\\\\{|^table\\\\{|,table\\\\{')",
+      "Bash(grep -oE '[^{}]{0,150}\\\\{display:table;width:100%;table-layout:fixed[^}]*\\\\}' \"c:/Private/Sites/amz.MultipleMonitors.co.uk/css/bootstrap.min.css\")",
+      "Bash(awk 'BEGIN{depth=0; line=1} {for\\(i=1;i<=length\\($0\\);i++\\){c=substr\\($0,i,1\\); if\\(c==\"{\"\\)depth++; else if\\(c==\"}\"\\)depth--; if\\(depth<0\\){print \"UNMATCHED } at line \"NR\" col \"i; exit}} } END{print \"Final depth: \"depth}' \"c:/Private/Sites/amz.MultipleMonitors.co.uk/css/mm-2026.css\")",
+      "Bash(grep -oE '[^,}]{0,80}small[,{]' \"c:/Private/Sites/amz.MultipleMonitors.co.uk/css/bootstrap.min.css\")",
+      "Bash(grep -oE 'small\\\\{[^}]{0,150}\\\\}' \"c:/Private/Sites/amz.MultipleMonitors.co.uk/css/bootstrap.min.css\")",
+      "WebFetch(domain:www.multiplemonitors.co.uk)",
+      "Bash(curl -s \"https://www.multiplemonitors.co.uk/html/trading-computers2.html\" -o /tmp/live-working.html)",
+      "Read(//tmp/**)",
+      "Bash(grep -oE '\\\\.label[^,{]*\\\\{[^}]*\\\\}' \"c:/Private/Sites/amz.MultipleMonitors.co.uk/css/bootstrap.min.css\")",
+      "Bash(sed 's/\\\\.//g')",
+      "Bash(sed 's/^\\\\s*//g')"
     ]
   }
 }
