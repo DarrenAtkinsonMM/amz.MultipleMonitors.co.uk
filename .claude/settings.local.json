@@ -26,7 +26,10 @@
       "Read(//tmp/**)",
       "Bash(grep -oE '\\\\.label[^,{]*\\\\{[^}]*\\\\}' \"c:/Private/Sites/amz.MultipleMonitors.co.uk/css/bootstrap.min.css\")",
       "Bash(sed 's/\\\\.//g')",
-      "Bash(sed 's/^\\\\s*//g')"
+      "Bash(sed 's/^\\\\s*//g')",
+      "Bash(curl -s \"https://www.multiplemonitors.co.uk/html/trading-computers2.html\" -o \"/tmp/tc2.html\")",
+      "Bash(curl -s \"https://www.multiplemonitors.co.uk/html/trading-computers2.html\" -o \"C:/Users/Darren Atkinson/AppData/Local/Temp/tc2.html\")",
+      "Read(//c/Users/Darren Atkinson/AppData/Local/Temp/**)"
     ]
   }
 }

@@ -54,6 +54,9 @@
    alone so the rest of the site keeps Bootstrap's fixed tiers.
    ================================================================= */
 
+/* Smooth scroll for in-page anchor jumps (e.g. hero "Compare" → #compare). */
+html { scroll-behavior: smooth; }
+
 /* Chrome container widths — counter Bootstrap 3's fixed .container
    widths (750px @768, 970px @992) so the sitewide chrome spans the
    viewport instead of pinching on tablets and small desktops.
