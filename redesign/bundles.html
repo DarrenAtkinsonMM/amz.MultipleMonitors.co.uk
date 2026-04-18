@@ -528,26 +528,26 @@
 (function(){
   const BUNDLE_CONFIG = {
     stands: [
-      { id:'s2v',  name:'Dual Vertical',     price:115, screens:2, img:'/images/bundles/bun-s2v-med.png' },
-      { id:'s2h',  name:'Dual Horizontal',   price:115, screens:2, img:'/images/bundles/bun-s2h-med.png' },
-      { id:'s3h',  name:'Triple Horizontal', price:175, screens:3, img:'/images/bundles/bun-s3h-med.png' },
-      { id:'s3p',  name:'Triple Pyramid',    price:175, screens:3, img:'/images/bundles/bun-s3p-med.png' },
-      { id:'s4s',  name:'Quad Square',       price:215, screens:4, img:'/images/bundles/bun-s4s-med.png' },
-      { id:'s4sp', name:'Quad Multi Pole',   price:215, screens:4, img:'/images/bundles/bun-s4sp-med.png' },
-      { id:'s4p',  name:'Quad Pyramid',      price:225, screens:4, img:'/images/bundles/bun-s4p-med.png' },
-      { id:'s4h',  name:'Quad Horizontal',   price:235, screens:4, img:'/images/bundles/bun-s4h-med.png' },
-      { id:'s5p',  name:'Five Pyramid',      price:245, screens:5, img:'/images/bundles/bun-s5p-med.png' },
-      { id:'s6r',  name:'Six Monitor',       price:275, screens:6, img:'/images/bundles/bun-s6r-med.png' },
-      { id:'s6rp', name:'Six Multi Pole',    price:275, screens:6, img:'/images/bundles/bun-s6rp-med.png' },
-      { id:'s8r',  name:'Eight Monitor',     price:375, screens:8, img:'/images/bundles/bun-s8r-med.png' },
+      { id:'s2v',  name:'Dual Vertical',     price:115, screens:2, img:'/images/bundles/bun-s2v-med.png', arrayimg:'s2v' },
+      { id:'s2h',  name:'Dual Horizontal',   price:115, screens:2, img:'/images/bundles/bun-s2h-med.png', arrayimg:'s2h' },
+      { id:'s3h',  name:'Triple Horizontal', price:175, screens:3, img:'/images/bundles/bun-s3h-med.png', arrayimg:'s3h' },
+      { id:'s3p',  name:'Triple Pyramid',    price:175, screens:3, img:'/images/bundles/bun-s3p-med.png', arrayimg:'s3p' },
+      { id:'s4s',  name:'Quad Square',       price:215, screens:4, img:'/images/bundles/bun-s4s-med.png', arrayimg:'s4s' },
+      { id:'s4sp', name:'Quad Multi Pole',   price:215, screens:4, img:'/images/bundles/bun-s4sp-med.png', arrayimg:'s4sp' },
+      { id:'s4p',  name:'Quad Pyramid',      price:225, screens:4, img:'/images/bundles/bun-s4p-med.png', arrayimg:'s4p' },
+      { id:'s4h',  name:'Quad Horizontal',   price:235, screens:4, img:'/images/bundles/bun-s4h-med.png', arrayimg:'s4h' },
+      { id:'s5p',  name:'Five Pyramid',      price:245, screens:5, img:'/images/bundles/bun-s5p-med.png', arrayimg:'s5p' },
+      { id:'s6r',  name:'Six Monitor',       price:275, screens:6, img:'/images/bundles/bun-s6r-med.png', arrayimg:'s6r' },
+      { id:'s6rp', name:'Six Multi Pole',    price:275, screens:6, img:'/images/bundles/bun-s6rp-med.png', arrayimg:'s6rp' },
+      { id:'s8r',  name:'Eight Monitor',     price:375, screens:8, img:'/images/bundles/bun-s8r-med.png', arrayimg:'s8r' },
     ],
     screens: [
-      { id:'scr24s', name:'24" Standard',     price:139, img:'/images/bundles/bun-24-monitor.jpg' },
-      { id:'scr24i', name:'24" IPS',          price:169, img:'/images/bundles/bun-i23-monitor.jpg' },
-      { id:'scr27s', name:'27" Standard',     price:199, img:'/images/bundles/bun-27-monitor.jpg' },
-      { id:'scr27i', name:'27" IPS',          price:239, img:'/images/bundles/bun-i27-monitor.jpg' },
-      { id:'scrAw',  name:'Acer Widescreen',  price:259, img:'/images/bundles/bun-acerwide-med.png' },
-      { id:'scrIiy', name:'Iiyama ProLite',   price:189, img:'/images/bundles/bun-iiyama-med.png' },
+      { id:'scr24s', name:'21.5" AOC',     price:85, img:'/images/bundles/bun-24-monitor.jpg', arrayimg:'a22' },
+      { id:'scr24i', name:'24" Acer',          price:90, img:'/images/bundles/bun-i23-monitor.jpg', arrayimg:'a24' },
+      { id:'scr27s', name:'27" Acer',     price:115, img:'/images/bundles/bun-27-monitor.jpg', arrayimg:'a27' },
+      { id:'scr27i', name:'24" Iiyama',          price:130, img:'/images/bundles/bun-i27-monitor.jpg', arrayimg:'i23' },
+      { id:'scrAw',  name:'27" AOC QHD',  price:155, img:'/images/bundles/bun-acerwide-med.png', arrayimg:'i27' },
+      { id:'scrIiy', name:'27" Iiyama QHD',   price:175, img:'/images/bundles/bun-iiyama-med.png', arrayimg:'i27' },
     ],
     computers: [
       { id:'ultra',   name:'Ultra PC',   price:895,  img:'/images/bundles/bun-ultra-pc.png' },
@@ -581,16 +581,30 @@
     },
   };
 
-  const state = { stand:null, screens:null, computer:null };
+  // `view` is the stage the user is actively looking at. When null, the
+  // builder auto-advances to the first un-picked stage. Set by stepper
+  // clicks so the user can jump back to an earlier step without losing
+  // their current picks. Cleared after any grid pick so the flow resumes.
+  const state = { stand:null, screens:null, computer:null, view:null };
 
   const $ = id => document.getElementById(id);
   const fmt = n => '&pound;' + n.toLocaleString('en-GB');
 
   function currentStage() {
+    // Explicit view (stepper jump) wins, but only if the prerequisites
+    // for that view are met.
+    if (state.view === 'stand')                      return 'stand';
+    if (state.view === 'screens'  && state.stand)    return 'screens';
+    if (state.view === 'computer' && state.screens)  return 'computer';
+    // Otherwise, show the first un-picked stage.
     if (!state.stand)    return 'stand';
     if (!state.screens)  return 'screens';
     if (!state.computer) return 'computer';
     return 'done';
+  }
+
+  function isComplete() {
+    return !!(state.stand && state.screens && state.computer);
   }
 
   function subtotal() {
@@ -639,9 +653,14 @@
   function renderSidebar() {
     const stage = currentStage();
 
-    // Image — swap from SVG placeholder to stand image once chosen.
+    // Image — swap from SVG placeholder to stand image once chosen,
+    // then to the stand+screens composite once both are picked.
     const viz = $('mmb-viz');
-    if (state.stand) {
+    if (state.stand && state.screens) {
+      const src = '/images/bundles/' + state.stand.arrayimg + '-' + state.screens.arrayimg + '-blg.png';
+      const alt = state.stand.name + ' with ' + state.screens.name;
+      viz.innerHTML = '<img src="' + src + '" alt="' + alt + '" style="max-width:180px; max-height:140px; object-fit:contain;">';
+    } else if (state.stand) {
       viz.innerHTML = '<img src="' + state.stand.img + '" alt="' + state.stand.name + '" style="max-width:180px; max-height:140px; object-fit:contain;">';
     }
 
@@ -676,9 +695,10 @@
     const done = [state.stand, state.screens, state.computer].filter(Boolean).length;
     $('mmb-pct').textContent = Math.round((done / 3) * 100) + '%';
 
-    // CTA
+    // CTA — enabled whenever all three picks are made, regardless of
+    // which step the user is currently viewing.
     const cta = $('mmb-cta');
-    if (stage === 'done') {
+    if (isComplete()) {
       cta.classList.remove('is-disabled');
       cta.innerHTML = 'Add bundle to basket <i class="fa fa-arrow-right"></i>';
     } else {
@@ -693,21 +713,21 @@
     renderSidebar();
   }
 
-  // Stepper click — jump back to an earlier stage to re-pick.
-  // Clicking a step clears that step's pick + all downstream picks.
+  // Stepper click — jump back to an earlier stage to review or swap a
+  // pick. Existing picks are preserved; totals re-calculate on render
+  // from whatever the current state is.
   document.getElementById('mmb-stepper').addEventListener('click', function(e){
     const li = e.target.closest('.step');
     if (!li) return;
     const which = li.dataset.step;
     if (which === 'screens'  && !state.stand)   return; // can't skip ahead
     if (which === 'computer' && !state.screens) return;
-    if (which === 'stand')    { state.stand = null; state.screens = null; state.computer = null; }
-    if (which === 'screens')  { state.screens = null; state.computer = null; }
-    if (which === 'computer') { state.computer = null; }
+    state.view = which;
     render();
   });
 
-  // Grid click — pick the item for the current stage.
+  // Grid click — pick the item for the current stage. Picks at upstream
+  // stages do NOT clear downstream picks; prices re-derive on render.
   document.getElementById('mmb-grid').addEventListener('click', function(e){
     const btn = e.target.closest('[data-id]');
     if (!btn) return;
@@ -715,20 +735,14 @@
     const stage = currentStage() === 'done' ? 'computer' : currentStage();
 
     if (stage === 'stand') {
-      const chosen = BUNDLE_CONFIG.stands.find(s => s.id === id);
-      if (!chosen) return;
-      // Changing stand resets downstream picks.
-      if (!state.stand || state.stand.id !== chosen.id) {
-        state.screens  = null;
-        state.computer = null;
-      }
-      state.stand = chosen;
+      state.stand = BUNDLE_CONFIG.stands.find(s => s.id === id) || state.stand;
     } else if (stage === 'screens') {
-      state.screens  = BUNDLE_CONFIG.screens.find(s => s.id === id) || null;
-      state.computer = null;
+      state.screens = BUNDLE_CONFIG.screens.find(s => s.id === id) || state.screens;
     } else if (stage === 'computer') {
       state.computer = BUNDLE_CONFIG.computers.find(c => c.id === id) || null;
     }
+    // Resume forward flow: next un-picked stage (or stay on 'done').
+    state.view = null;
     render();
   });
 
