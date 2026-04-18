@@ -177,22 +177,22 @@
 
       <!-- LEFT: stand picker -->
       <div class="reveal">
-        <ol class="stepper">
-          <li class="step is-current">
+        <ol class="stepper" id="mmb-stepper">
+          <li class="step is-current" data-step="stand">
             <span class="step-num">1</span>
             <div class="step-body">
               <span class="step-lbl">Choose your stand</span>
-              <span class="step-val">Quad Horizontal</span>
+              <span class="step-val">&mdash;</span>
             </div>
           </li>
-          <li class="step">
+          <li class="step" data-step="screens">
             <span class="step-num">2</span>
             <div class="step-body">
               <span class="step-lbl">Pick your screens</span>
               <span class="step-val">&mdash;</span>
             </div>
           </li>
-          <li class="step">
+          <li class="step" data-step="computer">
             <span class="step-num">3</span>
             <div class="step-body">
               <span class="step-lbl">Select your PC</span>
@@ -203,148 +203,12 @@
 
         <div class="stage">
           <div class="stage-head">
-            <h3>Start with the stand. <span class="muted">Everything else flexes around it.</span></h3>
-            <a href="/stands/" class="talk-link">See all 12 stands &rarr;</a>
+            <h3 id="mmb-stage-title">Start with the stand. <span class="muted">Everything else flexes around it.</span></h3>
+            <a href="/stands/" class="talk-link" id="mmb-stage-link">See all 12 stands &rarr;</a>
           </div>
 
-          <div class="stand-grid">
-
-            <button class="stand-card">
-              <div class="stand-vis">
-                <svg width="140" height="98" viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="30" y="58" width="40" height="3" fill="var(--ink)"></rect>
-                  <rect x="48.5" y="26" width="3" height="32" fill="var(--ink)"></rect>
-                  <g><rect x="31" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="32.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="51" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="52.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                </svg>
-              </div>
-              <div class="stand-name">Dual Horizontal</div>
-              <div class="stand-meta num">2 screens &middot; from &pound;115</div>
-            </button>
-
-            <button class="stand-card">
-              <div class="stand-vis">
-                <svg width="140" height="98" viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="30" y="58" width="40" height="3" fill="var(--ink)"></rect>
-                  <rect x="48.5" y="26" width="3" height="32" fill="var(--ink)"></rect>
-                  <g><rect x="41" y="6" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="42.5" y="7.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="41" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="42.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                </svg>
-              </div>
-              <div class="stand-name">Dual Vertical</div>
-              <div class="stand-meta num">2 screens &middot; from &pound;115</div>
-            </button>
-
-            <button class="stand-card">
-              <div class="stand-vis">
-                <svg width="140" height="98" viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="30" y="58" width="40" height="3" fill="var(--ink)"></rect>
-                  <rect x="48.5" y="26" width="3" height="32" fill="var(--ink)"></rect>
-                  <g><rect x="21" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="22.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="41" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="42.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="61" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="62.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                </svg>
-              </div>
-              <div class="stand-name">Triple Horizontal</div>
-              <div class="stand-meta num">3 screens &middot; from &pound;145</div>
-            </button>
-
-            <button class="stand-card">
-              <div class="stand-vis">
-                <svg width="140" height="98" viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="30" y="58" width="40" height="3" fill="var(--ink)"></rect>
-                  <rect x="48.5" y="26" width="3" height="32" fill="var(--ink)"></rect>
-                  <g><rect x="41" y="6" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="42.5" y="7.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="31" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="32.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="51" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="52.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                </svg>
-              </div>
-              <div class="stand-name">Triple Pyramid</div>
-              <div class="stand-meta num">3 screens &middot; from &pound;165</div>
-            </button>
-
-            <button class="stand-card is-selected">
-              <div class="stand-vis">
-                <svg width="140" height="98" viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="30" y="58" width="40" height="3" fill="var(--ink)"></rect>
-                  <rect x="48.5" y="26" width="3" height="32" fill="var(--ink)"></rect>
-                  <g><rect x="11" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="12.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="31" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="32.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="51" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="52.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="71" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="72.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                </svg>
-              </div>
-              <div class="stand-name">Quad Horizontal</div>
-              <div class="stand-meta num">4 screens &middot; from &pound;195</div>
-            </button>
-
-            <button class="stand-card">
-              <div class="stand-vis">
-                <svg width="140" height="98" viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="30" y="58" width="40" height="3" fill="var(--ink)"></rect>
-                  <rect x="48.5" y="26" width="3" height="32" fill="var(--ink)"></rect>
-                  <g><rect x="31" y="6" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="32.5" y="7.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="51" y="6" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="52.5" y="7.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="31" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="32.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="51" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="52.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                </svg>
-              </div>
-              <div class="stand-name">Quad Square</div>
-              <div class="stand-meta num">4 screens &middot; from &pound;195</div>
-            </button>
-
-            <button class="stand-card">
-              <div class="stand-vis">
-                <svg width="140" height="98" viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="30" y="58" width="40" height="3" fill="var(--ink)"></rect>
-                  <rect x="48.5" y="26" width="3" height="32" fill="var(--ink)"></rect>
-                  <g><rect x="41" y="4" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="42.5" y="5.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="21" y="20" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="22.5" y="21.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="41" y="20" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="42.5" y="21.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="61" y="20" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="62.5" y="21.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="41" y="36" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="42.5" y="37.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                </svg>
-              </div>
-              <div class="stand-name">Five Pyramid</div>
-              <div class="stand-meta num">5 screens &middot; from &pound;275</div>
-            </button>
-
-            <button class="stand-card">
-              <div class="stand-vis">
-                <svg width="140" height="98" viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="30" y="58" width="40" height="3" fill="var(--ink)"></rect>
-                  <rect x="48.5" y="26" width="3" height="32" fill="var(--ink)"></rect>
-                  <g><rect x="21" y="6" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="22.5" y="7.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="41" y="6" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="42.5" y="7.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="61" y="6" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="62.5" y="7.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="21" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="22.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="41" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="42.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="61" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="62.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                </svg>
-              </div>
-              <div class="stand-name">Six Triple-Pole</div>
-              <div class="stand-meta num">6 screens &middot; from &pound;325</div>
-            </button>
-
-            <button class="stand-card">
-              <div class="stand-vis">
-                <svg width="140" height="98" viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="30" y="58" width="40" height="3" fill="var(--ink)"></rect>
-                  <rect x="48.5" y="26" width="3" height="32" fill="var(--ink)"></rect>
-                  <g><rect x="6" y="6" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="7.5" y="7.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="26" y="6" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="27.5" y="7.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="56" y="6" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="57.5" y="7.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="76" y="6" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="77.5" y="7.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="6" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="7.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="26" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="27.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="56" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="57.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                  <g><rect x="76" y="22" width="18" height="12" fill="var(--sand)" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="77.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-                </svg>
-              </div>
-              <div class="stand-name">Eight Quad-Pole</div>
-              <div class="stand-meta num">8 screens &middot; from &pound;425</div>
-            </button>
-
+          <div class="stand-grid" id="mmb-grid">
+            <!-- Cards rendered by the bundle builder script at the end of this file -->
           </div>
         </div>
       </div>
@@ -354,9 +218,9 @@
         <div class="bsb-card">
           <div class="bsb-head">
             <span class="eyebrow">Your bundle</span>
-            <span class="bsb-pct num">33%</span>
+            <span class="bsb-pct num" id="mmb-pct">0%</span>
           </div>
-          <div class="bsb-viz">
+          <div class="bsb-viz" id="mmb-viz">
             <svg width="160" height="112" viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
               <rect x="30" y="58" width="40" height="3" fill="var(--ink)"></rect>
               <rect x="48.5" y="26" width="3" height="32" fill="var(--ink)"></rect>
@@ -366,18 +230,18 @@
               <g><rect x="71" y="22" width="18" height="12" fill="transparent" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="72.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
             </svg>
           </div>
-          <ol class="bsb-list">
-            <li class="is-done">
+          <ol class="bsb-list" id="mmb-list">
+            <li data-slot="stand">
               <span class="bsb-l">Stand</span>
-              <span class="bsb-r">Quad Horizontal</span>
-              <span class="bsb-p num">&pound;195</span>
+              <span class="bsb-r"><em class="muted">Not selected</em></span>
+              <span class="bsb-p num">&mdash;</span>
             </li>
-            <li>
+            <li data-slot="screens">
               <span class="bsb-l">Screens</span>
               <span class="bsb-r"><em class="muted">Not selected</em></span>
               <span class="bsb-p num">&mdash;</span>
             </li>
-            <li>
+            <li data-slot="computer">
               <span class="bsb-l">Computer</span>
               <span class="bsb-r"><em class="muted">Not selected</em></span>
               <span class="bsb-p num">&mdash;</span>
@@ -393,10 +257,10 @@
             </div>
           </div>
           <div class="bsb-totals">
-            <div class="bsb-row"><span>Subtotal</span><b class="num">&pound;195</b></div>
-            <div class="bsb-row total"><span>Total</span><b class="num">&pound;195</b></div>
+            <div class="bsb-row"><span>Subtotal</span><b class="num" id="mmb-subtotal">&mdash;</b></div>
+            <div class="bsb-row total"><span>Total</span><b class="num" id="mmb-total">&mdash;</b></div>
           </div>
-          <button class="btn btn-primary btn-lg bsb-cta is-disabled">Keep building <i class="fa fa-arrow-right"></i></button>
+          <button class="btn btn-primary btn-lg bsb-cta is-disabled" id="mmb-cta">Keep building <i class="fa fa-arrow-right"></i></button>
           <div class="bsb-share">
             <button class="bsb-share-btn"><i class="fa fa-link"></i>Copy link to this bundle</button>
             <button class="bsb-share-btn"><i class="fa fa-envelope-o"></i>Email to partner</button>
@@ -652,6 +516,225 @@
     </div>
   </div>
 </footer>
+
+<!-- ===================================================================
+     BUNDLE BUILDER — data + render
+     Edit BUNDLE_CONFIG below to change stands / screens / computers.
+     Each entry: { id, name, price, img }. Stands also carry `screens`
+     (the number of screens that stand holds). Screen `price` is PER
+     screen — multiplied by the chosen stand's screen count at render.
+     =================================================================== -->
+<script>
+(function(){
+  const BUNDLE_CONFIG = {
+    stands: [
+      { id:'s2v',  name:'Dual Vertical',     price:115, screens:2, img:'/images/bundles/bun-s2v-med.png' },
+      { id:'s2h',  name:'Dual Horizontal',   price:115, screens:2, img:'/images/bundles/bun-s2h-med.png' },
+      { id:'s3h',  name:'Triple Horizontal', price:175, screens:3, img:'/images/bundles/bun-s3h-med.png' },
+      { id:'s3p',  name:'Triple Pyramid',    price:175, screens:3, img:'/images/bundles/bun-s3p-med.png' },
+      { id:'s4s',  name:'Quad Square',       price:215, screens:4, img:'/images/bundles/bun-s4s-med.png' },
+      { id:'s4sp', name:'Quad Multi Pole',   price:215, screens:4, img:'/images/bundles/bun-s4sp-med.png' },
+      { id:'s4p',  name:'Quad Pyramid',      price:225, screens:4, img:'/images/bundles/bun-s4p-med.png' },
+      { id:'s4h',  name:'Quad Horizontal',   price:235, screens:4, img:'/images/bundles/bun-s4h-med.png' },
+      { id:'s5p',  name:'Five Pyramid',      price:245, screens:5, img:'/images/bundles/bun-s5p-med.png' },
+      { id:'s6r',  name:'Six Monitor',       price:275, screens:6, img:'/images/bundles/bun-s6r-med.png' },
+      { id:'s6rp', name:'Six Multi Pole',    price:275, screens:6, img:'/images/bundles/bun-s6rp-med.png' },
+      { id:'s8r',  name:'Eight Monitor',     price:375, screens:8, img:'/images/bundles/bun-s8r-med.png' },
+    ],
+    screens: [
+      { id:'scr24s', name:'24" Standard',     price:139, img:'/images/bundles/bun-24-monitor.jpg' },
+      { id:'scr24i', name:'24" IPS',          price:169, img:'/images/bundles/bun-i23-monitor.jpg' },
+      { id:'scr27s', name:'27" Standard',     price:199, img:'/images/bundles/bun-27-monitor.jpg' },
+      { id:'scr27i', name:'27" IPS',          price:239, img:'/images/bundles/bun-i27-monitor.jpg' },
+      { id:'scrAw',  name:'Acer Widescreen',  price:259, img:'/images/bundles/bun-acerwide-med.png' },
+      { id:'scrIiy', name:'Iiyama ProLite',   price:189, img:'/images/bundles/bun-iiyama-med.png' },
+    ],
+    computers: [
+      { id:'ultra',   name:'Ultra PC',   price:895,  img:'/images/bundles/bun-ultra-pc.png' },
+      { id:'extreme', name:'Extreme PC', price:1195, img:'/images/bundles/bun-extreme-pc.png' },
+      { id:'trader',  name:'Trader PC',  price:1395, img:'/images/bundles/bun-trader-pc.png' },
+      { id:'pro',     name:'Trader Pro', price:1695, img:'/images/bundles/bun-pro-pc.png' },
+    ],
+  };
+
+  const STAGES = {
+    stand: {
+      title: 'Start with the stand. <span class="muted">Everything else flexes around it.</span>',
+      link:  { href:'/stands/',    text:'See all 12 stands &rarr;' },
+      items: () => BUNDLE_CONFIG.stands,
+      meta:  s => '&pound;' + s.price + ' &middot; ' + s.screens + ' screens',
+    },
+    screens: {
+      title: 'Now pick your screens. <span class="muted">Same model across the stand.</span>',
+      link:  { href:'/display-systems/', text:'See all screens &rarr;' },
+      items: () => BUNDLE_CONFIG.screens,
+      meta:  (s, state) => {
+        const qty = state.stand ? state.stand.screens : 1;
+        return '&pound;' + s.price + ' each &middot; ' + qty + ' &times; &pound;' + (s.price * qty);
+      },
+    },
+    computer: {
+      title: 'Finally, the PC. <span class="muted">Graphics matched to your stand.</span>',
+      link:  { href:'/computers/', text:'See all computers &rarr;' },
+      items: () => BUNDLE_CONFIG.computers,
+      meta:  c => '&pound;' + c.price,
+    },
+  };
+
+  const state = { stand:null, screens:null, computer:null };
+
+  const $ = id => document.getElementById(id);
+  const fmt = n => '&pound;' + n.toLocaleString('en-GB');
+
+  function currentStage() {
+    if (!state.stand)    return 'stand';
+    if (!state.screens)  return 'screens';
+    if (!state.computer) return 'computer';
+    return 'done';
+  }
+
+  function subtotal() {
+    let t = 0;
+    if (state.stand)    t += state.stand.price;
+    if (state.stand && state.screens) t += state.screens.price * state.stand.screens;
+    if (state.computer) t += state.computer.price;
+    return t;
+  }
+
+  function renderGrid() {
+    const stage = currentStage();
+    const cfg   = STAGES[stage === 'done' ? 'computer' : stage];
+    const grid  = $('mmb-grid');
+    const selectedId = state[stage === 'done' ? 'computer' : stage]
+      ? state[stage === 'done' ? 'computer' : stage].id : null;
+
+    $('mmb-stage-title').innerHTML = cfg.title;
+    const link = $('mmb-stage-link');
+    link.href = cfg.link.href;
+    link.innerHTML = cfg.link.text;
+
+    grid.innerHTML = cfg.items().map(item => {
+      const sel  = item.id === selectedId ? ' is-selected' : '';
+      const meta = cfg.meta(item, state);
+      return (
+        '<button type="button" class="stand-card' + sel + '" data-id="' + item.id + '">' +
+          '<div class="stand-vis"><img src="' + item.img + '" alt="' + item.name + '"></div>' +
+          '<div class="stand-name">' + item.name + '</div>' +
+          '<div class="stand-meta num">' + meta + '</div>' +
+        '</button>'
+      );
+    }).join('');
+  }
+
+  function renderStepper() {
+    const stage = currentStage();
+    document.querySelectorAll('#mmb-stepper .step').forEach(li => {
+      const which  = li.dataset.step;
+      const picked = state[which];
+      li.classList.toggle('is-current', stage === which || (stage === 'done' && which === 'computer'));
+      li.querySelector('.step-val').innerHTML = picked ? picked.name : '&mdash;';
+    });
+  }
+
+  function renderSidebar() {
+    const stage = currentStage();
+
+    // Image — swap from SVG placeholder to stand image once chosen.
+    const viz = $('mmb-viz');
+    if (state.stand) {
+      viz.innerHTML = '<img src="' + state.stand.img + '" alt="' + state.stand.name + '" style="max-width:180px; max-height:140px; object-fit:contain;">';
+    }
+
+    // List rows
+    document.querySelectorAll('#mmb-list li').forEach(li => {
+      const slot  = li.dataset.slot;
+      const pick  = state[slot];
+      const rEl   = li.querySelector('.bsb-r');
+      const pEl   = li.querySelector('.bsb-p');
+      if (!pick) {
+        li.classList.remove('is-done');
+        rEl.innerHTML = '<em class="muted">Not selected</em>';
+        pEl.innerHTML = '&mdash;';
+      } else if (slot === 'screens') {
+        const qty = state.stand ? state.stand.screens : 1;
+        li.classList.add('is-done');
+        rEl.textContent = qty + ' × ' + pick.name;
+        pEl.innerHTML   = fmt(pick.price * qty);
+      } else {
+        li.classList.add('is-done');
+        rEl.textContent = pick.name;
+        pEl.innerHTML   = fmt(pick.price);
+      }
+    });
+
+    // Totals
+    const t = subtotal();
+    $('mmb-subtotal').innerHTML = t ? fmt(t) : '&mdash;';
+    $('mmb-total').innerHTML    = t ? fmt(t) : '&mdash;';
+
+    // Progress pct
+    const done = [state.stand, state.screens, state.computer].filter(Boolean).length;
+    $('mmb-pct').textContent = Math.round((done / 3) * 100) + '%';
+
+    // CTA
+    const cta = $('mmb-cta');
+    if (stage === 'done') {
+      cta.classList.remove('is-disabled');
+      cta.innerHTML = 'Add bundle to basket <i class="fa fa-arrow-right"></i>';
+    } else {
+      cta.classList.add('is-disabled');
+      cta.innerHTML = 'Keep building <i class="fa fa-arrow-right"></i>';
+    }
+  }
+
+  function render() {
+    renderGrid();
+    renderStepper();
+    renderSidebar();
+  }
+
+  // Stepper click — jump back to an earlier stage to re-pick.
+  // Clicking a step clears that step's pick + all downstream picks.
+  document.getElementById('mmb-stepper').addEventListener('click', function(e){
+    const li = e.target.closest('.step');
+    if (!li) return;
+    const which = li.dataset.step;
+    if (which === 'screens'  && !state.stand)   return; // can't skip ahead
+    if (which === 'computer' && !state.screens) return;
+    if (which === 'stand')    { state.stand = null; state.screens = null; state.computer = null; }
+    if (which === 'screens')  { state.screens = null; state.computer = null; }
+    if (which === 'computer') { state.computer = null; }
+    render();
+  });
+
+  // Grid click — pick the item for the current stage.
+  document.getElementById('mmb-grid').addEventListener('click', function(e){
+    const btn = e.target.closest('[data-id]');
+    if (!btn) return;
+    const id    = btn.dataset.id;
+    const stage = currentStage() === 'done' ? 'computer' : currentStage();
+
+    if (stage === 'stand') {
+      const chosen = BUNDLE_CONFIG.stands.find(s => s.id === id);
+      if (!chosen) return;
+      // Changing stand resets downstream picks.
+      if (!state.stand || state.stand.id !== chosen.id) {
+        state.screens  = null;
+        state.computer = null;
+      }
+      state.stand = chosen;
+    } else if (stage === 'screens') {
+      state.screens  = BUNDLE_CONFIG.screens.find(s => s.id === id) || null;
+      state.computer = null;
+    } else if (stage === 'computer') {
+      state.computer = BUNDLE_CONFIG.computers.find(c => c.id === id) || null;
+    }
+    render();
+  });
+
+  render();
+})();
+</script>
 
 <script>
   // Dynamic copyright year
