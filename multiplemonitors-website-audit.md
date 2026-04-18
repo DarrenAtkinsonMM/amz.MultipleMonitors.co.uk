@@ -580,7 +580,7 @@ Replacement pattern:
 
 **Sub-headline:** *"Developed by us, manufactured in the UK to our specifications. A modular system that scales from two screens to six on a single assembly. Built to hold up day after day, sold and delivered since 2008, with thousands in use across trader desks, design studios and operations rooms."*
 
-Primary CTA: "See the range" (anchor to product grid). Secondary: "How the modular system works" (link to existing `/pages/synergy-stand/`).
+Primary CTA: "See the range" (anchor to product grid).
 
 #### 4.7.2 "What makes a Synergy Stand different" — benefit cards
 

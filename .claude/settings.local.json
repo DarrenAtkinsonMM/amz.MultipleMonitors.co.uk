@@ -30,7 +30,8 @@
       "Bash(curl -s \"https://www.multiplemonitors.co.uk/html/trading-computers2.html\" -o \"/tmp/tc2.html\")",
       "Bash(curl -s \"https://www.multiplemonitors.co.uk/html/trading-computers2.html\" -o \"C:/Users/Darren Atkinson/AppData/Local/Temp/tc2.html\")",
       "Read(//c/Users/Darren Atkinson/AppData/Local/Temp/**)",
-      "Bash(awk '{ for\\(i=1;i<=length\\($0\\);i++\\){c=substr\\($0,i,1\\); if\\(c==\"{\"\\)o++; else if\\(c==\"}\"\\)ce++} } END{print \"open braces:\",o,\" close braces:\",ce}' css/mm-site.css)"
+      "Bash(awk '{ for\\(i=1;i<=length\\($0\\);i++\\){c=substr\\($0,i,1\\); if\\(c==\"{\"\\)o++; else if\\(c==\"}\"\\)ce++} } END{print \"open braces:\",o,\" close braces:\",ce}' css/mm-site.css)",
+      "WebFetch(domain:amz.multiplemonitors.co.uk)"
     ]
   }
 }
