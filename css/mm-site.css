@@ -1146,7 +1146,7 @@ footer a:hover { color:var(--accent); }
   background:var(--brand-soft); color:var(--brand-deep);
   border:1px solid #D5E4F0;
   padding:10px 16px; border-radius:999px;
-  font-size:13.5px; font-weight:500; max-width:420px;
+  font-size:13.5px; font-weight:500; max-width:460px;
 }
 .mm-site .ab-reassure .fa { color:var(--brand); font-size:14px; }
 
@@ -1390,7 +1390,7 @@ footer a:hover { color:var(--accent); }
 .mm-site .bsb-totals {
   display:flex; flex-direction:column; gap:6px;
   padding:12px 0 16px; border-top:1px solid var(--line);
-  margin-bottom:14px;
+  margin-bottom:1px;
 }
 .mm-site .bsb-row {
   display:flex; justify-content:space-between; align-items:baseline;
@@ -1399,6 +1399,12 @@ footer a:hover { color:var(--accent); }
 .mm-site .bsb-row b { color:var(--ink); font-weight:500; font-family:'JetBrains Mono', monospace; font-size:14px; }
 .mm-site .bsb-row.total { font-weight:500; font-size:16px; color:var(--ink); padding-top:6px; border-top:1px dashed var(--line); }
 .mm-site .bsb-row.total b { font-size:18px; }
+.mm-site .bsb-vat-note {
+  margin:4px 0 0; padding:0;
+  font-size:11px; letter-spacing:.04em; text-transform:uppercase;
+  color:var(--muted); text-align:right;
+  font-family:'JetBrains Mono', monospace;
+}
 
 .mm-site .bsb-cta {
   width:100%; margin-bottom:12px;

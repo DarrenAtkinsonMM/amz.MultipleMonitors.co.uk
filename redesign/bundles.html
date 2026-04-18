@@ -87,10 +87,10 @@
       <div class="reveal">
         <div class="eyebrow">Complete bundles &middot; Since 2008</div>
         <h1>
-          Stand, screens &amp; PC &mdash; <em>one delivery, one guarantee.</em>
+          <em>Everything you need,</em> delivered together, for less.
         </h1>
         <p class="lead">
-          Build your setup in three steps. We match the parts, bench-test it together, and deliver it in one box with every cable you need. Typical saving &pound;200+ vs piecing it together from Scan, Amazon and a stand vendor &mdash; and it actually works on day one.
+          PC, stand, screens and every cable, tested together, shipped together. One box, one invoice, one UK phone number if anything isn't right. Save up to £300 vs ordering the same items individually from us, and it actually works when you plug it in.
         </p>
         <div class="hero-ctas">
           <a href="#builder" class="btn btn-primary btn-lg">Start building <i class="fa fa-arrow-right"></i></a>
@@ -103,19 +103,7 @@
       </div>
 
       <div class="hero-visual reveal" style="transition-delay:.1s">
-        <div class="save-card" style="max-width:420px; margin-left:auto;">
-          <span class="save-tag">Typical &middot; 6-screen</span>
-          <div class="kicker">Average saving on a 6-screen bundle</div>
-          <div class="big"><small>&pound;</small>270</div>
-          <div class="sub">vs ordering the same stand, screens, PC and cables separately.</div>
-          <div class="breakdown">
-            <div class="r"><span>6 &times; 3m high-quality video cables</span><b>&pound;90</b></div>
-            <div class="r"><span>Free PC upgrades (Wifi, BT, speakers)</span><b>&pound;60</b></div>
-            <div class="r"><span>Free UK mainland delivery</span><b>&pound;20</b></div>
-            <div class="r"><span>Auto bundle discount</span><b>&pound;100</b></div>
-            <div class="r total"><span>Total savings</span><b>&minus; &pound;270</b></div>
-          </div>
-        </div>
+        <img src="../images/pages/trading-image.png" alt="Complete multi-screen bundle &mdash; stand, screens and PC delivered together" style="display:block; max-width:100%; height:auto; margin-left:auto;" />
       </div>
     </div>
   </div>
@@ -168,9 +156,10 @@
     <div class="section-head reveal" style="margin-bottom:30px;">
       <div>
         <span class="eyebrow">Build your bundle</span>
-        <h2>Three choices, <span class="display-em">one delivery, one guarantee.</span></h2>
+        <h2>Three steps to your, <span class="display-em">perfect bundle.</span></h2>
       </div>
-      <div class="ab-reassure"><i class="fa fa-check-circle"></i>Every stand works with every computer &mdash; pick whichever order you like.</div>
+      <div class="ab-reassure"><i class="fa fa-check-circle"></i>Every stand & screen combination works with every computer.
+</div>
     </div>
 
     <div class="page-body-grid">
@@ -250,9 +239,9 @@
           <div class="bsb-includes">
             <div class="bsb-includes-hd"><i class="fa fa-gift"></i>Included free</div>
             <div class="bsb-includes-rows">
-              <div><span>Wifi card</span><b class="num">&pound;40</b></div>
+              <div><span>Wifi / BT card</span><b class="num">&pound;40</b></div>
               <div><span>Speakers</span><b class="num">&pound;20</b></div>
-              <div><span>Long cables</span><b class="num" id="mmb-cables">&mdash;</b></div>
+              <div><span>Premium cables</span><b class="num" id="mmb-cables">&mdash;</b></div>
               <div><span>UK delivery</span><b class="num">&pound;20</b></div>
             </div>
           </div>
@@ -261,11 +250,12 @@
             <div class="bsb-row" style="color:var(--accent-deep);"><span>Bundle discount</span><b class="num" id="mmb-discount" style="color:var(--accent-deep);">&mdash;</b></div>
             <div class="bsb-row total"><span>Total</span><b class="num" id="mmb-total">&mdash;</b></div>
             <div class="bsb-row" style="color:var(--up);"><span>Total savings</span><b class="num" id="mmb-savings" style="color:var(--up);">&mdash;</b></div>
+            <p class="bsb-vat-note">All prices exclude VAT</p>
           </div>
           <button class="btn btn-primary btn-lg bsb-cta is-disabled" id="mmb-cta">Keep building <i class="fa fa-arrow-right"></i></button>
           <div class="bsb-trust">
             <i class="fa fa-shield"></i>
-            <span>5-year cover &middot; Lifetime UK support &middot; 30-day money-back</span>
+            <span>5-year PC cover &middot; Lifetime UK support &middot; 30-day money-back guarantee</span>
           </div>
         </div>
       </aside>
@@ -818,11 +808,11 @@
     const savings  = state.stand ? (cables + 80 + discount) : 0;
     const total    = Math.max(0, sub - discount);
 
-    $('mmb-cables').innerHTML   = state.stand ? fmt(cables)          : '&mdash;';
+    $('mmb-cables').innerHTML   = state.stand ? fmt(cables)          : '&pound;30';
     $('mmb-subtotal').innerHTML = sub         ? fmt(sub)             : '&mdash;';
-    $('mmb-discount').innerHTML = discount    ? '&minus; ' + fmt(discount) : '&mdash;';
+    $('mmb-discount').innerHTML = discount    ? '&minus; ' + fmt(discount) : '&pound25 - &pound;100';
     $('mmb-total').innerHTML    = sub         ? fmt(total)           : '&mdash;';
-    $('mmb-savings').innerHTML  = state.stand ? fmt(savings)         : '&mdash;';
+    $('mmb-savings').innerHTML  = state.stand ? fmt(savings)         : '&pound;135 - &pound;300';
 
     // Progress pct
     const done = [state.stand, state.screens, state.computer].filter(Boolean).length;
