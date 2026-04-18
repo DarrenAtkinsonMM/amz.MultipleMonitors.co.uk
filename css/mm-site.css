@@ -1162,6 +1162,7 @@ footer a:hover { color:var(--accent); }
   padding:10px 14px; border-radius:var(--radius);
   transition:background .2s ease;
 }
+.mm-site .step:hover { cursor: pointer; background:var(--sand);}
 .mm-site .step.is-current { background:var(--brand-soft); }
 .mm-site .step-num {
   width:30px; height:30px; border-radius:50%;
@@ -1181,7 +1182,7 @@ footer a:hover { color:var(--accent); }
   color:var(--ink); margin-top:2px;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
-.mm-site .step:not(.is-current) .step-val { color:var(--muted); }
+.mm-site .step:not(.is-current) .step-val { }
 
 /* Stage — the white card wrapping the current step */
 .mm-site .stage {
@@ -1265,11 +1266,11 @@ footer a:hover { color:var(--accent); }
 .mm-site .bsb-viz svg { max-width:180px; height:auto; }
 
 .mm-site .bsb-list {
-  list-style:none; padding:0; margin:0 0 18px;
+  list-style:none; padding:0; margin:0 0 8px;
   display:flex; flex-direction:column; gap:2px;
 }
 .mm-site .bsb-list li {
-  display:grid; grid-template-columns:18px 1fr auto; gap:10px;
+  display:grid; grid-template-columns:18px 1fr auto; row-gap:0px; column-gap: 10px;
   padding:10px 4px; border-bottom:1px solid var(--line);
   align-items:center; font-size:13.5px;
 }
@@ -1343,18 +1344,6 @@ footer a:hover { color:var(--accent); }
   background:var(--sand-2); border-color:var(--sand-2); color:var(--muted);
   transform:none; box-shadow:none;
 }
-
-.mm-site .bsb-share { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
-.mm-site .bsb-share-btn {
-  display:inline-flex; align-items:center; justify-content:center; gap:8px;
-  padding:10px 10px; background:#fff; border:1px solid var(--line);
-  border-radius:var(--radius); color:var(--ink);
-  font-family:'Geist', sans-serif; font-size:12.5px; font-weight:500;
-  cursor:pointer; transition:all .2s ease; line-height:1.2; text-align:center;
-}
-.mm-site .bsb-share-btn:hover { border-color:var(--brand); color:var(--brand); background:var(--brand-soft); }
-.mm-site .bsb-share-btn .fa { font-size:12px; color:var(--muted); }
-.mm-site .bsb-share-btn:hover .fa { color:var(--brand); }
 
 .mm-site .bsb-trust {
   display:flex; align-items:flex-start; gap:10px;

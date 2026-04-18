@@ -204,7 +204,7 @@
         <div class="stage">
           <div class="stage-head">
             <h3 id="mmb-stage-title">Start with the stand. <span class="muted">Everything else flexes around it.</span></h3>
-            <a href="/stands/" class="talk-link" id="mmb-stage-link">See all 12 stands &rarr;</a>
+            <button type="button" class="btn btn-primary" id="mmb-next-btn" style="display:none"></button>
           </div>
 
           <div class="stand-grid" id="mmb-grid">
@@ -252,19 +252,17 @@
             <div class="bsb-includes-rows">
               <div><span>Wifi card</span><b class="num">&pound;40</b></div>
               <div><span>Speakers</span><b class="num">&pound;20</b></div>
-              <div><span>Long cables</span><b class="num">&pound;24</b></div>
+              <div><span>Long cables</span><b class="num" id="mmb-cables">&mdash;</b></div>
               <div><span>UK delivery</span><b class="num">&pound;20</b></div>
             </div>
           </div>
           <div class="bsb-totals">
             <div class="bsb-row"><span>Subtotal</span><b class="num" id="mmb-subtotal">&mdash;</b></div>
+            <div class="bsb-row" style="color:var(--accent-deep);"><span>Bundle discount</span><b class="num" id="mmb-discount" style="color:var(--accent-deep);">&mdash;</b></div>
             <div class="bsb-row total"><span>Total</span><b class="num" id="mmb-total">&mdash;</b></div>
+            <div class="bsb-row" style="color:var(--up);"><span>Total savings</span><b class="num" id="mmb-savings" style="color:var(--up);">&mdash;</b></div>
           </div>
           <button class="btn btn-primary btn-lg bsb-cta is-disabled" id="mmb-cta">Keep building <i class="fa fa-arrow-right"></i></button>
-          <div class="bsb-share">
-            <button class="bsb-share-btn"><i class="fa fa-link"></i>Copy link to this bundle</button>
-            <button class="bsb-share-btn"><i class="fa fa-envelope-o"></i>Email to partner</button>
-          </div>
           <div class="bsb-trust">
             <i class="fa fa-shield"></i>
             <span>5-year cover &middot; Lifetime UK support &middot; 30-day money-back</span>
@@ -528,18 +526,18 @@
 (function(){
   const BUNDLE_CONFIG = {
     stands: [
-      { id:'s2v',  name:'Dual Vertical',     price:115, screens:2, img:'/images/bundles/bun-s2v-med.png', arrayimg:'s2v' },
-      { id:'s2h',  name:'Dual Horizontal',   price:115, screens:2, img:'/images/bundles/bun-s2h-med.png', arrayimg:'s2h' },
-      { id:'s3h',  name:'Triple Horizontal', price:175, screens:3, img:'/images/bundles/bun-s3h-med.png', arrayimg:'s3h' },
-      { id:'s3p',  name:'Triple Pyramid',    price:175, screens:3, img:'/images/bundles/bun-s3p-med.png', arrayimg:'s3p' },
-      { id:'s4s',  name:'Quad Square',       price:215, screens:4, img:'/images/bundles/bun-s4s-med.png', arrayimg:'s4s' },
-      { id:'s4sp', name:'Quad Multi Pole',   price:215, screens:4, img:'/images/bundles/bun-s4sp-med.png', arrayimg:'s4sp' },
-      { id:'s4p',  name:'Quad Pyramid',      price:225, screens:4, img:'/images/bundles/bun-s4p-med.png', arrayimg:'s4p' },
-      { id:'s4h',  name:'Quad Horizontal',   price:235, screens:4, img:'/images/bundles/bun-s4h-med.png', arrayimg:'s4h' },
-      { id:'s5p',  name:'Five Pyramid',      price:245, screens:5, img:'/images/bundles/bun-s5p-med.png', arrayimg:'s5p' },
-      { id:'s6r',  name:'Six Monitor',       price:275, screens:6, img:'/images/bundles/bun-s6r-med.png', arrayimg:'s6r' },
-      { id:'s6rp', name:'Six Multi Pole',    price:275, screens:6, img:'/images/bundles/bun-s6rp-med.png', arrayimg:'s6rp' },
-      { id:'s8r',  name:'Eight Monitor',     price:375, screens:8, img:'/images/bundles/bun-s8r-med.png', arrayimg:'s8r' },
+      { id:'s2v',  name:'Dual Vertical',     price:115, screens:2, discount:25, img:'/images/bundles/bun-s2v-med.png', arrayimg:'s2v' },
+      { id:'s2h',  name:'Dual Horizontal',   price:115, screens:2, discount:25, img:'/images/bundles/bun-s2h-med.png', arrayimg:'s2h' },
+      { id:'s3h',  name:'Triple Horizontal', price:175, screens:3, discount:25, img:'/images/bundles/bun-s3h-med.png', arrayimg:'s3h' },
+      { id:'s3p',  name:'Triple Pyramid',    price:175, screens:3, discount:25, img:'/images/bundles/bun-s3p-med.png', arrayimg:'s3p' },
+      { id:'s4s',  name:'Quad Square',       price:215, screens:4, discount:50, img:'/images/bundles/bun-s4s-med.png', arrayimg:'s4s' },
+      { id:'s4sp', name:'Quad Multi Pole',   price:215, screens:4, discount:50, img:'/images/bundles/bun-s4sp-med.png', arrayimg:'s4sp' },
+      { id:'s4p',  name:'Quad Pyramid',      price:225, screens:4, discount:50, img:'/images/bundles/bun-s4p-med.png', arrayimg:'s4p' },
+      { id:'s4h',  name:'Quad Horizontal',   price:235, screens:4, discount:50, img:'/images/bundles/bun-s4h-med.png', arrayimg:'s4h' },
+      { id:'s5p',  name:'Five Pyramid',      price:245, screens:5, discount:50, img:'/images/bundles/bun-s5p-med.png', arrayimg:'s5p' },
+      { id:'s6r',  name:'Six Monitor',       price:275, screens:6, discount:100, img:'/images/bundles/bun-s6r-med.png', arrayimg:'s6r' },
+      { id:'s6rp', name:'Six Multi Pole',    price:275, screens:6, discount:100, img:'/images/bundles/bun-s6rp-med.png', arrayimg:'s6rp' },
+      { id:'s8r',  name:'Eight Monitor',     price:375, screens:8, discount:100, img:'/images/bundles/bun-s8r-med.png', arrayimg:'s8r' },
     ],
     screens: [
       { id:'scr24s', name:'21.5" AOC',     price:85, img:'/images/bundles/bun-24-monitor.jpg', arrayimg:'a22' },
@@ -550,23 +548,23 @@
       { id:'scrIiy', name:'27" Iiyama QHD',   price:175, img:'/images/bundles/bun-iiyama-med.png', arrayimg:'i27' },
     ],
     computers: [
-      { id:'ultra',   name:'Ultra PC',   price:895,  img:'/images/bundles/bun-ultra-pc.png' },
-      { id:'extreme', name:'Extreme PC', price:1195, img:'/images/bundles/bun-extreme-pc.png' },
-      { id:'trader',  name:'Trader PC',  price:1395, img:'/images/bundles/bun-trader-pc.png' },
-      { id:'pro',     name:'Trader Pro', price:1695, img:'/images/bundles/bun-pro-pc.png' },
+      { id:'ultra',   name:'Ultra PC',   price:895, six:165, eight:165,  img:'/images/bundles/bun-ultra-pc.png', bunimg:'/images/bundles/case1-bun.png' },
+      { id:'extreme', name:'Extreme PC', price:1195, six:65, eight:175, img:'/images/bundles/bun-extreme-pc.png', bunimg:'/images/bundles/case1-bun.png' },
+      { id:'trader',  name:'Trader PC',  price:1395, six:165, eight:165, img:'/images/bundles/bun-trader-pc.png', bunimg:'/images/bundles/case1-bun.png' },
+      { id:'pro',     name:'Trader Pro', price:1695, six:65, eight:175, img:'/images/bundles/bun-pro-pc.png', bunimg:'/images/bundles/case1-bun.png' },
     ],
   };
 
   const STAGES = {
     stand: {
       title: 'Start with the stand. <span class="muted">Everything else flexes around it.</span>',
-      link:  { href:'/stands/',    text:'See all 12 stands &rarr;' },
+      next:  { goto:'screens',  label:'Next: Screens <i class="fa fa-arrow-right"></i>' },
       items: () => BUNDLE_CONFIG.stands,
       meta:  s => '&pound;' + s.price + ' &middot; ' + s.screens + ' screens',
     },
     screens: {
       title: 'Now pick your screens. <span class="muted">Same model across the stand.</span>',
-      link:  { href:'/display-systems/', text:'See all screens &rarr;' },
+      next:  { goto:'computer', label:'Next: Computer <i class="fa fa-arrow-right"></i>' },
       items: () => BUNDLE_CONFIG.screens,
       meta:  (s, state) => {
         const qty = state.stand ? state.stand.screens : 1;
@@ -575,9 +573,15 @@
     },
     computer: {
       title: 'Finally, the PC. <span class="muted">Graphics matched to your stand.</span>',
-      link:  { href:'/computers/', text:'See all computers &rarr;' },
+      next:  null, // final step — no next button
       items: () => BUNDLE_CONFIG.computers,
-      meta:  c => '&pound;' + c.price,
+      meta:  (c, state) => {
+        const up = computerUpgrade(c, state.stand);
+        const total = c.price + up;
+        if (!up) return '&pound;' + total;
+        const kit = state.stand.screens >= 7 ? '8-screen' : '6-screen';
+        return '&pound;' + total + ' &middot; ' + kit;
+      },
     },
   };
 
@@ -607,11 +611,24 @@
     return !!(state.stand && state.screens && state.computer);
   }
 
+  // Computer price includes a screen-count upgrade: 5-6 screens adds
+  // `six`, 7+ screens adds `eight`. Base price covers up to 4 screens.
+  function computerUpgrade(computer, stand) {
+    if (!computer || !stand) return 0;
+    if (stand.screens >= 7) return computer.eight || 0;
+    if (stand.screens >= 5) return computer.six   || 0;
+    return 0;
+  }
+  function computerPrice(computer, stand) {
+    if (!computer) return 0;
+    return computer.price + computerUpgrade(computer, stand);
+  }
+
   function subtotal() {
     let t = 0;
     if (state.stand)    t += state.stand.price;
     if (state.stand && state.screens) t += state.screens.price * state.stand.screens;
-    if (state.computer) t += state.computer.price;
+    if (state.computer) t += computerPrice(state.computer, state.stand);
     return t;
   }
 
@@ -623,9 +640,23 @@
       ? state[stage === 'done' ? 'computer' : stage].id : null;
 
     $('mmb-stage-title').innerHTML = cfg.title;
-    const link = $('mmb-stage-link');
-    link.href = cfg.link.href;
-    link.innerHTML = cfg.link.text;
+
+    // Next button: shown only when the current stage has a pick AND
+    // the stage has a next target (computer stage has none).
+    const stageKey = stage === 'done' ? 'computer' : stage;
+    const picked   = state[stageKey];
+    const nextBtn  = $('mmb-next-btn');
+    // `.mm-site .btn { display:inline-flex }` beats `[hidden]{display:none}`
+    // on specificity, so we toggle inline style.display instead.
+    if (cfg.next && picked) {
+      nextBtn.innerHTML     = cfg.next.label;
+      nextBtn.dataset.goto  = cfg.next.goto;
+      nextBtn.style.display = '';
+    } else {
+      nextBtn.style.display = 'none';
+      nextBtn.innerHTML     = '';
+      nextBtn.removeAttribute('data-goto');
+    }
 
     grid.innerHTML = cfg.items().map(item => {
       const sel  = item.id === selectedId ? ' is-selected' : '';
@@ -654,12 +685,17 @@
     const stage = currentStage();
 
     // Image — swap from SVG placeholder to stand image once chosen,
-    // then to the stand+screens composite once both are picked.
+    // then to the stand+screens composite once both are picked, then
+    // add the computer case alongside once a computer is picked.
     const viz = $('mmb-viz');
     if (state.stand && state.screens) {
-      const src = '/images/bundles/' + state.stand.arrayimg + '-' + state.screens.arrayimg + '-blg.png';
-      const alt = state.stand.name + ' with ' + state.screens.name;
-      viz.innerHTML = '<img src="' + src + '" alt="' + alt + '" style="max-width:180px; max-height:140px; object-fit:contain;">';
+      const arrSrc = '/images/bundles/' + state.stand.arrayimg + '-' + state.screens.arrayimg + '-blg.png';
+      const arrAlt = state.stand.name + ' with ' + state.screens.name;
+      let html = '<img src="' + arrSrc + '" alt="' + arrAlt + '" style="max-width:170px; max-height:130px; object-fit:contain;">';
+      if (state.computer && state.computer.bunimg) {
+        html += '<img src="' + state.computer.bunimg + '" alt="' + state.computer.name + '" style="max-height:130px; width:auto; margin-left:12px; object-fit:contain;">';
+      }
+      viz.innerHTML = html;
     } else if (state.stand) {
       viz.innerHTML = '<img src="' + state.stand.img + '" alt="' + state.stand.name + '" style="max-width:180px; max-height:140px; object-fit:contain;">';
     }
@@ -679,6 +715,10 @@
         li.classList.add('is-done');
         rEl.textContent = qty + ' × ' + pick.name;
         pEl.innerHTML   = fmt(pick.price * qty);
+      } else if (slot === 'computer') {
+        li.classList.add('is-done');
+        rEl.textContent = pick.name;
+        pEl.innerHTML   = fmt(computerPrice(pick, state.stand));
       } else {
         li.classList.add('is-done');
         rEl.textContent = pick.name;
@@ -686,10 +726,21 @@
       }
     });
 
-    // Totals
-    const t = subtotal();
-    $('mmb-subtotal').innerHTML = t ? fmt(t) : '&mdash;';
-    $('mmb-total').innerHTML    = t ? fmt(t) : '&mdash;';
+    // Totals + included-free cables + bundle discount + total savings.
+    // Cables = £15 per screen. Savings = cables + £80 (free wifi /
+    // speakers / delivery) + bundle discount. Discount comes from the
+    // selected stand and is subtracted from the subtotal.
+    const sub      = subtotal();
+    const cables   = state.stand ? 15 * state.stand.screens : 0;
+    const discount = state.stand ? (state.stand.discount || 0) : 0;
+    const savings  = state.stand ? (cables + 80 + discount) : 0;
+    const total    = Math.max(0, sub - discount);
+
+    $('mmb-cables').innerHTML   = state.stand ? fmt(cables)          : '&mdash;';
+    $('mmb-subtotal').innerHTML = sub         ? fmt(sub)             : '&mdash;';
+    $('mmb-discount').innerHTML = discount    ? '&minus; ' + fmt(discount) : '&mdash;';
+    $('mmb-total').innerHTML    = sub         ? fmt(total)           : '&mdash;';
+    $('mmb-savings').innerHTML  = state.stand ? fmt(savings)         : '&mdash;';
 
     // Progress pct
     const done = [state.stand, state.screens, state.computer].filter(Boolean).length;
@@ -700,7 +751,7 @@
     const cta = $('mmb-cta');
     if (isComplete()) {
       cta.classList.remove('is-disabled');
-      cta.innerHTML = 'Add bundle to basket <i class="fa fa-arrow-right"></i>';
+      cta.innerHTML = 'Configure PC &amp; Order Bundle<i class="fa fa-arrow-right"></i>';
     } else {
       cta.classList.add('is-disabled');
       cta.innerHTML = 'Keep building <i class="fa fa-arrow-right"></i>';
@@ -712,6 +763,14 @@
     renderStepper();
     renderSidebar();
   }
+
+  // Next button click — advance to the stage specified in data-goto.
+  document.getElementById('mmb-next-btn').addEventListener('click', function(){
+    const goto = this.dataset.goto;
+    if (!goto) return;
+    state.view = goto;
+    render();
+  });
 
   // Stepper click — jump back to an earlier stage to review or swap a
   // pick. Existing picks are preserved; totals re-calculate on render
@@ -741,8 +800,10 @@
     } else if (stage === 'computer') {
       state.computer = BUNDLE_CONFIG.computers.find(c => c.id === id) || null;
     }
-    // Resume forward flow: next un-picked stage (or stay on 'done').
-    state.view = null;
+    // Stay on the stage the user just picked in — lets them try other
+    // options at the same step and watch the sidebar update. They move
+    // on by clicking the stepper.
+    state.view = stage;
     render();
   });
 
