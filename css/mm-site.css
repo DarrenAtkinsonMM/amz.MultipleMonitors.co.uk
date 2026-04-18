@@ -1204,11 +1204,25 @@ footer a:hover { color:var(--accent); }
 }
 .mm-site .stage-head .talk-link:hover { color:var(--ink); }
 
-/* Stand grid */
+/* Stand grid — responsive column count per stage.
+   Tiers: <640 mobile, 640-1249 narrow desktop, 1250+ wide. */
 .mm-site .stand-grid {
   display:grid; grid-template-columns:repeat(2, 1fr); gap:14px;
 }
-@media (min-width:640px) { .mm-site .stand-grid { grid-template-columns:repeat(4, 1fr); } }
+.mm-site .stand-grid.cols-2 { grid-template-columns:repeat(1, 1fr); }
+.mm-site .stand-grid.cols-3 { grid-template-columns:repeat(1, 1fr); }
+
+@media (min-width:640px) {
+  .mm-site .stand-grid        { grid-template-columns:repeat(3, 1fr); } /* stands   = 3 */
+  .mm-site .stand-grid.cols-3 { grid-template-columns:repeat(2, 1fr); } /* screens  = 2 */
+  .mm-site .stand-grid.cols-2 { grid-template-columns:repeat(1, 1fr); } /* computer = 1 */
+}
+
+@media (min-width:1250px) {
+  .mm-site .stand-grid        { grid-template-columns:repeat(4, 1fr); } /* stands   = 4 */
+  .mm-site .stand-grid.cols-3 { grid-template-columns:repeat(3, 1fr); } /* screens  = 3 */
+  .mm-site .stand-grid.cols-2 { grid-template-columns:repeat(2, 1fr); } /* computer = 2 */
+}
 .mm-site .stand-card {
   position:relative; background:#fff; border:1px solid var(--line);
   border-radius:var(--radius); padding:12px 14px 14px;
@@ -1237,7 +1251,62 @@ footer a:hover { color:var(--accent); }
   font-family:'EB Garamond', 'Georgia', serif; font-size:17px; font-weight:500;
   color:var(--ink); letter-spacing:-.005em; margin-bottom:3px;
 }
+.mm-site .stand-desc {
+  font-size:12.5px; color:var(--muted); line-height:1.45;
+  margin:0 0 6px;
+}
 .mm-site .stand-meta { font-size:12px; color:var(--muted); }
+
+/* Detailed card variant — horizontal layout: image left, bullets right,
+   name + price on a bottom row. Used by the PC and screens grids. */
+.mm-site .stand-card.is-detail { padding:16px; }
+.mm-site .stand-card.is-detail .detail-top {
+  display:flex; gap:16px; align-items:flex-start; margin-bottom:14px;
+}
+.mm-site .stand-card.is-detail .detail-vis {
+  flex:0 0 auto; width:110px; min-height:140px;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--sand); border-radius:var(--radius); padding:10px;
+}
+.mm-site .stand-card.is-detail .detail-vis img {
+  max-width:100%; max-height:160px; object-fit:contain;
+}
+.mm-site .stand-card.is-detail .detail-bullets {
+  list-style:none; padding:0 22px 0 0; margin:2px 0 0; /* right padding clears is-selected tick */
+  font-size:13px; color:var(--ink); line-height:1.5;
+  flex:1 1 auto; min-width:0;
+}
+.mm-site .stand-card.is-detail .detail-bullets li {
+  position:relative; padding-left:18px; margin-bottom:6px;
+}
+.mm-site .stand-card.is-detail .detail-bullets li:last-child { margin-bottom:0; }
+.mm-site .stand-card.is-detail .detail-bullets li::before {
+  content:"\f00c"; font-family:'FontAwesome';
+  position:absolute; left:0; top:2px; font-size:11px; color:var(--brand);
+}
+.mm-site .stand-card.is-detail .detail-bottom {
+  display:flex; justify-content:space-between; align-items:baseline;
+  gap:12px; padding-top:12px; border-top:1px solid var(--line);
+}
+.mm-site .stand-card.is-detail .detail-name {
+  font-family:'EB Garamond', 'Georgia', serif; font-size:18px; font-weight:500;
+  color:var(--ink); letter-spacing:-.005em;
+}
+.mm-site .stand-card.is-detail .detail-price {
+  font-size:13px; color:var(--muted); font-weight:500;
+}
+.mm-site .stand-card.screens.is-detail { padding:14px 0 14px 8px; }
+.mm-site .stand-card.screens.is-detail .detail-top { gap:2px; }
+.mm-site .stand-card.screens.is-detail .detail-vis {
+    width:88px; min-height:80px; padding:0px; background: none; align-items: start;
+  }
+.mm-site .stand-card.screens.is-detail .detail-bottom {
+    flex-direction:column; align-items:flex-start; gap:2px; padding-top:8px;
+  }
+.mm-site .stand-card.screens.is-detail .detail-bullets {
+    font-size:12.5px; padding-right:14px 0 14px 8px;
+  }
+.mm-site .stand-card.screens.is-detail .detail-name { font-size:16px; }
 
 /* Running bundle sidebar */
 .mm-site .bundle-sidebar { position:relative; }

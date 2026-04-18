@@ -540,18 +540,70 @@
       { id:'s8r',  name:'Eight Monitor',     price:375, screens:8, discount:100, img:'/images/bundles/bun-s8r-med.png', arrayimg:'s8r' },
     ],
     screens: [
-      { id:'scr24s', name:'21.5" AOC',     price:85, img:'/images/bundles/bun-24-monitor.jpg', arrayimg:'a22' },
-      { id:'scr24i', name:'24" Acer',          price:90, img:'/images/bundles/bun-i23-monitor.jpg', arrayimg:'a24' },
-      { id:'scr27s', name:'27" Acer',     price:115, img:'/images/bundles/bun-27-monitor.jpg', arrayimg:'a27' },
-      { id:'scr27i', name:'24" Iiyama',          price:130, img:'/images/bundles/bun-i27-monitor.jpg', arrayimg:'i23' },
-      { id:'scrAw',  name:'27" AOC QHD',  price:155, img:'/images/bundles/bun-acerwide-med.png', arrayimg:'i27' },
-      { id:'scrIiy', name:'27" Iiyama QHD',   price:175, img:'/images/bundles/bun-iiyama-med.png', arrayimg:'i27' },
+      {
+        id:'scr24s', name:'21.5" AOC', price:85,
+        desc1:'1920 x 1080 FHD', desc2:'Thin bezel', desc3:'VA Screen',
+        img:'/shop/pc/catalog/acer22_thumb.jpg', arrayimg:'a22',
+      },
+      {
+        id:'scr24i', name:'24" Acer', price:90,
+        desc1:'1080p IPS panel', desc2:'24-inch screen', desc3:'Low-profile stand',
+        img:'/shop/pc/catalog/acer22_thumb.jpg', arrayimg:'a24',
+      },
+      {
+        id:'scr27s', name:'27" Acer', price:115,
+        desc1:'1080p IPS panel', desc2:'27-inch screen', desc3:'HDMI + DisplayPort',
+        img:'/shop/pc/catalog/acer22_thumb.jpg', arrayimg:'a27',
+      },
+      {
+        id:'scr27i', name:'24" Iiyama', price:130,
+        desc1:'1080p ProLite IPS', desc2:'24-inch screen', desc3:'3-year warranty',
+        img:'/shop/pc/catalog/iiyama23ips-thumb.jpg', arrayimg:'i23',
+      },
+      {
+        id:'scrAw',  name:'27" AOC QHD', price:155,
+        desc1:'1440p QHD &middot; 75Hz', desc2:'27-inch panel', desc3:'FreeSync support',
+        img:'/shop/pc/catalog/aoc27-thumb.jpg', arrayimg:'i27',
+      },
+      {
+        id:'scrIiy', name:'27" Iiyama QHD', price:175,
+        desc1:'2560 x 1440 QHD', desc2:'Thin Bezel', desc3:'IPS Panel',
+        img:'/shop/pc/catalog/iiyama23ips-thumb.jpg', arrayimg:'i27',
+      },
     ],
     computers: [
-      { id:'ultra',   name:'Ultra PC',   price:895, six:165, eight:165,  img:'/images/bundles/bun-ultra-pc.png', bunimg:'/images/bundles/case1-bun.png' },
-      { id:'extreme', name:'Extreme PC', price:1195, six:65, eight:175, img:'/images/bundles/bun-extreme-pc.png', bunimg:'/images/bundles/case1-bun.png' },
-      { id:'trader',  name:'Trader PC',  price:1395, six:165, eight:165, img:'/images/bundles/bun-trader-pc.png', bunimg:'/images/bundles/case1-bun.png' },
-      { id:'pro',     name:'Trader Pro', price:1695, six:65, eight:175, img:'/images/bundles/bun-pro-pc.png', bunimg:'/images/bundles/case1-bun.png' },
+      {
+        id:'ultra', name:'Ultra PC', price:895, six:165, eight:165,
+        desc1:'Fast everyday workstation',
+        desc2:'16GB RAM &middot; 1TB NVMe SSD',
+        desc3:'Quad-screen ready out of the box',
+        img:'/images/bundles/bun-ultra-pc.png',
+        bunimg:'/images/bundles/case1-bun.png',
+      },
+      {
+        id:'extreme', name:'Extreme PC', price:1195, six:65, eight:175,
+        desc1:'High-end workstation &middot; Intel i7',
+        desc2:'32GB RAM &middot; 2TB NVMe SSD',
+        desc3:'Handles heavy analytics workloads',
+        img:'/images/bundles/bun-extreme-pc.png',
+        bunimg:'/images/bundles/case1-bun.png',
+      },
+      {
+        id:'trader', name:'Trader PC', price:1395, six:165, eight:165,
+        desc1:'Built for multi-screen trading',
+        desc2:'32GB RAM &middot; matched GPU',
+        desc3:'Stable under MT4, TradingView, NinjaTrader',
+        img:'/images/bundles/bun-trader-pc.png',
+        bunimg:'/images/bundles/case1-bun.png',
+      },
+      {
+        id:'pro', name:'Trader Pro', price:1695, six:65, eight:175,
+        desc1:'Pro trading desk &middot; Intel i9',
+        desc2:'64GB RAM &middot; 8-screen ready',
+        desc3:'5-year hardware cover &middot; lifetime support',
+        img:'/images/bundles/bun-pro-pc.png',
+        bunimg:'/images/bundles/case1-bun.png',
+      },
     ],
   };
 
@@ -559,12 +611,14 @@
     stand: {
       title: 'Start with the stand. <span class="muted">Everything else flexes around it.</span>',
       next:  { goto:'screens',  label:'Next: Screens <i class="fa fa-arrow-right"></i>' },
+      cols:  4,
       items: () => BUNDLE_CONFIG.stands,
       meta:  s => '&pound;' + s.price + ' &middot; ' + s.screens + ' screens',
     },
     screens: {
       title: 'Now pick your screens. <span class="muted">Same model across the stand.</span>',
       next:  { goto:'computer', label:'Next: Computer <i class="fa fa-arrow-right"></i>' },
+      cols:  3,
       items: () => BUNDLE_CONFIG.screens,
       meta:  (s, state) => {
         const qty = state.stand ? state.stand.screens : 1;
@@ -574,6 +628,7 @@
     computer: {
       title: 'Finally, the PC. <span class="muted">Graphics matched to your stand.</span>',
       next:  null, // final step — no next button
+      cols:  2,
       items: () => BUNDLE_CONFIG.computers,
       meta:  (c, state) => {
         const up = computerUpgrade(c, state.stand);
@@ -658,13 +713,40 @@
       nextBtn.removeAttribute('data-goto');
     }
 
+    // Column count per stage (stand=4, screens=3, computer=2).
+    grid.className = 'stand-grid cols-' + (cfg.cols || 4);
+
     grid.innerHTML = cfg.items().map(item => {
       const sel  = item.id === selectedId ? ' is-selected' : '';
       const meta = cfg.meta(item, state);
+
+      // Screens and computer cards use the detailed horizontal layout:
+      // image left, up to 3 bullets right, name + price on a bottom row.
+      if (stageKey === 'computer' || stageKey === 'screens') {
+        const bullets = [item.desc1, item.desc2, item.desc3]
+          .filter(Boolean)
+          .map(d => '<li>' + d + '</li>')
+          .join('');
+        return (
+          '<button type="button" class="stand-card ' +  stageKey + ' is-detail' + sel + '" data-id="' + item.id + '">' +
+            '<div class="detail-top">' +
+              '<div class="detail-vis"><img src="' + item.img + '" alt="' + item.name + '"></div>' +
+              (bullets ? '<ul class="detail-bullets">' + bullets + '</ul>' : '') +
+            '</div>' +
+            '<div class="detail-bottom">' +
+              '<div class="detail-name">' + item.name + '</div>' +
+              '<div class="detail-price num">' + meta + '</div>' +
+            '</div>' +
+          '</button>'
+        );
+      }
+
+      const desc = item.description ? '<div class="stand-desc">' + item.description + '</div>' : '';
       return (
         '<button type="button" class="stand-card' + sel + '" data-id="' + item.id + '">' +
           '<div class="stand-vis"><img src="' + item.img + '" alt="' + item.name + '"></div>' +
           '<div class="stand-name">' + item.name + '</div>' +
+          desc +
           '<div class="stand-meta num">' + meta + '</div>' +
         '</button>'
       );
