@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Trader PC &mdash; UK-built trading computer from &pound;1,045 + VAT | Multiple Monitors</title>
+<meta name="description" content="The Trader PC is our entry-level trading computer &mdash; Intel i5 14400F, up to 4 screens, 5-year cover, lifetime support. UK-built, silent, benchmark tested. From &pound;1,045 + VAT." />
+
+<!-- Fonts: EB Garamond (display serif), Geist (body sans), JetBrains Mono (micro) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome 4.7 (same version as live ProductCart templates) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- 2026 redesign design system -->
+<link rel="stylesheet" href="../css/mm-site.css">
+
+<style>
+  /* ============================================================
+     Page-specific: Trader PC product page.
+     Scoped under .mm-site so it can't leak onto legacy pages.
+     Components introduced here (candidates for mm-site.css later):
+       .breadcrumb, .pd-hero, .pd-gallery, .pd-buybox,
+       .configurator, .cross-link
+     ============================================================ */
+
+  /* -- Breadcrumb ------------------------------------------------- */
+  .mm-site .breadcrumb {
+    background:#fff; border-bottom:1px solid var(--line);
+    font-family:'JetBrains Mono', monospace; font-size:11px;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+  }
+  .mm-site .breadcrumb .inner {
+    display:flex; align-items:center; gap:10px;
+    padding:14px 0; flex-wrap:wrap;
+  }
+  .mm-site .breadcrumb a { color:var(--muted); }
+  .mm-site .breadcrumb a:hover { color:var(--brand); }
+  .mm-site .breadcrumb .sep { color:var(--line-strong); }
+  .mm-site .breadcrumb .current { color:var(--ink); }
+
+  /* -- Product hero --------------------------------------------- */
+  .mm-site .pd-hero {
+    position:relative; padding:48px 0 58px; overflow:hidden;
+    background:
+      radial-gradient(55% 55% at 20% 25%, rgba(15,110,168,.06), transparent 70%),
+      radial-gradient(40% 50% at 95% 80%, rgba(242,167,27,.06), transparent 70%),
+      linear-gradient(180deg, var(--sand) 0%, var(--sand-2) 100%);
+  }
+  .mm-site .pd-hero::before {
+    content:""; position:absolute; inset:0; pointer-events:none; opacity:.45;
+    background-image:
+      linear-gradient(rgba(14,27,44,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(14,27,44,.045) 1px, transparent 1px);
+    background-size:64px 64px;
+    mask-image:radial-gradient(ellipse at 50% 40%, #000 30%, transparent 80%);
+    -webkit-mask-image:radial-gradient(ellipse at 50% 40%, #000 30%, transparent 80%);
+  }
+  .mm-site .pd-hero .container { position:relative; z-index:1; }
+  .mm-site .pd-hero-grid {
+    display:grid; grid-template-columns:1fr; gap:42px; align-items:start;
+  }
+  @media (min-width:992px) {
+    .mm-site .pd-hero-grid { grid-template-columns:1.1fr 1fr; gap:64px; }
+  }
+
+  /* Gallery (left column) */
+  .mm-site .pd-gallery { position:relative; }
+  .mm-site .pd-gallery__main {
+    position:relative;
+    background:
+      radial-gradient(55% 55% at 30% 30%, rgba(15,110,168,.06), transparent 70%),
+      linear-gradient(160deg, #F4F8FB 0%, #E8F1F8 100%);
+    border:1px solid var(--line); border-radius:var(--radius-xl);
+    aspect-ratio:4/3; display:flex; align-items:center; justify-content:center;
+    padding:40px; overflow:hidden;
+    box-shadow:var(--shadow-lg), inset 0 0 0 1px rgba(255,255,255,.6);
+  }
+  .mm-site .pd-gallery__main::before {
+    content:""; position:absolute; inset:0; pointer-events:none; opacity:.35;
+    background-image:
+      linear-gradient(rgba(14,27,44,.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(14,27,44,.06) 1px, transparent 1px);
+    background-size:28px 28px;
+    mask-image:radial-gradient(ellipse at 50% 50%, #000 10%, transparent 70%);
+    -webkit-mask-image:radial-gradient(ellipse at 50% 50%, #000 10%, transparent 70%);
+  }
+  .mm-site .pd-gallery__main img {
+    position:relative; max-height:100%; width:auto; max-width:78%;
+    filter:drop-shadow(0 20px 28px rgba(14,27,44,.18));
+    transition:transform .35s ease;
+  }
+  .mm-site .pd-gallery__main:hover img { transform:scale(1.03) translateY(-4px); }
+
+  /* Floating chip — "5-year cover" signal on the gallery */
+  .mm-site .pd-gallery__chip {
+    position:absolute; top:18px; left:18px;
+    background:rgba(14,27,44,.92); color:#fff;
+    border:1px solid rgba(255,255,255,.08); border-radius:999px;
+    padding:7px 12px 7px 10px;
+    font-family:'JetBrains Mono', monospace; font-size:10.5px;
+    letter-spacing:.14em; text-transform:uppercase;
+    display:inline-flex; align-items:center; gap:8px;
+    backdrop-filter:blur(6px); z-index:2;
+  }
+  .mm-site .pd-gallery__chip .dot {
+    width:6px; height:6px; border-radius:50%; background:var(--up);
+    box-shadow:0 0 0 0 rgba(33,166,122,.6);
+    animation:pulse 2.2s ease-out infinite;
+  }
+  .mm-site .pd-gallery__chip .acc { color:var(--accent); margin-right:3px; }
+
+  /* SKU mark — bottom-right of gallery */
+  .mm-site .pd-gallery__sku {
+    position:absolute; right:18px; bottom:18px;
+    font-family:'JetBrains Mono', monospace; font-size:10px;
+    letter-spacing:.18em; text-transform:uppercase;
+    color:var(--muted); background:rgba(255,255,255,.85);
+    border:1px solid var(--line); border-radius:4px;
+    padding:4px 8px; backdrop-filter:blur(4px); z-index:2;
+  }
+
+  /* Thumbnail strip */
+  .mm-site .pd-gallery__thumbs {
+    display:grid; grid-template-columns:repeat(5, 1fr); gap:10px; margin-top:14px;
+  }
+  .mm-site .pd-thumb {
+    aspect-ratio:1/1;
+    background:linear-gradient(160deg, #F4F8FB, #E8F1F8);
+    border:1px solid var(--line); border-radius:var(--radius);
+    display:flex; align-items:center; justify-content:center; padding:8px;
+    cursor:pointer; transition:all .2s ease; overflow:hidden;
+  }
+  .mm-site .pd-thumb img { max-height:100%; max-width:100%; object-fit:contain; }
+  .mm-site .pd-thumb.placeholder {
+    display:flex; flex-direction:column; gap:5px; align-items:center; justify-content:center;
+    background:#fff;
+  }
+  .mm-site .pd-thumb.placeholder .fa { color:var(--muted); font-size:16px; }
+  .mm-site .pd-thumb.placeholder span {
+    font-family:'JetBrains Mono', monospace; font-size:9px; letter-spacing:.12em;
+    color:var(--muted); text-transform:uppercase; text-align:center; line-height:1.2;
+  }
+  .mm-site .pd-thumb:hover { border-color:var(--brand); transform:translateY(-2px); }
+  .mm-site .pd-thumb.is-active {
+    border-color:var(--brand); box-shadow:0 0 0 2px rgba(15,110,168,.18);
+  }
+
+  /* Buy-box (right column) */
+  .mm-site .pd-buybox {
+    display:flex; flex-direction:column; gap:18px;
+  }
+  .mm-site .pd-buybox .eyebrow { margin-bottom:0; }
+  .mm-site .pd-buybox h1 {
+    font-family:'EB Garamond', 'Georgia', serif;
+    font-size:clamp(40px, 5.4vw, 56px); line-height:1.02;
+    letter-spacing:-.028em; font-weight:500; color:var(--ink);
+    margin:0;
+  }
+  .mm-site .pd-buybox h1 em {
+    font-style:italic; color:var(--brand); font-weight:400;
+  }
+  .mm-site .pd-buybox .pitch {
+    font-size:16.5px; color:var(--slate); line-height:1.55; margin:0;
+    max-width:520px;
+  }
+
+  /* Trustpilot mini widget (in buy-box) */
+  .mm-site .pd-tp {
+    display:inline-flex; align-items:center; gap:10px;
+    padding:8px 0;
+  }
+  .mm-site .pd-tp .tp-stars { gap:2px; }
+  .mm-site .pd-tp b {
+    font-family:'EB Garamond', 'Georgia', serif; font-size:17px; color:var(--ink); font-weight:500;
+  }
+  .mm-site .pd-tp small {
+    font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:.08em;
+    color:var(--muted);
+  }
+  .mm-site .pd-tp a {
+    font-size:12.5px; color:var(--brand); font-weight:500;
+    padding-left:10px; border-left:1px solid var(--line); margin-left:2px;
+  }
+
+  /* Price block */
+  .mm-site .pd-price {
+    display:flex; align-items:baseline; flex-wrap:wrap; gap:12px 14px;
+    padding:20px 0 18px;
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  }
+  .mm-site .pd-price__from {
+    font-family:'JetBrains Mono', monospace; font-size:11px;
+    letter-spacing:.18em; text-transform:uppercase; color:var(--muted);
+  }
+  .mm-site .pd-price__num {
+    font-family:'EB Garamond', 'Georgia', serif; font-weight:500;
+    font-size:56px; line-height:1; letter-spacing:-.028em; color:var(--ink);
+    display:inline-flex; align-items:baseline; gap:4px;
+  }
+  .mm-site .pd-price__num .sym {
+    font-size:28px; color:var(--brand); margin-right:2px;
+  }
+  .mm-site .pd-price__vat {
+    font-family:'JetBrains Mono', monospace; font-size:12px;
+    color:var(--muted); letter-spacing:.08em;
+  }
+  .mm-site .pd-price__vat b { color:var(--ink); font-weight:500; }
+
+  /* Delivery cutoff */
+  .mm-site .pd-cutoff {
+    display:inline-flex; align-items:center; gap:10px;
+    background:rgba(33,166,122,.07); border:1px solid rgba(33,166,122,.22);
+    border-radius:999px; padding:9px 14px 9px 12px;
+    font-size:13.5px; color:var(--ink); font-weight:500;
+  }
+  .mm-site .pd-cutoff .dot {
+    width:7px; height:7px; border-radius:50%; background:var(--up);
+    box-shadow:0 0 0 0 rgba(33,166,122,.55);
+    animation:pulse 2.2s ease-out infinite;
+  }
+  .mm-site .pd-cutoff b {
+    font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:500;
+    color:var(--up); letter-spacing:.05em;
+  }
+
+  /* Inclusion strip */
+  .mm-site .pd-incl {
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:16px;
+    margin:4px 0 6px;
+  }
+  @media (max-width:520px) { .mm-site .pd-incl { grid-template-columns:1fr; gap:10px; } }
+  .mm-site .pd-incl .item {
+    display:flex; align-items:center; gap:10px; font-size:13px; color:var(--slate);
+    line-height:1.3;
+  }
+  .mm-site .pd-incl .item .fa {
+    color:var(--brand); font-size:16px; width:18px; text-align:center; flex-shrink:0;
+  }
+  .mm-site .pd-incl .item b { color:var(--ink); font-weight:500; display:block; }
+  .mm-site .pd-incl .item small {
+    font-family:'JetBrains Mono', monospace; font-size:10px;
+    letter-spacing:.1em; color:var(--muted); text-transform:uppercase;
+  }
+
+  /* CTA row */
+  .mm-site .pd-cta {
+    display:flex; flex-wrap:wrap; gap:12px; align-items:center;
+  }
+  .mm-site .pd-cta .btn-primary { flex:1 1 auto; min-width:220px; }
+  .mm-site .pd-cta .btn-primary .fa { transition:transform .2s ease; }
+  .mm-site .pd-cta .btn-primary:hover .fa { transform:translateX(4px); }
+  .mm-site .pd-cta .ghost-link {
+    color:var(--slate); font-weight:500; font-size:14px;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .mm-site .pd-cta .ghost-link:hover { color:var(--brand); }
+  .mm-site .pd-cta .ghost-link .fa { color:var(--brand); }
+
+  /* Mini footnote beneath CTAs */
+  .mm-site .pd-foot {
+    font-family:'JetBrains Mono', monospace; font-size:10.5px;
+    letter-spacing:.12em; text-transform:uppercase;
+    color:var(--muted); display:flex; gap:14px; flex-wrap:wrap;
+  }
+  .mm-site .pd-foot span { display:inline-flex; align-items:center; gap:6px; }
+  .mm-site .pd-foot .fa { color:var(--brand); font-size:11px; }
+
+  /* -- Configurator (inline stepper) ----------------------------- */
+  .mm-site .configurator { padding:66px 0; background:var(--sand); }
+  .mm-site .cfg-head {
+    display:flex; justify-content:space-between; align-items:flex-end;
+    flex-wrap:wrap; gap:18px; margin-bottom:32px;
+  }
+  .mm-site .cfg-head h2 { margin:0; }
+  .mm-site .cfg-head h2 em {
+    font-style:italic; color:var(--brand); font-weight:400;
+  }
+  .mm-site .cfg-head .talk-link {
+    font-weight:500; color:var(--brand); font-size:14px;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+
+  .mm-site .cfg-grid {
+    display:grid; grid-template-columns:1fr; gap:24px; align-items:start;
+  }
+  @media (min-width:992px) {
+    .mm-site .cfg-grid { grid-template-columns:minmax(0, 1fr) 360px; gap:28px; }
+  }
+
+  /* Left: option rows */
+  .mm-site .cfg-options-wrap {
+    background:#fff; border:1px solid var(--line);
+    border-radius:var(--radius-lg); box-shadow:var(--shadow-sm);
+    overflow:hidden;
+  }
+  .mm-site .cfg-row { padding:24px 26px; border-bottom:1px solid var(--line); }
+  .mm-site .cfg-row:last-child { border-bottom:none; }
+  .mm-site .cfg-row__head {
+    display:flex; justify-content:space-between; align-items:baseline;
+    gap:16px; margin-bottom:12px;
+  }
+  .mm-site .cfg-row__label {
+    font-family:'JetBrains Mono', monospace; font-size:11px;
+    letter-spacing:.18em; text-transform:uppercase; color:var(--muted);
+    font-weight:500;
+  }
+  .mm-site .cfg-row__label .n {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:22px; height:22px; border-radius:50%;
+    background:var(--brand-soft); color:var(--brand);
+    font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:600;
+    margin-right:10px; letter-spacing:0;
+  }
+  .mm-site .cfg-row__selected {
+    font-family:'EB Garamond', 'Georgia', serif; font-size:17px;
+    font-weight:500; color:var(--ink); letter-spacing:-.005em;
+  }
+  .mm-site .cfg-row__help {
+    font-size:13.5px; color:var(--slate); line-height:1.5;
+    max-width:640px; margin:2px 0 14px;
+  }
+  .mm-site .cfg-row__help a { color:var(--brand); font-weight:500; }
+
+  /* Segmented options */
+  .mm-site .cfg-options {
+    display:flex; flex-wrap:wrap; gap:8px;
+  }
+  .mm-site .cfg-option {
+    position:relative;
+    display:inline-flex; flex-direction:column; gap:3px;
+    background:#fff; border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:11px 16px; cursor:pointer; transition:all .18s ease;
+    min-width:0;
+  }
+  .mm-site .cfg-option:hover { border-color:var(--line-strong); box-shadow:var(--shadow-sm); }
+  .mm-site .cfg-option.is-selected {
+    border-color:var(--brand);
+    background:linear-gradient(180deg, #fff, var(--brand-soft));
+    box-shadow:0 0 0 1px var(--brand), var(--shadow-sm);
+  }
+  .mm-site .cfg-option.is-selected::after {
+    content:"\f058"; font-family:'FontAwesome';
+    position:absolute; top:8px; right:10px;
+    color:var(--brand); font-size:12px;
+  }
+  .mm-site .cfg-option .opt-name {
+    font-size:13.5px; font-weight:500; color:var(--ink); line-height:1.2;
+    padding-right:16px;
+  }
+  .mm-site .cfg-option .opt-price {
+    font-family:'JetBrains Mono', monospace; font-size:11px;
+    color:var(--muted); letter-spacing:.02em;
+  }
+  .mm-site .cfg-option .opt-price.inc { color:var(--up); }
+  .mm-site .cfg-option .opt-price.std { color:var(--muted); }
+
+  /* -- Configurator summary sidebar ------------------------------ */
+  .mm-site .cfg-summary { position:relative; }
+  @media (min-width:992px) { .mm-site .cfg-summary { position:sticky; top:140px; } }
+  .mm-site .cfg-summary__card {
+    background:#fff; border:1px solid var(--line);
+    border-radius:var(--radius-lg); box-shadow:var(--shadow);
+    padding:22px 22px 20px;
+  }
+  .mm-site .cfg-summary__head {
+    display:flex; justify-content:space-between; align-items:center;
+    padding-bottom:14px; border-bottom:1px solid var(--line);
+    margin-bottom:14px;
+  }
+  .mm-site .cfg-summary__head h5 { margin:0; color:var(--brand); }
+  .mm-site .cfg-summary__head .tick {
+    background:var(--brand-soft); color:var(--brand-deep);
+    border-radius:999px; padding:3px 10px;
+    font-family:'JetBrains Mono', monospace; font-size:10.5px;
+    letter-spacing:.12em; text-transform:uppercase; font-weight:500;
+  }
+  .mm-site .cfg-summary__list {
+    list-style:none; padding:0; margin:0 0 14px;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .mm-site .cfg-summary__list li {
+    display:grid; grid-template-columns:72px 1fr auto;
+    gap:12px; align-items:baseline;
+    font-size:13px; color:var(--slate);
+    padding:4px 0;
+  }
+  .mm-site .cfg-summary__list .lbl {
+    font-family:'JetBrains Mono', monospace; font-size:10px;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+  }
+  .mm-site .cfg-summary__list .val {
+    color:var(--ink); font-weight:500; line-height:1.35;
+  }
+  .mm-site .cfg-summary__list .pri {
+    font-family:'JetBrains Mono', monospace; font-size:12px;
+    color:var(--muted); text-align:right;
+  }
+  .mm-site .cfg-summary__list .pri.inc { color:var(--up); font-weight:500; }
+
+  .mm-site .cfg-total {
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding:14px 0 4px; border-top:1px dashed var(--line);
+    margin-top:6px;
+  }
+  .mm-site .cfg-total .lbl {
+    font-family:'JetBrains Mono', monospace; font-size:11px;
+    letter-spacing:.15em; text-transform:uppercase; color:var(--muted);
+  }
+  .mm-site .cfg-total .amt {
+    font-family:'EB Garamond', 'Georgia', serif; font-weight:500;
+    font-size:30px; line-height:1; color:var(--ink); letter-spacing:-.02em;
+  }
+  .mm-site .cfg-total .amt .sym { font-size:18px; color:var(--brand); margin-right:2px; }
+  .mm-site .cfg-vat {
+    font-family:'JetBrains Mono', monospace; font-size:10.5px;
+    letter-spacing:.12em; text-transform:uppercase;
+    color:var(--muted); text-align:right; margin:6px 0 16px;
+  }
+  .mm-site .cfg-vat b { color:var(--ink); font-weight:500; }
+
+  .mm-site .cfg-summary__cta {
+    width:100%; justify-content:center; margin-bottom:14px;
+  }
+  .mm-site .cfg-summary__trust {
+    display:flex; align-items:flex-start; gap:10px;
+    background:var(--brand-soft); border-radius:var(--radius);
+    padding:10px 12px;
+    font-size:12.5px; color:var(--brand-deep); line-height:1.4;
+  }
+  .mm-site .cfg-summary__trust .fa {
+    color:var(--brand); font-size:14px; flex-shrink:0; margin-top:1px;
+  }
+
+  /* -- Cross-link band ------------------------------------------- */
+  .mm-site .xlink {
+    padding:52px 0; background:var(--sand-2);
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  }
+  .mm-site .xlink-grid {
+    display:grid; grid-template-columns:1fr; gap:18px;
+  }
+  @media (min-width:768px) { .mm-site .xlink-grid { grid-template-columns:1fr 1fr; gap:20px; } }
+
+  .mm-site .xlink-card {
+    background:#fff; border:1px solid var(--line);
+    border-radius:var(--radius-lg); padding:26px 28px;
+    display:flex; flex-direction:column; gap:10px;
+    transition:all .25s ease; position:relative; overflow:hidden;
+  }
+  .mm-site .xlink-card::before {
+    content:""; position:absolute; left:0; right:0; top:0; height:3px;
+    background:linear-gradient(90deg, var(--brand), var(--brand-deep));
+    transform:scaleX(0); transform-origin:left; transition:transform .4s ease;
+  }
+  .mm-site .xlink-card:hover { border-color:var(--brand); box-shadow:var(--shadow-lg); transform:translateY(-3px); }
+  .mm-site .xlink-card:hover::before { transform:scaleX(1); }
+  .mm-site .xlink-card h5 { color:var(--brand); margin:0 0 6px; }
+  .mm-site .xlink-card h3 {
+    font-family:'EB Garamond', 'Georgia', serif; font-size:24px;
+    margin:0 0 6px; letter-spacing:-.015em;
+  }
+  .mm-site .xlink-card h3 em { color:var(--brand); font-style:italic; }
+  .mm-site .xlink-card p {
+    margin:0; font-size:14.5px; color:var(--slate); line-height:1.5; flex:1;
+  }
+  .mm-site .xlink-card__foot {
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding-top:14px; margin-top:4px; border-top:1px solid var(--line); gap:16px;
+  }
+  .mm-site .xlink-card__foot .from {
+    font-family:'JetBrains Mono', monospace; font-size:11px;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+  }
+  .mm-site .xlink-card__foot .from b {
+    font-family:'EB Garamond', 'Georgia', serif; font-size:20px;
+    color:var(--ink); font-weight:500; margin-left:6px; letter-spacing:-.01em;
+  }
+  .mm-site .xlink-card__foot .arr {
+    color:var(--brand); font-weight:500; font-size:14px;
+    display:inline-flex; align-items:center; gap:7px;
+  }
+  .mm-site .xlink-card:hover .arr .fa { transform:translateX(4px); }
+  .mm-site .xlink-card__foot .arr .fa { transition:transform .2s ease; }
+
+  /* -- Section head for content sections ------------------------- */
+  .mm-site .section-head-narrow {
+    max-width:760px; margin:0 auto 40px; text-align:center;
+  }
+  .mm-site .section-head-narrow h2 { margin:0 0 12px; }
+  .mm-site .section-head-narrow p {
+    font-size:15.5px; color:var(--slate); margin:0 auto; max-width:620px;
+  }
+</style>
+
+</head>
+<body>
+
+<!-- ===================================================================
+     TOPBAR + NAV (sticky together)
+     =================================================================== -->
+<div class="site-header">
+<div class="topbar">
+  <div class="mm-container inner">
+    <div>
+      <a href="tel:03302236655"><i class="fa fa-phone"></i>0330 223 66 55</a>
+      <span class="sep hide-xs">|</span>
+      <a class="hide-xs" href="mailto:sales@multiplemonitors.co.uk"><i class="fa fa-envelope-o"></i>sales@multiplemonitors.co.uk</a>
+    </div>
+    <div>
+      <span class="hide-xs"><a href="#"><i class="fa fa-user" style="color:var(--accent);"></i>Existing Customer Login</a></span>
+      <span class="show-xs"><a href="#"><i class="fa fa-shopping-basket"></i>Basket <strong>(0)</strong></a></span>
+    </div>
+  </div>
+</div>
+
+<div class="navwrap">
+  <div class="mm-container nav-inner">
+    <a href="/" class="brand-mark" aria-label="Multiple Monitors home">
+      <img src="https://www.multiplemonitors.co.uk/images/mm-logo-trans.png" alt="Multiple Monitors Ltd" />
+      <span class="brand-est">Est 2008<b>UK Specialist</b></span>
+    </a>
+
+    <nav class="mainnav">
+      <a href="/">Home</a>
+      <a href="/computers/" class="is-trader">Computers</a>
+      <a href="/bundles/">Bundles</a>
+      <a href="/stands/">Stands</a>
+      <a href="/display-systems/">Monitor Arrays</a>
+    </nav>
+
+    <div class="nav-actions">
+      <div class="nav-cta">
+        <a href="/shop/pc/viewcart.asp" class="cart-btn" aria-label="View basket">
+          <i class="fa fa-shopping-basket"></i>
+          <span>Basket (0)</span>
+        </a>
+      </div>
+      <button class="nav-toggle" aria-label="Open menu" onclick="document.getElementById('mobnav').classList.toggle('is-open')"><i class="fa fa-bars"></i></button>
+    </div>
+  </div>
+  <div class="mobnav" id="mobnav">
+    <a href="/trading-computers/">Trading Computers</a>
+    <a href="/computers/">Computers</a>
+    <a href="/display-systems/">Monitor Arrays</a>
+    <a href="/stands/">Stands</a>
+    <a href="/bundles/">Bundles</a>
+    <a href="/blog/">Blog</a>
+  </div>
+</div>
+</div><!-- /.site-header -->
+
+<div class="mm-site">
+
+<!-- ===================================================================
+     BREADCRUMB
+     =================================================================== -->
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <div class="container inner">
+    <a href="/">Home</a>
+    <span class="sep">/</span>
+    <a href="/computers/">Computers</a>
+    <span class="sep">/</span>
+    <a href="/trading-computers/">Trading</a>
+    <span class="sep">/</span>
+    <span class="current">Trader PC</span>
+  </div>
+</nav>
+
+<!-- ===================================================================
+     PRODUCT HERO (gallery + buy-box)
+     =================================================================== -->
+<section class="pd-hero">
+  <div class="container">
+    <div class="pd-hero-grid">
+
+      <!-- Gallery column -->
+      <div class="pd-gallery reveal">
+        <div class="pd-gallery__main">
+          <span class="pd-gallery__chip">
+            <span class="dot"></span><span class="acc">5YR</span>HARDWARE&nbsp;COVER
+          </span>
+          <!-- Placeholder catalog image; real product photography needed. -->
+          <img id="pdMainImg" src="https://www.multiplemonitors.co.uk/shop/pc/catalog/antecp7_general.jpg" alt="Trader PC &mdash; Fractal Design case" />
+          <span class="pd-gallery__sku">SKU &middot; MM-TRA1</span>
+        </div>
+        <div class="pd-gallery__thumbs">
+          <div class="pd-thumb is-active" data-img="https://www.multiplemonitors.co.uk/shop/pc/catalog/antecp7_general.jpg">
+            <img src="https://www.multiplemonitors.co.uk/shop/pc/catalog/antecp7_general.jpg" alt="Case exterior" />
+          </div>
+          <div class="pd-thumb" data-img="https://www.multiplemonitors.co.uk/shop/pc/catalog/antecp7_detail.jpg">
+            <img src="https://www.multiplemonitors.co.uk/shop/pc/catalog/antecp7_detail.jpg" alt="Case detail" />
+          </div>
+          <div class="pd-thumb" data-img="https://www.multiplemonitors.co.uk/shop/pc/catalog/intel12cpu_general.jpg">
+            <img src="https://www.multiplemonitors.co.uk/shop/pc/catalog/intel12cpu_general.jpg" alt="Intel i5 CPU" />
+          </div>
+          <div class="pd-thumb" data-img="https://www.multiplemonitors.co.uk/shop/pc/catalog/nvidiaT600_general.jpg">
+            <img src="https://www.multiplemonitors.co.uk/shop/pc/catalog/nvidiaT600_general.jpg" alt="nVidia RTX A400 GPU" />
+          </div>
+          <div class="pd-thumb placeholder">
+            <i class="fa fa-play-circle-o"></i>
+            <span>60-sec<br>walkthrough</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buy-box column -->
+      <aside class="pd-buybox reveal" style="transition-delay:.08s">
+        <div class="eyebrow">2026 Refresh &middot; Entry-level trader</div>
+        <h1>Trader <em>PC</em></h1>
+        <p class="pitch">
+          The trader&rsquo;s entry point. Built in the UK around the Intel i5 14400F,
+          spec&rsquo;d for MT4, TradingView, TradeStation and NinjaTrader up to four screens.
+          Silent, tested, shipped with everything you need.
+        </p>
+
+        <div class="pd-tp">
+          <span class="tp-stars"><span></span><span></span><span></span><span></span><span></span></span>
+          <b>4.9</b>
+          <small>&middot; 90+ reviews</small>
+          <a href="#reviews">Read reviews <i class="fa fa-arrow-down" style="font-size:10px;"></i></a>
+        </div>
+
+        <div class="pd-price">
+          <div>
+            <div class="pd-price__from">From</div>
+            <div class="pd-price__num"><span class="sym">&pound;</span>1,045</div>
+          </div>
+          <div class="pd-price__vat">
+            <b>&pound;1,254.00</b> inc VAT<br>
+            <span style="text-transform:none; font-family:'Geist', sans-serif; letter-spacing:0; color:var(--slate);">+ UK delivery &pound;10 &middot; international by quote</span>
+          </div>
+        </div>
+
+        <div>
+          <span class="pd-cutoff">
+            <span class="dot"></span>
+            Order before <b>14:30 today</b> &middot; delivered Tuesday 21st April
+          </span>
+        </div>
+
+        <div class="pd-incl">
+          <div class="item">
+            <i class="fa fa-flag"></i>
+            <div><b>UK&ndash;built</b><small>Since 2008</small></div>
+          </div>
+          <div class="item">
+            <i class="fa fa-shield"></i>
+            <div><b>5-year cover</b><small>1yr OnSite</small></div>
+          </div>
+          <div class="item">
+            <i class="fa fa-life-ring"></i>
+            <div><b>Lifetime support</b><small>Phone &amp; remote</small></div>
+          </div>
+        </div>
+
+        <div class="pd-cta">
+          <a href="#configure" class="btn btn-primary btn-lg">
+            Configure &amp; order <i class="fa fa-arrow-right"></i>
+          </a>
+          <a href="tel:03302236655" class="ghost-link">
+            <i class="fa fa-phone"></i>Call Darren about a custom spec
+          </a>
+        </div>
+
+        <div class="pd-foot">
+          <span><i class="fa fa-television"></i>As seen on BBC Traders</span>
+          <span><i class="fa fa-check"></i>Bench-tested pre-ship</span>
+          <span><i class="fa fa-wrench"></i>Upgrade paths included</span>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     TRUST STRIP
+     =================================================================== -->
+<section class="truststrip">
+  <div class="container">
+    <div class="inner">
+      <div class="trust-item bbc">
+        <div class="icon"><i class="fa fa-television"></i></div>
+        <div>
+          <div class="label">As seen on the <span class="bbc-mark">BBC</span></div>
+          <div class="val">Traders: Millions by the Minute</div>
+        </div>
+      </div>
+      <div class="trust-item tp">
+        <div class="icon"><i class="fa fa-star"></i></div>
+        <div>
+          <div class="label">Trustpilot &middot; 4.9&thinsp;/&thinsp;5</div>
+          <div class="val">90+ Unsolicited Reviews</div>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="icon"><i class="fa fa-clock-o"></i></div>
+        <div>
+          <div class="label">Since 2008</div>
+          <div class="val">1,000s of Trading PCs delivered</div>
+        </div>
+      </div>
+      <div class="trust-item accent">
+        <div class="icon"><i class="fa fa-line-chart"></i></div>
+        <div>
+          <div class="label">Published benchmarks</div>
+          <div class="val">Our own data on TraderSpec.com</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     KEY SPECS GRID (base configuration)
+     =================================================================== -->
+<section class="s specs">
+  <div class="container">
+    <div class="section-head-narrow reveal">
+      <h5 style="margin-bottom:14px;">Base configuration</h5>
+      <h2>What&rsquo;s in the <span class="display-em">£1,045 machine</span>.</h2>
+      <p>Everything listed here is what you get at the starting price &mdash; before upgrades. Each one is the part we actually recommend, not the cheapest we could source.</p>
+    </div>
+
+    <div class="spec-grid">
+      <div class="spec-card reveal">
+        <div class="spec-card__icon"><i class="fa fa-microchip"></i></div>
+        <div class="spec-card__label">Processor</div>
+        <div class="spec-card__value">Intel i5 14400F</div>
+        <div class="spec-card__desc">10 cores / 16 threads, 2.5&ndash;4.7&nbsp;GHz. Tuned for single-thread chart rendering &mdash; the lever that matters most for MT4 / TradingView / MultiCharts.</div>
+      </div>
+      <div class="spec-card reveal" style="transition-delay:.06s">
+        <div class="spec-card__icon"><i class="fa fa-database"></i></div>
+        <div class="spec-card__label">Memory</div>
+        <div class="spec-card__value">16&nbsp;GB DDR4 3200</div>
+        <div class="spec-card__desc">Plenty for most retail trading stacks. Upgrade to 32 or 64&nbsp;GB if you run heavy scans, Bloomberg, or keep 20+ charts open.</div>
+      </div>
+      <div class="spec-card reveal" style="transition-delay:.12s">
+        <div class="spec-card__icon"><i class="fa fa-hdd-o"></i></div>
+        <div class="spec-card__label">Storage</div>
+        <div class="spec-card__value">500&nbsp;GB Kingston NVMe</div>
+        <div class="spec-card__desc">M.2 SSD, 3,500&nbsp;MB/s read. Bootable backup drive and secondary SSDs available as options.</div>
+      </div>
+      <div class="spec-card reveal">
+        <div class="spec-card__icon"><i class="fa fa-desktop"></i></div>
+        <div class="spec-card__label">Graphics</div>
+        <div class="spec-card__value">nVidia RTX A400 (4 screens)</div>
+        <div class="spec-card__desc">Professional-grade GPU with 4&nbsp;GB. Qualified against every major trading platform. Upgrade to 8-screen dual-GPU from +&pound;165.</div>
+      </div>
+      <div class="spec-card reveal" style="transition-delay:.06s">
+        <div class="spec-card__icon"><i class="fa fa-windows"></i></div>
+        <div class="spec-card__label">Operating system</div>
+        <div class="spec-card__value">Windows 11 Home</div>
+        <div class="spec-card__desc">Pre-installed, activated, tuned for trading workloads. Pro edition available at +&pound;45. DisplayFusion multi-monitor software included.</div>
+      </div>
+      <div class="spec-card reveal" style="transition-delay:.12s">
+        <div class="spec-card__icon"><i class="fa fa-shield"></i></div>
+        <div class="spec-card__label">Warranty</div>
+        <div class="spec-card__value">5-year hardware cover</div>
+        <div class="spec-card__desc">1st year OnSite / collection. Plus <strong>lifetime</strong> remote support for the life of the machine &mdash; still helping customers who bought in 2013.</div>
+      </div>
+    </div>
+
+    <div class="spec-box reveal" style="transition-delay:.18s">
+      <div class="spec-box__lead">
+        <div class="spec-box__icon"><i class="fa fa-archive"></i></div>
+        <div>
+          <div class="spec-box__label">In the box</div>
+          <div class="spec-box__title">Everything you need to trade.</div>
+        </div>
+      </div>
+      <div class="spec-chips">
+        <span class="spec-chip"><i class="fa fa-check"></i>Fractal Design case</span>
+        <span class="spec-chip"><i class="fa fa-check"></i>BeQuiet 500&thinsp;W PSU</span>
+        <span class="spec-chip"><i class="fa fa-check"></i>UK power lead</span>
+        <span class="spec-chip"><i class="fa fa-check"></i>DisplayFusion licence</span>
+        <span class="spec-chip"><i class="fa fa-check"></i>Recovery drive</span>
+        <span class="spec-chip"><i class="fa fa-check"></i>Setup guide</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     CONFIGURATOR (inline stepper + sticky summary)
+     =================================================================== -->
+<section class="configurator" id="configure">
+  <div class="container">
+    <div class="cfg-head reveal">
+      <div>
+        <h5>Build your Trader PC</h5>
+        <h2>Configure it the way you&rsquo;ll <em>actually use it</em>.</h2>
+      </div>
+      <a href="tel:03302236655" class="talk-link"><i class="fa fa-phone"></i>Or call &mdash; 0330 223 66 55</a>
+    </div>
+
+    <div class="cfg-grid">
+
+      <!-- Options column -->
+      <div class="cfg-options-wrap reveal">
+
+        <!-- 1. CPU -->
+        <div class="cfg-row" data-group="cpu">
+          <div class="cfg-row__head">
+            <div class="cfg-row__label"><span class="n">1</span>Processor</div>
+            <div class="cfg-row__selected" data-selected>Intel i5 14400F &middot; 10C/16T</div>
+          </div>
+          <p class="cfg-row__help">
+            The CPU is the biggest factor in how fast your computer feels in day-to-day use.
+            More cores help with multi-tasking, backtests and heavier platforms.
+            <a href="#benchmarks">See our CPU benchmarks &rarr;</a>
+          </p>
+          <div class="cfg-options" role="radiogroup">
+            <button class="cfg-option is-selected" data-name="Intel i5 14400F &middot; 10C/16T" data-delta="0">
+              <span class="opt-name">Intel i5&nbsp;14400F</span>
+              <span class="opt-price std">Included</span>
+            </button>
+            <button class="cfg-option" data-name="Intel i5 14600KF &middot; 14C/20T" data-delta="65">
+              <span class="opt-name">Intel i5&nbsp;14600KF</span>
+              <span class="opt-price inc">+ &pound;65</span>
+            </button>
+            <button class="cfg-option" data-name="Intel i7 14700KF &middot; 20C/28T" data-delta="145">
+              <span class="opt-name">Intel i7&nbsp;14700KF</span>
+              <span class="opt-price inc">+ &pound;145</span>
+            </button>
+            <button class="cfg-option" data-name="Intel i9 14900KF &middot; 24C/32T" data-delta="265">
+              <span class="opt-name">Intel i9&nbsp;14900KF</span>
+              <span class="opt-price inc">+ &pound;265</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. RAM -->
+        <div class="cfg-row" data-group="ram">
+          <div class="cfg-row__head">
+            <div class="cfg-row__label"><span class="n">2</span>Memory</div>
+            <div class="cfg-row__selected" data-selected>16&nbsp;GB DDR4 3200</div>
+          </div>
+          <p class="cfg-row__help">
+            RAM dictates how many charts, platforms and browser tabs you can keep open at once.
+            16&nbsp;GB is plenty for MT4/TradingView setups. Upgrade if you run Bloomberg, scans, or VMs.
+          </p>
+          <div class="cfg-options" role="radiogroup">
+            <button class="cfg-option is-selected" data-name="16 GB DDR4 3200" data-delta="0">
+              <span class="opt-name">16&nbsp;GB</span>
+              <span class="opt-price std">Included</span>
+            </button>
+            <button class="cfg-option" data-name="32 GB DDR4 3200" data-delta="125">
+              <span class="opt-name">32&nbsp;GB</span>
+              <span class="opt-price inc">+ &pound;125</span>
+            </button>
+            <button class="cfg-option" data-name="64 GB DDR4 3200" data-delta="325">
+              <span class="opt-name">64&nbsp;GB</span>
+              <span class="opt-price inc">+ &pound;325</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. Screens / GPU -->
+        <div class="cfg-row" data-group="gpu">
+          <div class="cfg-row__head">
+            <div class="cfg-row__label"><span class="n">3</span>Screens supported</div>
+            <div class="cfg-row__selected" data-selected>Up to 4 screens &middot; RTX A400</div>
+          </div>
+          <p class="cfg-row__help">
+            Each screen needs a display output and enough GPU memory to drive it without artefacts.
+            We only ship professional-grade GPUs qualified against the major trading platforms.
+          </p>
+          <div class="cfg-options" role="radiogroup">
+            <button class="cfg-option is-selected" data-name="Up to 4 screens &middot; RTX A400" data-delta="0">
+              <span class="opt-name">4 screens &middot; A400 4&nbsp;GB</span>
+              <span class="opt-price std">Included</span>
+            </button>
+            <button class="cfg-option" data-name="Up to 8 screens &middot; Dual RTX A400" data-delta="165">
+              <span class="opt-name">8 screens &middot; Dual A400</span>
+              <span class="opt-price inc">+ &pound;165</span>
+            </button>
+            <button class="cfg-option" data-name="Up to 8 screens &middot; RTX 5050 8&nbsp;GB" data-delta="395">
+              <span class="opt-name">8 screens &middot; RTX 5050</span>
+              <span class="opt-price inc">+ &pound;395</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. Storage -->
+        <div class="cfg-row" data-group="storage">
+          <div class="cfg-row__head">
+            <div class="cfg-row__label"><span class="n">4</span>Primary storage</div>
+            <div class="cfg-row__selected" data-selected>500&nbsp;GB Kingston NVMe</div>
+          </div>
+          <p class="cfg-row__help">
+            NVMe SSDs are what make Windows feel instant. Size it for your data, software, and years
+            of chart history &mdash; most traders are happy with 500&nbsp;GB or 1&nbsp;TB.
+          </p>
+          <div class="cfg-options" role="radiogroup">
+            <button class="cfg-option is-selected" data-name="500 GB Kingston NVMe" data-delta="0">
+              <span class="opt-name">500&nbsp;GB NVMe</span>
+              <span class="opt-price std">Included</span>
+            </button>
+            <button class="cfg-option" data-name="1 TB Kingston NVMe" data-delta="65">
+              <span class="opt-name">1&nbsp;TB NVMe</span>
+              <span class="opt-price inc">+ &pound;65</span>
+            </button>
+            <button class="cfg-option" data-name="2 TB Kingston NVMe" data-delta="125">
+              <span class="opt-name">2&nbsp;TB NVMe</span>
+              <span class="opt-price inc">+ &pound;125</span>
+            </button>
+            <button class="cfg-option" data-name="4 TB Kingston NVMe" data-delta="375">
+              <span class="opt-name">4&nbsp;TB NVMe</span>
+              <span class="opt-price inc">+ &pound;375</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 5. Operating system -->
+        <div class="cfg-row" data-group="os">
+          <div class="cfg-row__head">
+            <div class="cfg-row__label"><span class="n">5</span>Operating system</div>
+            <div class="cfg-row__selected" data-selected>Windows 11 Home</div>
+          </div>
+          <p class="cfg-row__help">
+            Both editions come pre-installed, activated and tuned for trading. Pro adds BitLocker,
+            Remote Desktop host, and domain join &mdash; mainly useful if you connect to a corporate network.
+          </p>
+          <div class="cfg-options" role="radiogroup">
+            <button class="cfg-option is-selected" data-name="Windows 11 Home" data-delta="0">
+              <span class="opt-name">Windows 11 Home</span>
+              <span class="opt-price std">Included</span>
+            </button>
+            <button class="cfg-option" data-name="Windows 11 Pro" data-delta="45">
+              <span class="opt-name">Windows 11 Pro</span>
+              <span class="opt-price inc">+ &pound;45</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 6. Warranty -->
+        <div class="cfg-row" data-group="warranty">
+          <div class="cfg-row__head">
+            <div class="cfg-row__label"><span class="n">6</span>Hardware warranty</div>
+            <div class="cfg-row__selected" data-selected>5 years &middot; 1yr OnSite (std)</div>
+          </div>
+          <p class="cfg-row__help">
+            Every Trader PC gets 5-year hardware cover by default. Extend the OnSite portion if you
+            can&rsquo;t afford a collection-week of downtime in the first few years of trading.
+          </p>
+          <div class="cfg-options" role="radiogroup">
+            <button class="cfg-option is-selected" data-name="5yr cover &middot; 1yr OnSite" data-delta="0">
+              <span class="opt-name">Standard &middot; 1yr OnSite</span>
+              <span class="opt-price std">Included</span>
+            </button>
+            <button class="cfg-option" data-name="5yr cover &middot; 2yr OnSite" data-delta="75">
+              <span class="opt-name">+ 2nd year OnSite</span>
+              <span class="opt-price inc">+ &pound;75</span>
+            </button>
+            <button class="cfg-option" data-name="5yr cover &middot; 3yr OnSite" data-delta="150">
+              <span class="opt-name">+ 3rd year OnSite</span>
+              <span class="opt-price inc">+ &pound;150</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 7. Extras -->
+        <div class="cfg-row" data-group="extras">
+          <div class="cfg-row__head">
+            <div class="cfg-row__label"><span class="n">7</span>Extras</div>
+            <div class="cfg-row__selected" data-selected>None</div>
+          </div>
+          <p class="cfg-row__help">
+            Everything you&rsquo;d otherwise grab from Amazon at the last minute. Ticked means
+            it arrives in the same box, tested, and included in the warranty.
+          </p>
+          <div class="cfg-options" role="radiogroup">
+            <button class="cfg-option" data-name="Wireless keyboard &amp; mouse" data-delta="25">
+              <span class="opt-name">Wireless KB &amp; mouse</span>
+              <span class="opt-price inc">+ &pound;25</span>
+            </button>
+            <button class="cfg-option" data-name="Speakers" data-delta="20">
+              <span class="opt-name">Speakers</span>
+              <span class="opt-price inc">+ &pound;20</span>
+            </button>
+            <button class="cfg-option" data-name="Wi-Fi AX + Bluetooth" data-delta="40">
+              <span class="opt-name">Wi-Fi AX + BT</span>
+              <span class="opt-price inc">+ &pound;40</span>
+            </button>
+            <button class="cfg-option" data-name="Bootable backup drive" data-delta="145">
+              <span class="opt-name">Bootable backup</span>
+              <span class="opt-price inc">+ &pound;145</span>
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /cfg-options-wrap -->
+
+      <!-- Sticky summary sidebar -->
+      <aside class="cfg-summary reveal" style="transition-delay:.08s">
+        <div class="cfg-summary__card">
+          <div class="cfg-summary__head">
+            <h5>Your Trader PC</h5>
+            <span class="tick"><i class="fa fa-check" style="margin-right:4px;"></i>Live</span>
+          </div>
+
+          <ul class="cfg-summary__list">
+            <li><span class="lbl">CPU</span><span class="val" data-sum="cpu">Intel i5 14400F</span><span class="pri" data-sum-pri="cpu">Std</span></li>
+            <li><span class="lbl">RAM</span><span class="val" data-sum="ram">16 GB DDR4</span><span class="pri" data-sum-pri="ram">Std</span></li>
+            <li><span class="lbl">Screens</span><span class="val" data-sum="gpu">Up to 4 &middot; A400</span><span class="pri" data-sum-pri="gpu">Std</span></li>
+            <li><span class="lbl">Storage</span><span class="val" data-sum="storage">500 GB NVMe</span><span class="pri" data-sum-pri="storage">Std</span></li>
+            <li><span class="lbl">OS</span><span class="val" data-sum="os">Win 11 Home</span><span class="pri" data-sum-pri="os">Std</span></li>
+            <li><span class="lbl">Warranty</span><span class="val" data-sum="warranty">5yr &middot; 1yr OnSite</span><span class="pri" data-sum-pri="warranty">Std</span></li>
+            <li><span class="lbl">Extras</span><span class="val" data-sum="extras">None</span><span class="pri" data-sum-pri="extras">&mdash;</span></li>
+          </ul>
+
+          <div class="cfg-total">
+            <span class="lbl">Your price</span>
+            <span class="amt"><span class="sym">&pound;</span><span data-total-ex>1,045</span></span>
+          </div>
+          <div class="cfg-vat">
+            <b>&pound;<span data-total-inc>1,254.00</span></b> inc VAT
+          </div>
+
+          <a href="/shop/pc/viewprod.asp?idproduct=MM-TRA1" class="btn btn-primary btn-lg cfg-summary__cta">
+            <i class="fa fa-shopping-basket"></i>Add to basket
+          </a>
+
+          <div class="cfg-summary__trust">
+            <i class="fa fa-truck"></i>
+            <div>
+              <strong>Free UK delivery on trader bundles.</strong>
+              Single PCs from &pound;10. Order by 14:30 today for Tuesday.
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </div><!-- /cfg-grid -->
+  </div>
+</section>
+
+<!-- ===================================================================
+     BENEFIT PILLARS — the four that made the cut (audit §4.8.3)
+     =================================================================== -->
+<section class="s">
+  <div class="container">
+    <div class="section-head-narrow reveal">
+      <h5>Why this machine</h5>
+      <h2>Four reasons traders <span class="display-em">choose us</span>.</h2>
+      <p>The rest of the pitch lives on the <a href="/trading-computers/">trading computers page</a> &mdash; this is the short list that actually decides the sale.</p>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar reveal">
+        <div class="icon"><i class="fa fa-bar-chart"></i></div>
+        <h4>Spec&rsquo;d against the platforms</h4>
+        <p>Every CPU option benchmarked on MT4, TradingView, NinjaTrader and TradeStation &mdash; so you can pick the chip that wins your workload, not the one with the biggest number.</p>
+        <span class="tag"><a href="/trading-computers/#compare" style="color:inherit;">See comparison &rarr;</a></span>
+      </div>
+      <div class="pillar reveal" style="transition-delay:.06s">
+        <div class="icon"><i class="fa fa-desktop"></i></div>
+        <h4>Up to 8 screens + DisplayFusion</h4>
+        <p>Start at 4, upgrade to 8 with a dual-GPU at any time. DisplayFusion multi-monitor licence included &mdash; the standard for managing split-screen trading layouts.</p>
+        <span class="tag">Included &middot; &pound;35 value</span>
+      </div>
+      <div class="pillar reveal" style="transition-delay:.12s">
+        <div class="icon"><i class="fa fa-flag"></i></div>
+        <h4>Built, tuned &amp; tested in the UK</h4>
+        <p>Assembled by hand in our workshop. Stress-tested for 24 hours. Burned-in Windows with trading-specific tuning. Shipped silent &mdash; not just quiet.</p>
+        <span class="tag">Since 2008</span>
+      </div>
+      <div class="pillar reveal" style="transition-delay:.18s">
+        <div class="icon"><i class="fa fa-shield"></i></div>
+        <h4>5-year cover + lifetime support</h4>
+        <p>Two years longer than Scan. Three years longer than most US builders. Plus phone and remote support for the lifetime of the machine &mdash; no support contract clock.</p>
+        <span class="tag">Standard &middot; Not an extra</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     BENCHMARK PANEL — CPU upgrade options (single-thread)
+     =================================================================== -->
+<section class="s depth" id="benchmarks">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <h5>TraderSpec data</h5>
+        <h2>What <span class="display-em">each CPU upgrade</span> actually buys you.</h2>
+        <p style="max-width:720px; margin-top:12px;">Single-thread chart-rendering performance across the four CPU options available on Trader PC. Higher is better. The i5 14400F is the sweet spot for most traders &mdash; the i7 and i9 earn their price only if you&rsquo;re running heavier workloads.</p>
+      </div>
+    </div>
+
+    <div class="bench-panels">
+      <div class="bench-panel reveal">
+        <h4>Single-thread chart performance</h4>
+        <span class="sub">Higher is better &middot; indicative mockup data</span>
+        <div class="bench-bars">
+          <div class="bench-row"><span class="name ours">i9 14900KF (+&pound;265)</span><div class="barwrap"><div class="bar" style="width:98%"></div></div><span class="val">98</span></div>
+          <div class="bench-row"><span class="name ours">i7 14700KF (+&pound;145)</span><div class="barwrap"><div class="bar" style="width:93%"></div></div><span class="val">93</span></div>
+          <div class="bench-row"><span class="name ours">i5 14600KF (+&pound;65)</span><div class="barwrap"><div class="bar" style="width:88%"></div></div><span class="val">88</span></div>
+          <div class="bench-row"><span class="name ours">i5 14400F (std)</span><div class="barwrap"><div class="bar" style="width:84%"></div></div><span class="val">84</span></div>
+          <div class="bench-row"><span class="name">Off-the-shelf PC</span><div class="barwrap"><div class="bar alt" style="width:45%"></div></div><span class="val">45</span></div>
+        </div>
+        <p class="bench-caption">MT4, TradingView, MultiCharts &mdash; chart rendering is a single-thread problem. Going from the i5 14400F to the 14600KF is a 5% uplift for &pound;65; the i7 and i9 gains are real but diminishing.</p>
+      </div>
+
+      <div class="bench-panel reveal" style="transition-delay:.08s">
+        <h4>Backtest &amp; multi-task throughput</h4>
+        <span class="sub">Higher is better &middot; indicative mockup data</span>
+        <div class="bench-bars">
+          <div class="bench-row"><span class="name ours">i9 14900KF (+&pound;265)</span><div class="barwrap"><div class="bar" style="width:95%"></div></div><span class="val">95</span></div>
+          <div class="bench-row"><span class="name ours">i7 14700KF (+&pound;145)</span><div class="barwrap"><div class="bar" style="width:86%"></div></div><span class="val">86</span></div>
+          <div class="bench-row"><span class="name ours">i5 14600KF (+&pound;65)</span><div class="barwrap"><div class="bar" style="width:76%"></div></div><span class="val">76</span></div>
+          <div class="bench-row"><span class="name ours">i5 14400F (std)</span><div class="barwrap"><div class="bar" style="width:64%"></div></div><span class="val">64</span></div>
+          <div class="bench-row"><span class="name">Off-the-shelf PC</span><div class="barwrap"><div class="bar alt" style="width:38%"></div></div><span class="val">38</span></div>
+        </div>
+        <p class="bench-caption">NinjaTrader strategy analyser, TradeStation backtests, Bloomberg multi-session. If you do these things &mdash; or think you will &mdash; step up a CPU tier, or step up to the <a href="/products/trader-pro/" style="color:var(--brand); font-weight:500;">Trader Pro</a>.</p>
+      </div>
+    </div>
+
+    <p style="text-align:center; margin:36px 0 0;" class="reveal">
+      <a href="https://traderspec.com" target="_blank" rel="noopener" class="btn btn-ghost">
+        See the full methodology on TraderSpec.com <i class="fa fa-external-link"></i>
+      </a>
+    </p>
+  </div>
+</section>
+
+<!-- ===================================================================
+     CROSS-LINK BAND (audit §4.8.5)
+     =================================================================== -->
+<section class="xlink">
+  <div class="container">
+    <div class="xlink-grid">
+
+      <a href="/products/trader-pro/" class="xlink-card reveal">
+        <h5>Considering Trader Pro instead?</h5>
+        <h3>Step up to <em>Trader Pro</em></h3>
+        <p>If you&rsquo;re running NinjaTrader strategy analysers overnight, using Bloomberg, or going past 6 screens, the extra cores of the Trader Pro earn their price. Core Ultra CPUs &middot; DDR5 &middot; same 5-year cover.</p>
+        <div class="xlink-card__foot">
+          <span class="from">From<b>&pound;1,345</b></span>
+          <span class="arr">See Trader Pro <i class="fa fa-arrow-right"></i></span>
+        </div>
+      </a>
+
+      <a href="/trading-computers/#compare" class="xlink-card reveal" style="transition-delay:.06s">
+        <h5>Not sure which is right?</h5>
+        <h3>Compare <em>side-by-side</em></h3>
+        <p>Our comparison table rates both machines on the platforms you actually run &mdash; MT4, TradingView, NinjaTrader, TradeStation, Bloomberg, backtesting &mdash; using live benchmark data. Pick the right one in 60 seconds.</p>
+        <div class="xlink-card__foot">
+          <span class="from">Takes<b>60 sec</b></span>
+          <span class="arr">Compare both <i class="fa fa-arrow-right"></i></span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     CUSTOMER LOGOS
+     =================================================================== -->
+<section class="firms">
+  <div class="container">
+    <h5>You&rsquo;re in great company</h5>
+    <div class="logo-strip">
+      <div class="logo-ph">Oakwood Capital<small>Hedge fund</small></div>
+      <div class="logo-ph">Meridian Prop<small>Prop trading</small></div>
+      <div class="logo-ph">Strathclyde FX<small>FX desk</small></div>
+      <div class="logo-ph">Harbour &amp; Lane<small>Wealth mgmt</small></div>
+      <div class="logo-ph">Hallbrook Futures<small>Futures desk</small></div>
+    </div>
+    <p style="text-align:center; color:var(--muted); font-size:12.5px; margin:22px 0 0; font-family:'EB Garamond',serif; font-style:italic;">Representative placeholder &mdash; real customer logos subject to permission.</p>
+  </div>
+</section>
+
+<!-- ===================================================================
+     REVIEWS
+     =================================================================== -->
+<section class="s reviews" id="reviews">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <h5>Trader reviews</h5>
+        <h2>Traders who picked the <span class="display-em">Trader PC</span>.</h2>
+        <p>All reviews are voluntary &mdash; we don&rsquo;t ask for them.</p>
+      </div>
+      <div class="tp-summary">
+        <span class="tp-stars"><span></span><span></span><span></span><span></span><span></span></span>
+        <span><b>4.9</b> <small>&middot; based on 90+ reviews</small></span>
+        <a href="#" class="link" style="margin-left:10px;">See all on Trustpilot <i class="fa fa-external-link"></i></a>
+      </div>
+    </div>
+
+    <div class="reviews-grid">
+      <div class="review reveal">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <span class="platform">MT4 / MT5 &middot; 4-screen</span>
+        <h4>Perfect spec for a part-time FX trader</h4>
+        <p>Wanted a proper machine without going mad on spec. Trader PC with the i5 14600KF and 32&nbsp;GB RAM runs four MT5 instances, TradingView and a browser with 20+ tabs without breaking a sweat. Arrived silent &mdash; I honestly thought it was off for the first ten minutes.</p>
+        <div class="meta">
+          <div class="ava">MD</div>
+          <div class="who">Michael D., Manchester</div>
+          <div class="when">03&thinsp;/&thinsp;2026</div>
+        </div>
+      </div>
+      <div class="review reveal" style="transition-delay:.08s">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <span class="platform">TradingView &middot; 4-screen</span>
+        <h4>Darren talked me <em>down</em> from the Pro</h4>
+        <p>Originally asked for a Trader Pro. Darren asked what I actually do &mdash; TradingView, IG, maybe 15 charts &mdash; and told me the Trader PC would do it with money to spare. Saved me about &pound;400 I would have spent chasing specs I&rsquo;d never use. Four months in, zero regrets.</p>
+        <div class="meta">
+          <div class="ava">RL</div>
+          <div class="who">Rachel L., Bristol</div>
+          <div class="when">02&thinsp;/&thinsp;2026</div>
+        </div>
+      </div>
+      <div class="review reveal" style="transition-delay:.16s">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <span class="platform">NinjaTrader &middot; 6-screen upgrade</span>
+        <h4>Upgraded from 4 to 6 screens &mdash; painless</h4>
+        <p>Bought a Trader PC last year running 4 screens. This month I added the 8-screen GPU upgrade &mdash; Multiple Monitors posted the card, I installed it with a ten-minute phone call walking me through it. Try getting that level of support from Scan or Amazon.</p>
+        <div class="meta">
+          <div class="ava">JP</div>
+          <div class="who">Jon P., Edinburgh</div>
+          <div class="when">01&thinsp;/&thinsp;2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     FAQ (product-specific, audit §4.8.7)
+     =================================================================== -->
+<section class="s depth" id="faq">
+  <div class="container-narrow">
+    <div class="section-head reveal" style="display:block; margin-bottom:38px;">
+      <h5>Trader PC questions</h5>
+      <h2>The six questions we get <span class="display-em">most often</span>.</h2>
+      <p style="margin-top:12px;">Specific to this machine &mdash; not generic PC-shop answers. Got a question not listed? <a href="tel:03302236655" style="color:var(--brand); font-weight:500;">Call us on 0330 223 66 55</a>.</p>
+    </div>
+
+    <div class="faq-list reveal">
+      <details class="faq-item" open>
+        <summary>Can I upgrade the CPU, RAM or storage later?</summary>
+        <div class="faq-body">
+          <p><strong>Yes &mdash; every Trader PC is designed for upgrades.</strong> The motherboard supports every 14th-gen Intel CPU option we sell (up to the i9 14900KF), so you can start with the i5 14400F now and upgrade later without changing the board.</p>
+          <p>RAM is straightforward &mdash; two DIMM slots, up to 64&nbsp;GB DDR4 3200. Storage adds the same way: a second M.2 slot and 4 SATA ports for extra SSDs or HDDs. We&rsquo;ll walk you through any upgrade on the phone &mdash; usually a 15-minute job.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Does Windows come pre-installed and activated?</summary>
+        <div class="faq-body">
+          <p>Yes. Every machine ships with Windows 11 Home fully installed, activated, and tuned for trading workloads &mdash; Windows Defender exclusions for your platforms, telemetry minimised, power plan set to high-performance, scheduled updates set for out-of-hours. DisplayFusion is also pre-installed and licensed.</p>
+          <p>Windows 11 Pro is available at +&pound;45 if you need BitLocker, Remote Desktop host, or domain join.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>What&rsquo;s included in the box?</summary>
+        <div class="faq-body">
+          <p>The PC itself, a UK power lead, a printed setup guide, and a recovery USB drive for Windows reinstalls. Anything you add in the configurator (keyboard, speakers, Wi-Fi card, etc.) arrives in the same carton, bench-tested with the machine.</p>
+          <p>What&rsquo;s <em>not</em> in the box: monitors and cables. If you need those, a <a href="/bundles/" style="color:var(--brand); font-weight:500;">trader bundle</a> is typically &pound;100&ndash;&pound;200 cheaper than buying separately.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How do I connect my existing monitors?</summary>
+        <div class="faq-body">
+          <p>The standard nVidia RTX A400 has four mini-DisplayPort outputs and ships with four mini-DP to DisplayPort adapters. If your monitors have HDMI only, we can throw in DP-to-HDMI cables at cost &mdash; just call and ask.</p>
+          <p>If you&rsquo;re running more than four screens or monitors with unusual inputs, tell us what you have when you order and we&rsquo;ll ship with the right cables in the box.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>What happens if a part fails under warranty?</summary>
+        <div class="faq-body">
+          <p>In year one, we come to you (OnSite) or collect and repair &mdash; at our discretion, usually depending on what&rsquo;s failed. Years two to five are collection or return-to-base. You can extend OnSite to year two (+&pound;75) or year three (+&pound;150) at checkout.</p>
+          <p>In practice: if a trader&rsquo;s machine goes down during market hours, we&rsquo;ll often courier a replacement part the same day and recover yours at leisure. Not a written policy &mdash; just what we do because we&rsquo;d want someone to do it for us.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How do I move my trading software and data across from my old PC?</summary>
+        <div class="faq-body">
+          <p>We do this for free as part of lifetime support. Phone or email us the day your new machine arrives &mdash; we&rsquo;ll remote-connect (TeamViewer or similar), help you install MT4/MT5/NinjaTrader/TradingView, migrate your templates, indicators, EAs and chart layouts, and get your broker connections back up. Usually takes 45&ndash;90 minutes depending on how much you&rsquo;re moving.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="darren-inline reveal">
+      <div class="avatar"><i class="fa fa-user"></i></div>
+      <div>
+        <h4>Question not on the list?</h4>
+        <p>Seventeen years of pre-sale conversations means we&rsquo;ve heard most things. Phone or email Darren &mdash; he&rsquo;ll give you a straight answer, or tell you honestly if the Trader PC isn&rsquo;t the right machine for you.</p>
+      </div>
+      <div>
+        <a href="tel:03302236655" class="btn btn-primary"><i class="fa fa-phone"></i>0330 223 66 55</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     DARREN CTA
+     =================================================================== -->
+<section class="darren" id="darren">
+  <div class="container">
+    <div class="darren-grid">
+      <div class="darren-photo reveal">
+        <img src="/images/pages/darren.jpg" alt="Darren Atkinson, founder of Multiple Monitors Ltd">
+      </div>
+      <div class="reveal" style="transition-delay:.08s">
+        <h5>Still deciding?</h5>
+        <h2>Talk to <em>Darren</em> &mdash; the founder, not a call centre.</h2>
+        <p>If you want a Trader PC spec&rsquo;d for exactly what you do &mdash; which broker, which platform, how many charts, whether you backtest overnight &mdash; fifteen minutes on the phone usually does it. No pushy sales, no corner-cutting. Just the right machine for the workload.</p>
+        <div class="darren-ctas">
+          <a href="tel:03302236655" class="btn btn-primary btn-lg"><i class="fa fa-phone"></i>0330 223 66 55</a>
+          <a href="#" class="btn btn-ghost btn-lg"><i class="fa fa-calendar"></i>Book a 15-min call</a>
+        </div>
+        <div class="darren-sig">&mdash; Darren Atkinson, founder, Multiple Monitors Ltd</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     STICKY CONFIGURE CTA
+     =================================================================== -->
+<div class="sticky-cta" id="stickyCta">
+  <div class="txt">
+    <strong>Trader PC &middot; <span data-sticky-price>&pound;1,045</span> + VAT</strong>
+    <span>Order by 14:30 today &middot; delivered Tuesday</span>
+  </div>
+  <a href="#configure" class="btn btn-primary btn-sm">Configure <i class="fa fa-arrow-right"></i></a>
+</div>
+
+</div><!-- /.mm-site -->
+
+<!-- ===================================================================
+     FOOTER
+     =================================================================== -->
+<footer>
+  <div class="mm-container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo-w">
+          <img src="https://www.multiplemonitors.co.uk/images/mm-logo-trans-w.png" alt="" style="height:40px; filter:brightness(0.8);">
+        </div>
+        <p>UK multi-screen specialists since 2008. Trading computers, monitor arrays, Synergy stands &amp; complete bundles &mdash; custom built, benchmark tested, supported for life.</p>
+        <div class="contacts">
+          <div><i class="fa fa-phone"></i>0330 223 66 55</div>
+          <div><i class="fa fa-envelope-o"></i>sales@multiplemonitors.co.uk</div>
+          <div><i class="fa fa-map-marker"></i>United Kingdom</div>
+        </div>
+      </div>
+
+      <div class="foot">
+        <h6>Shop</h6>
+        <ul>
+          <li><a href="/trading-computers/">Trading Computers</a></li>
+          <li><a href="/computers/">Computers</a></li>
+          <li><a href="/display-systems/">Monitor Arrays</a></li>
+          <li><a href="/stands/">Synergy Stands</a></li>
+          <li><a href="/bundles/">Bundles</a></li>
+        </ul>
+      </div>
+
+      <div class="foot">
+        <h6>About</h6>
+        <ul>
+          <li><a href="/about-us/">About us</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/pages/trading-computers/">Trader guide</a></li>
+          <li><a href="https://traderspec.com">TraderSpec.com</a></li>
+          <li><a href="/contact/">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="foot">
+        <h6>Policies</h6>
+        <ul>
+          <li><a href="/delivery/">Delivery</a></li>
+          <li><a href="/warranty/">Warranty</a></li>
+          <li><a href="/returns/">Returns</a></li>
+          <li><a href="/privacy/">Privacy</a></li>
+          <li><a href="/terms/">Terms</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot-bottom">
+      <div>&copy; Copyright <span id="year">2026</span> Multiple Monitors Ltd. All rights reserved.</div>
+      <div class="legal">
+        UK Company No. 6863410 &middot; VAT Reg. 971 7562 87
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Dynamic copyright year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Reveal on scroll
+  (function(){
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(function(e){ e.classList.add('is-in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(function(e){ io.observe(e); });
+  })();
+
+  // Sticky configure CTA — visible after scrolling past hero, hidden near footer
+  (function(){
+    var sticky = document.getElementById('stickyCta');
+    if (!sticky) return;
+    var hero = document.querySelector('.pd-hero');
+    var footerEl = document.querySelector('footer');
+    if (!hero || !footerEl) return;
+    function onScroll(){
+      var y = window.scrollY || window.pageYOffset;
+      var heroBottom = hero.getBoundingClientRect().bottom + y;
+      var footerTop = footerEl.getBoundingClientRect().top + y;
+      var viewportBottom = y + window.innerHeight;
+      if (y > heroBottom + 120 && viewportBottom < footerTop) {
+        sticky.classList.add('visible');
+      } else {
+        sticky.classList.remove('visible');
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive:true });
+    onScroll();
+  })();
+
+  // Gallery thumbs — switch main image
+  (function(){
+    var thumbs = document.querySelectorAll('.pd-thumb[data-img]');
+    var main = document.getElementById('pdMainImg');
+    if (!main) return;
+    thumbs.forEach(function(t){
+      t.addEventListener('click', function(){
+        document.querySelectorAll('.pd-thumb.is-active').forEach(function(x){ x.classList.remove('is-active'); });
+        t.classList.add('is-active');
+        main.src = t.dataset.img;
+      });
+    });
+  })();
+
+  // Configurator — segmented option selection + live running total
+  (function(){
+    var BASE_EX = 1045;
+    var VAT_RATE = 0.20;
+
+    var rows = document.querySelectorAll('.cfg-row');
+    var state = {}; // group -> { name, delta }
+    rows.forEach(function(row){
+      var group = row.dataset.group;
+      var sel = row.querySelector('.cfg-option.is-selected');
+      if (sel) {
+        state[group] = { name: sel.dataset.name, delta: parseInt(sel.dataset.delta || '0', 10) };
+      } else {
+        state[group] = { name: 'None', delta: 0 };
+      }
+    });
+
+    // Extras is multi-select — track as a set
+    var extras = new Set();
+
+    function formatGBP(n) {
+      return n.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    }
+    function formatGBP2(n) {
+      return n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function recalc() {
+      var total = BASE_EX;
+      Object.keys(state).forEach(function(g){
+        if (g !== 'extras') total += state[g].delta;
+      });
+      extras.forEach(function(e){ total += e.delta; });
+
+      // Update summary list
+      Object.keys(state).forEach(function(g){
+        var s = document.querySelector('[data-sum="' + g + '"]');
+        var sp = document.querySelector('[data-sum-pri="' + g + '"]');
+        if (!s || !sp) return;
+        if (g === 'extras') {
+          if (extras.size === 0) {
+            s.textContent = 'None';
+            sp.textContent = '—';
+            sp.classList.remove('inc');
+          } else {
+            var names = Array.from(extras).map(function(e){ return e.shortName; });
+            s.textContent = names.join(', ');
+            var sum = 0; extras.forEach(function(e){ sum += e.delta; });
+            sp.textContent = '+ £' + formatGBP(sum);
+            sp.classList.add('inc');
+          }
+        } else {
+          s.textContent = state[g].name.replace(/&middot;/g, '·').replace(/&nbsp;/g, ' ');
+          if (state[g].delta === 0) {
+            sp.textContent = 'Std';
+            sp.classList.remove('inc');
+          } else {
+            sp.textContent = '+ £' + formatGBP(state[g].delta);
+            sp.classList.add('inc');
+          }
+        }
+      });
+
+      // Update totals
+      var totalEl = document.querySelector('[data-total-ex]');
+      var totalIncEl = document.querySelector('[data-total-inc]');
+      var stickyEl = document.querySelector('[data-sticky-price]');
+      if (totalEl)    totalEl.textContent = formatGBP(total);
+      if (totalIncEl) totalIncEl.textContent = formatGBP2(total * (1 + VAT_RATE));
+      if (stickyEl)   stickyEl.textContent = '£' + formatGBP(total);
+    }
+
+    // Single-select groups
+    document.querySelectorAll('.cfg-row:not([data-group="extras"]) .cfg-option').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var row = btn.closest('.cfg-row');
+        var group = row.dataset.group;
+        row.querySelectorAll('.cfg-option').forEach(function(b){ b.classList.remove('is-selected'); });
+        btn.classList.add('is-selected');
+        state[group] = {
+          name: btn.dataset.name,
+          delta: parseInt(btn.dataset.delta || '0', 10)
+        };
+        var selectedEl = row.querySelector('[data-selected]');
+        if (selectedEl) selectedEl.innerHTML = btn.dataset.name;
+        recalc();
+      });
+    });
+
+    // Multi-select extras
+    document.querySelectorAll('.cfg-row[data-group="extras"] .cfg-option').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var delta = parseInt(btn.dataset.delta || '0', 10);
+        var name = btn.dataset.name;
+        var row = btn.closest('.cfg-row');
+        var selectedEl = row.querySelector('[data-selected]');
+        var key = { name: name, shortName: btn.querySelector('.opt-name').textContent.trim(), delta: delta, btn: btn };
+
+        if (btn.classList.contains('is-selected')) {
+          btn.classList.remove('is-selected');
+          extras.forEach(function(e){ if (e.btn === btn) extras.delete(e); });
+        } else {
+          btn.classList.add('is-selected');
+          extras.add(key);
+        }
+
+        if (extras.size === 0) {
+          selectedEl.textContent = 'None';
+        } else {
+          selectedEl.textContent = Array.from(extras).map(function(e){ return e.shortName; }).join(' + ');
+        }
+        recalc();
+      });
+    });
+
+    recalc();
+  })();
+</script>
+
+</body>
+</html>

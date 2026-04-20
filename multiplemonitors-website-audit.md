@@ -861,7 +861,7 @@ A customer who realises mid-configure that they're on the wrong machine shouldn'
 
 #### 4.8.6 Starting CPU on the Ultra
 
-The Ultra starts with an Intel i3 14100F (4 cores, 8 threads) at £925. This is a noticeably weak starting spec for the price — most buyers will upgrade. For comparison, the Trader PC starts at i5 14600KF for a similar price.
+The Ultra starts with an Intel i3 14100F (4 cores, 8 threads) at £925. This is a noticeably weak starting spec for the price — most buyers will upgrade. For comparison, the Trader PC starts at i5 14400KF for a similar price.
 
 Two options worth considering:
 1. **Lower the Ultra starting price** to reflect the i3 base (makes it genuinely entry-level)
