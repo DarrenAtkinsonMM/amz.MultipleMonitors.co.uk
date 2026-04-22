@@ -249,6 +249,105 @@
 </section>
 
 <!-- ===================================================================
+     YOUR ARRAY &mdash; the commit section. Hidden until both picks are made;
+     revealed and populated dynamically by renderYourArray() below.
+     =================================================================== -->
+<section class="your-array" id="your-array" hidden>
+  <div class="container">
+
+    <div class="ya-head reveal">
+      <span class="eyebrow">Your array</span>
+      <h2>Configured, compatible, <span class="display-em">ready to ship.</span></h2>
+    </div>
+
+    <div class="ya-hero-grid">
+      <!-- Gallery -->
+      <div class="ya-gallery reveal">
+        <div class="ya-gallery__main">
+          <span class="ya-chip"><span class="dot"></span>Pre-tested<span class="acc">&nbsp;&middot;&nbsp;</span>UK assembled</span>
+          <img id="ya-hero-img" src="" alt="" onerror="this.style.display='none'">
+        </div>
+        <div class="ya-mini-trust">
+          <span><i class="fa fa-shield"></i>Lifetime stand warranty</span>
+          <span><i class="fa fa-check-circle"></i>3-year screen cover</span>
+          <span><i class="fa fa-undo"></i>30-day money-back</span>
+          <span><i class="fa fa-phone"></i>Free UK phone support</span>
+        </div>
+      </div>
+
+      <!-- Buybox -->
+      <div class="ya-buybox reveal" style="transition-delay:.08s">
+        <div class="eyebrow">Configured array</div>
+        <h3 id="ya-title">&mdash;</h3>
+        <p class="ya-pitch" id="ya-pitch">&mdash;</p>
+
+        <div class="ya-price">
+          <div class="ya-price__row">
+            <span class="ya-price__num"><span class="sym">&pound;</span><b id="ya-price-num">&mdash;</b></span>
+            <span class="ya-price__vat"><b id="ya-price-total">&mdash;</b> inc VAT</span>
+          </div>
+          <div class="ya-cutoff">
+            <span class="dot"></span>
+            <span>In stock &middot; Ships in <b>3&ndash;5 working days</b></span>
+          </div>
+        </div>
+
+        <div class="ya-actions">
+          <button type="button" class="btn btn-primary btn-lg ya-add" id="ya-add">Add array to basket <i class="fa fa-shopping-basket"></i></button>
+          <a href="#builder" class="btn btn-ghost ya-change">Change configuration <i class="fa fa-arrow-up"></i></a>
+          <button type="button" class="ya-copy" id="ya-copy"><i class="fa fa-link"></i>Copy array link</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compatibility-checked copy, written from state -->
+    <div class="ya-compat reveal">
+      <span class="tick"><i class="fa fa-check-circle"></i></span>
+      <div class="ya-compat__body">
+        <b>We&rsquo;ve checked this pairing.</b>
+        <p id="ya-compat-copy">&mdash;</p>
+      </div>
+    </div>
+
+    <!-- Full specifications table &mdash; two columns: screens + stand -->
+    <div class="ya-specs reveal">
+      <div class="ya-specs__col">
+        <div class="ya-specs__lbl">Screens</div>
+        <h4 id="ya-screen-name">&mdash;</h4>
+        <table class="ya-specs__table"><tbody id="ya-screen-table"></tbody></table>
+      </div>
+      <div class="ya-specs__col">
+        <div class="ya-specs__lbl">Stand</div>
+        <h4 id="ya-stand-name">&mdash;</h4>
+        <table class="ya-specs__table"><tbody id="ya-stand-table"></tbody></table>
+      </div>
+    </div>
+
+    <!-- In the box -->
+    <div class="ya-box reveal">
+      <div class="ya-box__head"><i class="fa fa-cube"></i>In the box</div>
+      <ul class="ya-box__list" id="ya-box-list"></ul>
+    </div>
+
+    <!-- PC / bundle cross-link -->
+    <a href="/bundles/" class="ya-crosslink reveal">
+      <span class="ya-crosslink__icon"><i class="fa fa-desktop"></i></span>
+      <div class="ya-crosslink__copy">
+        <b>Driving this array with a PC?</b>
+        <p>A matched <b>Trader PC</b> + this array as a bundle saves a further <b>&pound;<span id="ya-cross-save">60</span>+</b> &mdash; free Wi-Fi card, speakers, and a larger bundle discount on top.</p>
+      </div>
+      <span class="ya-crosslink__cta">See bundle options <i class="fa fa-arrow-right"></i></span>
+    </a>
+
+    <!-- Safety net -->
+    <div class="ya-safety reveal">
+      Not quite the right array? <a href="tel:03302236655"><i class="fa fa-phone"></i>Call Darren on 0330 223 66 55</a> or <a href="#builder"><i class="fa fa-arrow-up"></i>change stand &amp; screens above</a>.
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================================================================
      WHAT'S IN EVERY ARRAY &mdash; dark band, 4 inline reassurance icons
      =================================================================== -->
 <section class="bundle bundle-includes">
@@ -500,50 +599,120 @@
 <!-- ===================================================================
      ARRAY CONFIGURATOR &mdash; data + render
      Forked from redesign/bundles.html. Key differences:
-       - 2 stages (stand, screens) + a "summary" view that replaces
-         the picker grid with a completed-array product card
-       - No computer step, no wifi/speakers in the sidebar "included"
-       - Sidebar discount label reads "Array discount"
-     Stand/screen data and preset cards share the same IDs as
-     bundles.html so image naming ({stand.arrayimg}-{screen.arrayimg}-*.jpg)
-     lines up with the existing asset library.
+       - 2 stages (stand, screens). No computer step.
+       - The "commit moment" lives in the full-width #your-array
+         section below the builder, not inside the builder's left
+         column. Picking both reveals it and populates it from state.
+       - Sidebar "Included free" is cables + delivery only.
+       - Sidebar discount label reads "Array discount".
+     Stand/screen IDs match bundles.html so the existing composite
+     images in /images/bundles/ ({stand.arrayimg}-{screen.arrayimg}-*.jpg)
+     work without renaming.
+     ------------------------------------------------------------
+     To edit stands or screens: update the arrays below. Each stand
+     and screen carries both the selector fields (id/name/price/img)
+     AND the detailed spec fields (material, dimensions, weight,
+     refresh rate, response time, inputs, etc.) that the "Your array"
+     specs table renders from. Adding a new screen = one object.
      =================================================================== -->
 <script>
 (function(){
+  // ------------------------------------------------------------
+  // STANDS — each carries selector fields AND detailed spec fields
+  // for the "Your array" specs table.
+  // ------------------------------------------------------------
   const ARRAY_CONFIG = {
     stands: [
-      { id:'s2v',  name:'Dual Vertical',     price:115, screens:2, discount:25,  img:'/images/bundles/bun-s2v-med.png', arrayimg:'s2v' },
-      { id:'s2h',  name:'Dual Horizontal',   price:115, screens:2, discount:25,  img:'/images/bundles/bun-s2h-med.png', arrayimg:'s2h' },
-      { id:'s3h',  name:'Triple Horizontal', price:175, screens:3, discount:25,  img:'/images/bundles/bun-s3h-med.png', arrayimg:'s3h' },
-      { id:'s3p',  name:'Triple Pyramid',    price:175, screens:3, discount:25,  img:'/images/bundles/bun-s3p-med.png', arrayimg:'s3p' },
-      { id:'s4s',  name:'Quad Square',       price:215, screens:4, discount:50,  img:'/images/bundles/bun-s4s-med.png', arrayimg:'s4s' },
-      { id:'s4sp', name:'Quad Multi Pole',   price:215, screens:4, discount:50,  img:'/images/bundles/bun-s4sp-med.png', arrayimg:'s4sp' },
-      { id:'s4p',  name:'Quad Pyramid',      price:225, screens:4, discount:50,  img:'/images/bundles/bun-s4p-med.png', arrayimg:'s4p' },
-      { id:'s4h',  name:'Quad Horizontal',   price:235, screens:4, discount:50,  img:'/images/bundles/bun-s4h-med.png', arrayimg:'s4h' },
-      { id:'s5p',  name:'Five Pyramid',      price:245, screens:5, discount:50,  img:'/images/bundles/bun-s5p-med.png', arrayimg:'s5p' },
-      { id:'s6r',  name:'Six Monitor',       price:275, screens:6, discount:100, img:'/images/bundles/bun-s6r-med.png', arrayimg:'s6r' },
-      { id:'s6rp', name:'Six Multi Pole',    price:275, screens:6, discount:100, img:'/images/bundles/bun-s6rp-med.png', arrayimg:'s6rp' },
-      { id:'s8r',  name:'Eight Monitor',     price:375, screens:8, discount:100, img:'/images/bundles/bun-s8r-med.png', arrayimg:'s8r' },
+      { id:'s2v',  name:'Dual Vertical',     price:115, screens:2, discount:25,  img:'/images/bundles/bun-s2v-med.png', arrayimg:'s2v',
+        material:'All-steel, powder-coated',  dimensions:'420 × 220 × 720 mm',  weight:'4.4 kg',
+        mount:'VESA 75×75 / 100×100',         base:'Desk clamp (grommet / freestanding option)',  warranty:'Lifetime frame' },
+      { id:'s2h',  name:'Dual Horizontal',   price:115, screens:2, discount:25,  img:'/images/bundles/bun-s2h-med.png', arrayimg:'s2h',
+        material:'All-steel, powder-coated',  dimensions:'900 × 220 × 480 mm',  weight:'4.2 kg',
+        mount:'VESA 75×75 / 100×100',         base:'Desk clamp (grommet / freestanding option)',  warranty:'Lifetime frame' },
+      { id:'s3h',  name:'Triple Horizontal', price:175, screens:3, discount:25,  img:'/images/bundles/bun-s3h-med.png', arrayimg:'s3h',
+        material:'All-steel, powder-coated',  dimensions:'1320 × 220 × 480 mm', weight:'5.8 kg',
+        mount:'VESA 75×75 / 100×100',         base:'Desk clamp (grommet / freestanding option)',  warranty:'Lifetime frame' },
+      { id:'s3p',  name:'Triple Pyramid',    price:175, screens:3, discount:25,  img:'/images/bundles/bun-s3p-med.png', arrayimg:'s3p',
+        material:'All-steel, powder-coated',  dimensions:'900 × 220 × 720 mm',  weight:'5.8 kg',
+        mount:'VESA 75×75 / 100×100',         base:'Desk clamp (grommet / freestanding option)',  warranty:'Lifetime frame' },
+      { id:'s4s',  name:'Quad Square',       price:215, screens:4, discount:50,  img:'/images/bundles/bun-s4s-med.png', arrayimg:'s4s',
+        material:'All-steel, powder-coated',  dimensions:'900 × 220 × 720 mm',  weight:'7.1 kg',
+        mount:'VESA 75×75 / 100×100',         base:'Desk clamp (grommet / freestanding option)',  warranty:'Lifetime frame' },
+      { id:'s4sp', name:'Quad Multi Pole',   price:215, screens:4, discount:50,  img:'/images/bundles/bun-s4sp-med.png', arrayimg:'s4sp',
+        material:'All-steel, powder-coated',  dimensions:'1180 × 220 × 720 mm', weight:'7.4 kg',
+        mount:'VESA 75×75 / 100×100',         base:'Desk clamp (grommet / freestanding option)',  warranty:'Lifetime frame' },
+      { id:'s4p',  name:'Quad Pyramid',      price:225, screens:4, discount:50,  img:'/images/bundles/bun-s4p-med.png', arrayimg:'s4p',
+        material:'All-steel, powder-coated',  dimensions:'1320 × 220 × 720 mm', weight:'7.6 kg',
+        mount:'VESA 75×75 / 100×100',         base:'Desk clamp (grommet / freestanding option)',  warranty:'Lifetime frame' },
+      { id:'s4h',  name:'Quad Horizontal',   price:235, screens:4, discount:50,  img:'/images/bundles/bun-s4h-med.png', arrayimg:'s4h',
+        material:'All-steel, powder-coated',  dimensions:'1760 × 220 × 480 mm', weight:'7.9 kg',
+        mount:'VESA 75×75 / 100×100',         base:'Desk clamp (grommet / freestanding option)',  warranty:'Lifetime frame' },
+      { id:'s5p',  name:'Five Pyramid',      price:245, screens:5, discount:50,  img:'/images/bundles/bun-s5p-med.png', arrayimg:'s5p',
+        material:'All-steel, powder-coated',  dimensions:'1320 × 220 × 900 mm', weight:'8.5 kg',
+        mount:'VESA 75×75 / 100×100',         base:'Desk clamp (grommet / freestanding option)',  warranty:'Lifetime frame' },
+      { id:'s6r',  name:'Six Monitor',       price:275, screens:6, discount:100, img:'/images/bundles/bun-s6r-med.png', arrayimg:'s6r',
+        material:'All-steel, powder-coated',  dimensions:'1320 × 220 × 900 mm', weight:'9.2 kg',
+        mount:'VESA 75×75 / 100×100',         base:'Desk clamp (grommet / freestanding option)',  warranty:'Lifetime frame' },
+      { id:'s6rp', name:'Six Multi Pole',    price:275, screens:6, discount:100, img:'/images/bundles/bun-s6rp-med.png', arrayimg:'s6rp',
+        material:'All-steel, powder-coated',  dimensions:'1760 × 220 × 900 mm', weight:'9.6 kg',
+        mount:'VESA 75×75 / 100×100',         base:'Desk clamp (grommet / freestanding option)',  warranty:'Lifetime frame' },
+      { id:'s8r',  name:'Eight Monitor',     price:375, screens:8, discount:100, img:'/images/bundles/bun-s8r-med.png', arrayimg:'s8r',
+        material:'All-steel, powder-coated',  dimensions:'1760 × 220 × 900 mm', weight:'11.4 kg',
+        mount:'VESA 75×75 / 100×100',         base:'Desk clamp (grommet / freestanding option)',  warranty:'Lifetime frame' },
     ],
+    // ------------------------------------------------------------
+    // SCREENS — selector fields + full spec sheet for the Your array
+    // table. Values are representative; update here and the table
+    // picks them up automatically.
+    // ------------------------------------------------------------
     screens: [
-      { id:'scr24s', name:'21.5" AOC - Full HD',  price:85,
-        desc1:'1920 x 1080 FHD',  desc2:'Thin bezel',    desc3:'VA Panel',
-        img:'/shop/pc/catalog/acer22_thumb.jpg',     arrayimg:'a22', shortSize:'21.5"', resolution:'1920\u00d71080', panel:'VA',  bezel:'Thin' },
-      { id:'scr24i', name:'24" Acer - Full HD',   price:90,
-        desc1:'1920 x 1080 FHD',  desc2:'24-inch screen',desc3:'VA Panel',
-        img:'/shop/pc/catalog/acer22_thumb.jpg',     arrayimg:'a24', shortSize:'24"',   resolution:'1920\u00d71080', panel:'VA',  bezel:'Thin' },
-      { id:'scr27s', name:'27" Acer - Full HD',   price:115,
-        desc1:'1920 x 1080 FHD',  desc2:'Thin bezel',    desc3:'VA Panel',
-        img:'/shop/pc/catalog/acer22_thumb.jpg',     arrayimg:'a27', shortSize:'27"',   resolution:'1920\u00d71080', panel:'VA',  bezel:'Thin' },
+      { id:'scr24s', name:'21.5" AOC - Full HD', price:85,
+        desc1:'1920 x 1080 FHD', desc2:'Thin bezel', desc3:'VA Panel',
+        img:'/shop/pc/catalog/acer22_thumb.jpg', arrayimg:'a22', shortSize:'21.5"',
+        manufacturer:'AOC', model:'24B2XH', size:'21.5" (21.5" diagonal)',
+        resolution:'1920 × 1080 (Full HD)',  refreshRate:'75 Hz',  responseTime:'4 ms (GtG)',
+        panel:'VA',  inputs:'HDMI 1.4 · VGA',  bezelWidth:'5.9 mm (three-side thin)',
+        vesa:'100 × 100',  warranty:'3-year manufacturer' },
+
+      { id:'scr24i', name:'24" Acer - Full HD', price:90,
+        desc1:'1920 x 1080 FHD', desc2:'24-inch screen', desc3:'VA Panel',
+        img:'/shop/pc/catalog/acer22_thumb.jpg', arrayimg:'a24', shortSize:'24"',
+        manufacturer:'Acer', model:'K243Y E', size:'24" (23.8" diagonal)',
+        resolution:'1920 × 1080 (Full HD)',  refreshRate:'100 Hz', responseTime:'1 ms (VRB)',
+        panel:'VA',  inputs:'HDMI 1.4 · DisplayPort 1.2 · VGA',  bezelWidth:'5.5 mm (ultra-thin)',
+        vesa:'100 × 100',  warranty:'3-year manufacturer' },
+
+      { id:'scr27s', name:'27" Acer - Full HD', price:115,
+        desc1:'1920 x 1080 FHD', desc2:'Thin bezel', desc3:'VA Panel',
+        img:'/shop/pc/catalog/acer22_thumb.jpg', arrayimg:'a27', shortSize:'27"',
+        manufacturer:'Acer', model:'KA272 E', size:'27" (27" diagonal)',
+        resolution:'1920 × 1080 (Full HD)',  refreshRate:'100 Hz', responseTime:'1 ms (VRB)',
+        panel:'VA',  inputs:'HDMI 1.4 · DisplayPort 1.2 · VGA',  bezelWidth:'6.5 mm (three-side thin)',
+        vesa:'100 × 100',  warranty:'3-year manufacturer' },
+
       { id:'scr27i', name:'24" Iiyama - Full HD', price:130,
-        desc1:'1920 x 1080 FHD',  desc2:'Thin bezel',    desc3:'IPS Panel',
-        img:'/shop/pc/catalog/iiyama23ips-thumb.jpg',arrayimg:'i23', shortSize:'24"',   resolution:'1920\u00d71080', panel:'IPS', bezel:'Thin' },
-      { id:'scrAw',  name:'27" AOC - Quad HD',    price:155,
-        desc1:'2560 x 1440 QHD',  desc2:'Thin bezel',    desc3:'IPS Panel',
-        img:'/shop/pc/catalog/aoc27-thumb.jpg',      arrayimg:'i27', shortSize:'27"',   resolution:'2560\u00d71440', panel:'IPS', bezel:'Thin' },
+        desc1:'1920 x 1080 FHD', desc2:'Thin bezel', desc3:'IPS Panel',
+        img:'/shop/pc/catalog/iiyama23ips-thumb.jpg', arrayimg:'i23', shortSize:'24"',
+        manufacturer:'Iiyama', model:'ProLite XUB2493HS', size:'24" (23.8" diagonal)',
+        resolution:'1920 × 1080 (Full HD)',  refreshRate:'75 Hz',  responseTime:'4 ms (GtG)',
+        panel:'IPS', inputs:'HDMI 1.4 · DisplayPort 1.2 · VGA',  bezelWidth:'2 mm (frameless)',
+        vesa:'100 × 100',  warranty:'3-year manufacturer' },
+
+      { id:'scrAw',  name:'27" AOC - Quad HD', price:155,
+        desc1:'2560 x 1440 QHD', desc2:'Thin bezel', desc3:'IPS Panel',
+        img:'/shop/pc/catalog/aoc27-thumb.jpg', arrayimg:'i27', shortSize:'27"',
+        manufacturer:'AOC', model:'Q27P2Q', size:'27" (27" diagonal)',
+        resolution:'2560 × 1440 (Quad HD)',  refreshRate:'75 Hz',  responseTime:'4 ms (GtG)',
+        panel:'IPS', inputs:'HDMI 1.4 · DisplayPort 1.2 · USB-C · VGA',  bezelWidth:'3 mm (three-side frameless)',
+        vesa:'100 × 100',  warranty:'3-year manufacturer' },
+
       { id:'scrIiy', name:'27" Iiyama - Quad HD', price:175,
-        desc1:'2560 x 1440 QHD',  desc2:'Thin Bezel',    desc3:'IPS Panel',
-        img:'/shop/pc/catalog/iiyama23ips-thumb.jpg',arrayimg:'i27', shortSize:'27"',   resolution:'2560\u00d71440', panel:'IPS', bezel:'Thin' },
+        desc1:'2560 x 1440 QHD', desc2:'Thin Bezel', desc3:'IPS Panel',
+        img:'/shop/pc/catalog/iiyama23ips-thumb.jpg', arrayimg:'i27', shortSize:'27"',
+        manufacturer:'Iiyama', model:'ProLite XUB2792QSN', size:'27" (27" diagonal)',
+        resolution:'2560 × 1440 (Quad HD)',  refreshRate:'100 Hz', responseTime:'4 ms (GtG)',
+        panel:'IPS', inputs:'HDMI 1.4 · DisplayPort 1.4 · USB-C (65 W) · USB-B hub',  bezelWidth:'2 mm (frameless)',
+        vesa:'100 × 100',  warranty:'3-year manufacturer' },
     ],
   };
 
@@ -557,7 +726,9 @@
     },
     screens: {
       title: 'Now pick your screens. <span class="muted">Same model across the whole stand.</span>',
-      next:  { goto:'summary', label:'View your array <i class="fa fa-arrow-right"></i>' },
+      // Picking a screen reveals #your-array below; this next button
+      // scrolls to it rather than switching the builder's left column.
+      next:  { goto:'your-array', label:'View your array <i class="fa fa-arrow-down"></i>' },
       cols:  3,
       items: () => ARRAY_CONFIG.screens,
       meta:  (s, state) => {
@@ -568,10 +739,10 @@
   };
 
   // `view` is the stage the user is actively looking at. When null, the
-  // configurator auto-advances to the first un-picked stage (or to the
-  // summary view when both picks exist). Set by stepper/next-button
-  // clicks so the user can jump back to an earlier step without losing
-  // their current picks.
+  // configurator auto-advances to the first un-picked stage. Once both
+  // picks exist we stay on the screens step (with selection marked) and
+  // the "Your array" section below the configurator takes over as the
+  // commit moment.
   const state = { stand:null, screens:null, view:null };
 
   const $ = id => document.getElementById(id);
@@ -579,12 +750,11 @@
   const fmtPlain = n => '£' + n.toLocaleString('en-GB');
 
   function currentStage() {
-    if (state.view === 'stand')                                    return 'stand';
-    if (state.view === 'screens' && state.stand)                   return 'screens';
-    if (state.view === 'summary' && state.stand && state.screens)  return 'summary';
-    if (!state.stand)    return 'stand';
-    if (!state.screens)  return 'screens';
-    return 'summary';
+    if (state.view === 'stand')                   return 'stand';
+    if (state.view === 'screens' && state.stand)  return 'screens';
+    if (!state.stand)   return 'stand';
+    if (!state.screens) return 'screens';
+    return 'screens';
   }
 
   function isComplete() {
@@ -598,99 +768,15 @@
     return t;
   }
 
-  // Build the completed-array summary card. Replaces the picker grid on
-  // stage "summary". Image uses the existing {stand}-{screen}-axl.jpg
-  // composites in /images/bundles/ — one per stand × screen combo.
-  function buildSummaryHTML() {
-    const s   = state.stand;
-    const sc  = state.screens;
-    const qty = s.screens;
-    const sub = subtotal();
-    const discount = s.discount || 0;
-    const total = Math.max(0, sub - discount);
-    const heroSrc = '/images/bundles/' + s.arrayimg + '-' + sc.arrayimg + '-axl.jpg';
-    const heroAlt = s.name + ' with ' + qty + ' \u00d7 ' + sc.name;
-    const arrayTitle = qty + ' \u00d7 ' + (sc.shortSize || '') + ' <em>on ' + s.name + '</em>';
-
-    return (
-      '<div class="array-final">' +
-
-        '<div class="af-hero">' +
-          '<span class="af-chip"><span class="dot"></span>Pre-tested<span class="acc">&nbsp;\u00b7&nbsp;</span>UK assembled</span>' +
-          '<img class="af-hero__img" src="' + heroSrc + '" alt="' + heroAlt + '" onerror="this.style.display=\'none\'">' +
-        '</div>' +
-
-        '<div class="af-meta">' +
-          '<div class="eyebrow">Your configured array</div>' +
-          '<h3>' + arrayTitle + '</h3>' +
-          '<p>Stand, screens, cables and power extension &mdash; matched, workshop-tested together, and shipped as a single order. Total today: <b style="color:var(--ink);">' + fmtPlain(total) + '</b> +VAT (saving ' + fmtPlain(discount + qty * 15 + 20) + ' vs ordering the parts separately).</p>' +
-        '</div>' +
-
-        '<div class="af-compat">' +
-          '<div class="af-compat__row"><span class="tick"><i class="fa fa-check"></i></span><div><b>VESA &amp; bezel match confirmed</b><small>Both the stand and screens carry 75&times;75 or 100&times;100 VESA. Bezel thickness checked for the layout.</small></div></div>' +
-          '<div class="af-compat__row"><span class="tick"><i class="fa fa-check"></i></span><div><b>Workshop test-fitted</b><small>Physically assembled with the exact screens before despatch &mdash; not just compatible on paper.</small></div></div>' +
-          '<div class="af-compat__row"><span class="tick"><i class="fa fa-check"></i></span><div><b>Cables cut to length</b><small>' + qty + ' &times; 3m premium video cables plus a power extension sized for this layout.</small></div></div>' +
-        '</div>' +
-
-        '<div class="af-specs">' +
-          '<div class="af-specs__col">' +
-            '<div class="af-specs__lbl">Screens</div>' +
-            '<h4>' + qty + ' &times; ' + sc.name + '</h4>' +
-            '<ul class="af-specs__list">' +
-              '<li><span>Size</span><b>' + (sc.shortSize || '—') + '</b></li>' +
-              '<li><span>Resolution</span><b>' + (sc.resolution || sc.desc1 || '—') + '</b></li>' +
-              '<li><span>Panel</span><b>' + (sc.panel || '—') + '</b></li>' +
-              '<li><span>Bezel</span><b>' + (sc.bezel || '—') + '</b></li>' +
-              '<li><span>VESA</span><b>75 / 100</b></li>' +
-            '</ul>' +
-          '</div>' +
-          '<div class="af-specs__col">' +
-            '<div class="af-specs__lbl">Stand</div>' +
-            '<h4>' + s.name + ' Synergy Stand</h4>' +
-            '<ul class="af-specs__list">' +
-              '<li><span>Screens</span><b>' + s.screens + '</b></li>' +
-              '<li><span>Layout</span><b>' + s.name + '</b></li>' +
-              '<li><span>Mount</span><b>VESA 75 / 100</b></li>' +
-              '<li><span>Base</span><b>Clamp / grommet</b></li>' +
-              '<li><span>Warranty</span><b>Lifetime frame</b></li>' +
-            '</ul>' +
-          '</div>' +
-        '</div>' +
-
-        '<a href="/bundles/" class="af-crosslink">' +
-          '<span class="icon"><i class="fa fa-desktop"></i></span>' +
-          '<span class="copy"><b>Need a PC to drive it?</b><small>A matched Trader or Ultra PC in a full bundle saves a further &pound;100+ &mdash; plus free WiFi and speakers.</small></span>' +
-          '<i class="fa fa-arrow-right arrow"></i>' +
-        '</a>' +
-
-        '<div class="af-back"><a href="#" data-change>&larr; Change stand or screens</a></div>' +
-
-      '</div>'
-    );
-  }
-
   function renderGrid() {
     const stage = currentStage();
+    const cfg   = STAGES[stage];
     const grid  = $('mmb-grid');
     const nextBtn = $('mmb-next-btn');
-
-    // Summary stage: replace the picker grid entirely with the completed-
-    // array card. Hide the "next" button — the CTA lives in the sidebar.
-    if (stage === 'summary') {
-      $('mmb-stage-title').innerHTML = 'Your completed array. <span class="muted">Review and add to basket.</span>';
-      grid.className = 'array-summary-wrap';
-      grid.innerHTML = buildSummaryHTML();
-      nextBtn.style.display = 'none';
-      nextBtn.innerHTML = '';
-      nextBtn.removeAttribute('data-goto');
-      return;
-    }
-
-    const cfg = STAGES[stage];
     const selectedId = state[stage] ? state[stage].id : null;
+
     $('mmb-stage-title').innerHTML = cfg.title;
 
-    // Next button: shown when the current stage has a pick.
     const picked = state[stage];
     if (cfg.next && picked) {
       nextBtn.innerHTML     = cfg.next.label;
@@ -707,7 +793,6 @@
       const sel  = item.id === selectedId ? ' is-selected' : '';
       const meta = cfg.meta(item, state);
 
-      // Screens stage uses the detailed horizontal card layout.
       if (stage === 'screens') {
         const bullets = [item.desc1, item.desc2, item.desc3]
           .filter(Boolean)
@@ -727,7 +812,6 @@
         );
       }
 
-      // Stand stage — simple stacked card.
       return (
         '<button type="button" class="stand-card' + sel + '" data-id="' + item.id + '">' +
           '<div class="stand-vis"><img src="' + item.img + '" alt="' + item.name + '"></div>' +
@@ -743,10 +827,8 @@
     document.querySelectorAll('#mmb-stepper .step').forEach(li => {
       const which  = li.dataset.step;
       const picked = state[which];
-      // In the summary view both steps light up as "current" — reads as
-      // "both done, now reviewing the whole thing."
-      const active = stage === which || stage === 'summary';
-      li.classList.toggle('is-current', active);
+      li.classList.toggle('is-current', stage === which);
+      li.classList.toggle('is-done', !!picked);
       li.querySelector('.step-val').innerHTML = picked ? picked.name : '&mdash;';
     });
   }
@@ -804,27 +886,138 @@
     const done = [state.stand, state.screens].filter(Boolean).length;
     $('mmb-pct').textContent = Math.round((done / 2) * 100) + '%';
 
-    // CTA — enabled once both picks exist.
+    // CTA — once both picks exist, the primary Add-to-basket lives in
+    // the #your-array section below. The sidebar CTA becomes a jump to
+    // that section so the user sees the full commit view.
     const cta = $('mmb-cta');
     if (isComplete()) {
       cta.classList.remove('is-disabled');
-      cta.innerHTML = 'Add array to basket <i class="fa fa-arrow-right"></i>';
+      cta.innerHTML = 'See your array <i class="fa fa-arrow-down"></i>';
     } else {
       cta.classList.add('is-disabled');
       cta.innerHTML = 'Keep configuring <i class="fa fa-arrow-right"></i>';
     }
   }
 
+  // ------------------------------------------------------------
+  // Your Array — the commit section below the configurator.
+  // Hidden until both picks exist; populated entirely from state.
+  // Every field (title, pitch, price, compatibility copy, screen
+  // table, stand table, in-the-box list, cross-link savings) is
+  // derived from ARRAY_CONFIG so updating specs is a one-file job.
+  // ------------------------------------------------------------
+  function renderYourArray() {
+    const section = $('your-array');
+    if (!isComplete()) {
+      section.hidden = true;
+      section.classList.remove('is-ready');
+      return;
+    }
+    section.hidden = false;
+    // next frame → CSS transition picks it up for the reveal
+    requestAnimationFrame(() => section.classList.add('is-ready'));
+
+    const s   = state.stand;
+    const sc  = state.screens;
+    const qty = s.screens;
+    const sub = subtotal();
+    const discount = s.discount || 0;
+    const total    = Math.max(0, sub - discount);
+    const totalIncVat = Math.round(total * 1.2);
+
+    // Hero composite — existing asset library.
+    const heroSrc = '/images/bundles/' + s.arrayimg + '-' + sc.arrayimg + '-axl.jpg';
+    const heroAlt = s.name + ' Synergy Stand with ' + qty + ' × ' + sc.name;
+    const heroImg = $('ya-hero-img');
+    heroImg.src = heroSrc;
+    heroImg.alt = heroAlt;
+    heroImg.style.display = '';
+
+    // Title + pitch
+    $('ya-title').innerHTML  = qty + ' &times; ' + sc.shortSize + ' <em>on a ' + s.name + '</em> Synergy Stand';
+    $('ya-pitch').textContent =
+      qty + ' × ' + sc.manufacturer + ' ' + sc.model + ' screens on the ' + s.name + ' Synergy Stand — ' +
+      'matched, workshop test-fitted and shipped as a single order. Every mount plate, screw and cable in the box.';
+
+    // Price
+    $('ya-price-num').textContent   = total.toLocaleString('en-GB');
+    $('ya-price-total').textContent = fmtPlain(totalIncVat);
+
+    // Dynamic compatibility copy — template from feedback.
+    $('ya-compat-copy').innerHTML =
+      'The <b>' + s.name + ' Synergy Stand</b> is fully compatible with the <b>' + sc.name + ' Monitor</b>. Arrives as one delivery with <b>' + qty + ' premium cables</b> and every mount plate, screw and  tool you will need.';
+
+    // Screen specs table — rendered from ARRAY_CONFIG.screens fields.
+    const screenRows = [
+      ['Manufacturer',   sc.manufacturer],
+      ['Model',          sc.model],
+      ['Size',           sc.size],
+      ['Resolution',     sc.resolution],
+      ['Refresh rate',   sc.refreshRate],
+      ['Response time',  sc.responseTime],
+      ['Panel type',     sc.panel],
+      ['Inputs',         sc.inputs],
+      ['Bezel width',    sc.bezelWidth],
+      ['VESA mount',     sc.vesa],
+      ['Warranty',       sc.warranty],
+    ];
+    $('ya-screen-name').textContent = qty + ' × ' + sc.manufacturer + ' ' + sc.model;
+    $('ya-screen-table').innerHTML = screenRows
+      .map(r => '<tr><th>' + r[0] + '</th><td>' + r[1] + '</td></tr>').join('');
+
+    // Stand specs table
+    const standRows = [
+      ['Model',                    s.name + ' Synergy Stand'],
+      ['Holds',                    s.screens + ' screens'],
+      ['Material',                 s.material],
+      ['Dimensions (W × D × H)',   s.dimensions],
+      ['Weight',                   s.weight],
+      ['Mount pattern',            s.mount],
+      ['Base options',             s.base],
+      ['Warranty',                 s.warranty],
+    ];
+    $('ya-stand-name').textContent = s.name + ' Synergy Stand';
+    $('ya-stand-table').innerHTML = standRows
+      .map(r => '<tr><th>' + r[0] + '</th><td>' + r[1] + '</td></tr>').join('');
+
+    // In the box
+    const boxItems = [
+      '<i class="fa fa-plug"></i><div><b>' + qty + ' x Premium 3m Video Cables</b><small>DisplayPort or HDMI to match your PC outputs</small></div>',
+      '<i class="fa fa-bolt"></i><div><b>' + qty + ' x UK Power Cables</b><small>Standard 1.8m length</small></div>',
+      '<i class="fa fa-wrench"></i><div><b>Assembly Tools & Guide</b><small>Full set of hex keys & spanners</small></div>',
+    ];
+    $('ya-box-list').innerHTML = boxItems.map(i => '<li>' + i + '</li>').join('');
+
+    // Bundle cross-link saving — concrete pounds saved by bundling a PC.
+    // A matched bundle ships with wifi (£40) + speakers (£20) on top of
+    // what an array already includes, hence +£60 of included value. If
+    // there's a larger stand-discount tier in bundles later we can layer
+    // that in here.
+    const bundleExtra = 60;
+    $('ya-cross-save').textContent = bundleExtra;
+  }
+
   function render() {
     renderGrid();
     renderStepper();
     renderSidebar();
+    renderYourArray();
   }
 
-  // Next button — advance to the stage specified in data-goto.
+  // Smooth-scroll helper so the "#your-array" section lands a little
+  // below the sticky header instead of being tucked under it.
+  function scrollToYourArray() {
+    const el = document.getElementById('your-array');
+    if (!el) return;
+    el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  // Next button — either advance within the builder or scroll to the
+  // commit section below.
   $('mmb-next-btn').addEventListener('click', function(){
     const goto = this.dataset.goto;
     if (!goto) return;
+    if (goto === 'your-array') { scrollToYourArray(); return; }
     state.view = goto;
     render();
   });
@@ -839,62 +1032,90 @@
     render();
   });
 
-  // Grid click — pick the item for the current stage. On summary view
-  // the grid contains the "change stand or screens" back link, handled
-  // separately below.
+  // Grid click — pick the item for the current stage.
   $('mmb-grid').addEventListener('click', function(e){
-    // Back link inside the summary card — return to the screens step.
-    const changeLink = e.target.closest('[data-change]');
-    if (changeLink) {
-      e.preventDefault();
-      state.view = 'screens';
-      render();
-      return;
-    }
-
     const btn = e.target.closest('[data-id]');
     if (!btn) return;
     const id    = btn.dataset.id;
     const stage = currentStage();
-
     if (stage === 'stand') {
       state.stand = ARRAY_CONFIG.stands.find(s => s.id === id) || state.stand;
     } else if (stage === 'screens') {
       state.screens = ARRAY_CONFIG.screens.find(s => s.id === id) || state.screens;
     }
-    // Stay on the current stage so the user can try alternatives and
-    // watch the sidebar update. They advance with the "Next" button.
     state.view = stage;
     render();
   });
 
-  // Add-to-basket CTA — placeholder. When we wire this up to ProductCart
-  // it'll POST stand.id + screen.id + qty (stand.screens) to whichever
-  // cart endpoint handles configured arrays. Out of scope for mockup.
+  // Sidebar CTA — once both picks exist, jump to the commit section.
   $('mmb-cta').addEventListener('click', function(e){
-    if (this.classList.contains('is-disabled')) { e.preventDefault(); return; }
-    // TODO: wire to /shop/pc/buynow.asp (or whichever handler) with
-    // { stand: state.stand.id, screen: state.screens.id, qty: state.stand.screens }
     e.preventDefault();
+    if (this.classList.contains('is-disabled')) return;
+    scrollToYourArray();
+  });
+
+  // Primary Add-to-basket (inside #your-array) — placeholder for
+  // ProductCart wiring. Out of scope for the mockup.
+  $('ya-add').addEventListener('click', function(e){
+    e.preventDefault();
+    // TODO: POST { stand:state.stand.id, screen:state.screens.id,
+    //              qty:state.stand.screens } to the cart endpoint.
     alert('Add-to-basket flow will wire into ProductCart once the design is signed off.');
   });
 
-  // Preset cards — pre-fill stand + screens and jump to the summary.
+  // Copy array link — puts a shareable URL on the clipboard and shows
+  // a brief "Link copied" state on the button.
+  $('ya-copy').addEventListener('click', function(e){
+    e.preventDefault();
+    if (!isComplete()) return;
+    const url = window.location.origin + window.location.pathname +
+                '?stand=' + encodeURIComponent(state.stand.id) +
+                '&screen=' + encodeURIComponent(state.screens.id);
+    const btn     = this;
+    const doneLbl = '<i class="fa fa-check"></i>Link copied';
+    const origLbl = btn.dataset.origLbl || btn.innerHTML;
+    btn.dataset.origLbl = origLbl;
+    const flash = () => {
+      btn.classList.add('is-copied');
+      btn.innerHTML = doneLbl;
+      setTimeout(() => { btn.classList.remove('is-copied'); btn.innerHTML = origLbl; }, 2400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(flash, flash);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (_) {}
+      document.body.removeChild(ta); flash();
+    }
+  });
+
+  // Preset cards — pre-fill and drop the user on the commit section.
   document.querySelectorAll('[data-preset]').forEach(card => {
     card.addEventListener('click', function(e){
-      const standId  = this.dataset.stand;
-      const screenId = this.dataset.screens;
-      const stand  = ARRAY_CONFIG.stands.find(s => s.id === standId);
-      const screen = ARRAY_CONFIG.screens.find(s => s.id === screenId);
-      if (!stand || !screen) return; // let the anchor navigate normally
+      const stand  = ARRAY_CONFIG.stands.find(s  => s.id === this.dataset.stand);
+      const screen = ARRAY_CONFIG.screens.find(s => s.id === this.dataset.screens);
+      if (!stand || !screen) return;
       e.preventDefault();
-      state.stand   = stand;
-      state.screens = screen;
-      state.view    = 'summary';
+      state.stand = stand; state.screens = screen; state.view = 'screens';
       render();
-      document.getElementById('builder').scrollIntoView({ behavior:'smooth', block:'start' });
+      scrollToYourArray();
     });
   });
+
+  // Accept ?stand= and ?screen= from the URL (shared links land pre-filled).
+  (function hydrateFromUrl(){
+    try {
+      const p = new URLSearchParams(window.location.search);
+      const sId = p.get('stand'), scId = p.get('screen');
+      const stand  = sId  && ARRAY_CONFIG.stands.find(s => s.id === sId);
+      const screen = scId && ARRAY_CONFIG.screens.find(s => s.id === scId);
+      if (stand)  state.stand   = stand;
+      if (screen) state.screens = screen;
+      if (stand && screen) state.view = 'screens';
+    } catch (_) { /* no-op */ }
+  })();
 
   render();
 })();
