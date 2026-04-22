@@ -53,93 +53,86 @@ Select Case lcase(Request.ServerVariables("SCRIPT_NAME"))
 		Select Case pcv_strViewPrdStyle
 			Case "monitor"
 				if request.querystring("arr")="1" Then
-					topmenuArrays = " class=""active"""
+					topmenuArrays = " class=""is-trader"""
 				else
-					topmenuBundles = " class=""active"""
+					topmenuBundles = " class=""is-trader"""
 				end if
 			Case "stand"
 				if request.querystring("arr")="1" Then
-					topmenuArrays = " class=""active"""
+					topmenuArrays = " class=""is-trader"""
 				elseif request.querystring("sid")<>"" then
-					topmenuBundles = " class=""active"""
+					topmenuBundles = " class=""is-trader"""
 				else
-					topmenuStands = " class=""active"""
+					topmenuStands = " class=""is-trader"""
 				end if
 			Case "computer", "traderpc", "charterpc", "traderpropc"
 				if request.querystring("sid")="" Then
-					topmenuComputers = " class=""active"""
+					topmenuComputers = " class=""is-trader"""
 				else
-					topmenuBundles = " class=""active"""
+					topmenuBundles = " class=""is-trader"""
 				end if
 		End Select
 	Case "/shop/pc/customcat-stands.asp"
-		topmenuStands = " class=""active"""
+		topmenuStands = " class=""is-trader"""
 	Case "/shop/pc/customcat-computers.asp","/shop/pc/customcat-tradingcomputers.asp"
-		topmenuComputers = " class=""active"""
+		topmenuComputers = " class=""is-trader"""
 	Case "/shop/pc/customcat-bundles1.asp","/shop/pc/customcat-bundles2.asp","/shop/pc/customcat-bundles3.asp"
-		topmenuBundles = " class=""active"""
+		topmenuBundles = " class=""is-trader"""
 	Case "/shop/pc/customcat-arrays1.asp","/shop/pc/customcat-arrays2.asp","/shop/pc/customcat-arrays3.asp"
-		topmenuArrays = " class=""active"""
+		topmenuArrays = " class=""is-trader"""
 	Case "/default.asp"
-		topmenuHome = " class=""active"""
+		topmenuHome = " class=""is-trader"""
 	Case "/new-blog/default.asp","/shop/pc/viewcontent.asp"
-		topmenuBlog = " class=""active"""
+		topmenuBlog = " class=""is-trader"""
 End Select
 %>
 
 
 <div id="wrapper">
-    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
-		<div class="top-area">
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-6 col-md-6 topbar-connects">
-					<p class="text-left">
-						<span class="tb-contact-bx tb-phone"><a class="text-white" href="tel:03302236655"><i class="fa fa-phone"></i>0330 223 66 55</a></span>
-						<a class="tb-contact-bx tb-mail" href="mailto:sales@multiplemonitors.co.uk"><i class="fa fa-envelope"></i>sales@multiplemonitors.co.uk</a>
-					</p>
-					</div>
-					<div class="col-sm-6 col-md-6 text-right top-user-box">
-                        <!-- #include file="smallQuickCart.asp" -->
-					</div>
+	<div class="site-header">
+		<div class="topbar">
+			<div class="mm-container inner">
+				<div>
+					<a href="tel:03302236655"><i class="fa fa-phone"></i>0330 223 66 55</a>
+					<span class="sep hide-xs">|</span>
+					<a class="hide-xs" href="mailto:sales@multiplemonitors.co.uk"><i class="fa fa-envelope-o"></i>sales@multiplemonitors.co.uk</a>
 				</div>
+				<!--#include file="smallQuickCart.asp"-->
 			</div>
 		</div>
-        <div class="container navigation">
-			<div class="row">
-				<div class="navbar-header page-scroll col-lg-4 col-md-3 col-xs-12">
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
-						<i class="fa fa-bars"></i>
-					</button>
-					<a class="navbar-brand" href="/">
-						<img src="/images/logo.png" alt="" width="353" height="44" />
-					</a>
+
+		<div class="navwrap">
+			<div class="mm-container nav-inner">
+				<a href="/" class="brand-mark" aria-label="Multiple Monitors home">
+					<img src="/images/mm-logo-trans.png" alt="Multiple Monitors Ltd" />
+					<span class="brand-est">Est 2008<b>UK Specialist</b></span>
+				</a>
+
+				<nav class="mainnav">
+					<a href="/"<%=topmenuHome%>>Home</a>
+					<a href="/computers/"<%=topmenuComputers%>>Computers</a>
+					<a href="/bundles/"<%=topmenuBundles%>>Bundles</a>
+					<a href="/stands/"<%=topmenuStands%>>Stands</a>
+					<a href="/display-systems/"<%=topmenuArrays%>>Monitor Arrays</a>
+				</nav>
+
+				<div class="nav-actions">
+					<div class="nav-cta">
+						<!--#include file="smallCartButton.asp"-->
+					</div>
+					<button class="nav-toggle" aria-label="Open menu" onclick="document.getElementById('mobnav').classList.toggle('is-open')"><i class="fa fa-bars"></i></button>
 				</div>
-			<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse navbar-right navbar-main-collapse">
-				  <ul class="nav navbar-nav">
-					<li<%=topmenuHome%>><a href="/">Home</a></li>
-					<li<%=topmenuComputers%>><a href="/computers/">Computers</a></li>
-					<li<%=topmenuArrays%>><a href="/display-systems/">Monitor Arrays</a></li>
-					<li<%=topmenuBundles%>><a href="/bundles/">Bundles</a></li>
-					<li<%=topmenuStands%>><a href="/stands/">Stands</a></li>
-					<li<%=topmenuBlog%>><a href="/blog/">Blog</a></li>
-				  </ul>
-				</div>
-				<!-- /.navbar-collapse -->
- </div>
-        </div>
-        <!-- /.container -->
-		<div class="top-tagline-bar">
-			<div class="container top-tagline">
-				<div class="row">
-					<p class="tagline-txt col-lg-8 col-sm-12">Multi-screen displays & computers. As seen on BBC's 'Traders: Millions by the Minute'</p>
-					<p class="subscribe-txt col-lg-4 hidden-ss color">Get Exclusive Special Offers! <a href="/pages/email-signup/">SIGN UP NOW</a></p>
-				</div>
-				<!-- /.container -->
+			</div>
+			<div class="mobnav" id="mobnav">
+				<a href="/"<%=topmenuHome%>>Home</a>
+				<a href="/computers/"<%=topmenuComputers%>>Computers</a>
+				<a href="/bundles/"<%=topmenuBundles%>>Bundles</a>
+				<a href="/stands/"<%=topmenuStands%>>Stands</a>
+				<a href="/display-systems/"<%=topmenuArrays%>>Monitor Arrays</a>
+				<a href="/shop/pc/custPref.asp">Existing Customer Login</a>
 			</div>
 		</div>
-    </nav>
+	</div><!-- /.site-header -->
 <%
 	if scURLredirect = "" then
 		homepageurl = scStoreURL & "/" & scPcFolder & "/home.asp"

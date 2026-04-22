@@ -1,601 +1,657 @@
 <%
-'This file is part of ProductCart, an ecommerce application developed and sold by NetSource Commerce. ProductCart, its source code, the ProductCart name and logo are property of NetSource Commerce. Copyright 2001-2015. All rights reserved. You are not allowed to use, alter, distribute and/or resell any parts of ProductCart's source code without the written consent of NetSource Commerce. To contact NetSource Commerce, please visit www.productcart.com.
+' ============================================================
+' CUSTOMCAT-stands.asp
+' 2026 redesign — Synergy Stands category page.
+' Rewritten in place (was 602 lines of ProductCart scaffolding);
+' now a mostly-static page with a small direct-DB query for the
+' 12 stand tiles grouped by screen count. See
+' /category-redesign-plan.md at repo root for the approach.
+' ============================================================
 %>
-<% Response.CacheControl = "no-cache" %>
-<% Response.AddHeader "Pragma", "no-cache" %> 
-<% Response.Expires = -1 %>
-
-<% response.Buffer=true %>
+<% Response.Buffer = True %>
 <!--#include file="../includes/common.asp"-->
-<!--#include file="../includes/common_checkout.asp"-->
-<!--#include file="../includes/SearchConstants.asp"-->
-<!--#include file="prv_incFunctions.asp"-->
-<%Dim iAddDefaultPrice,	iAddDefaultWPrice%>
-<!--#include file="pcCheckPricingCats.asp"-->
 <%
-'*******************************
-' Page Name
-'*******************************
 Dim pcStrPageName
-pcStrPageName = "viewCategories.asp"
-
-'*******************************
-' Page Settings
-'*******************************
-Dim pcCategoryClass, pcCategoryHover, pcProductHover
-pcCategoryClass 	= "pcShowCategory"
-pcCategoryHover 	= "pcShowCategoryBgHover"
-pcProductHover		= "pcShowProductBgHover"
-
-'*******************************
-' START: Check store on/off, start PC session, check affiliate ID
-'*******************************
+pcStrPageName = "customcat-stands.asp"
 %>
 <!--#include file="pcStartSession.asp"-->
-<%
-'*******************************
-' END: Check store on/off, start PC session, check affiliate ID
-'*******************************
-
-dim pTempIntSubCategory
-%>
 <!--#include file="prv_getSettings.asp"-->
 <%
-pTempIntSubCategory=session("idCategoryRedirect")
-if pTempIntSubCategory = "" then
-	pTempIntSubCategory=getUserInput(request("idCategory"),10)
-end if
+' ------------------------------------------------------------
+' Load stands products (category 5) in one pass.
+' Fields: 0=idProduct 1=sku 2=description 3=price
+'         4=smallImageUrl 5=pcUrl
+' ------------------------------------------------------------
+Dim mmStandsSql, mmStandsRs, mmStandsRows, mmStandsCount
+mmStandsCount = 0
 
-pTempIntSubCategory=5
+mmStandsSql = "SELECT p.idProduct, p.sku, p.description, p.price, " & _
+              "p.smallImageUrl, p.pcUrl " & _
+              "FROM products p " & _
+              "INNER JOIN categories_products cp ON p.idProduct = cp.idProduct " & _
+              "WHERE cp.idCategory = 5 " & _
+              "  AND p.active = -1 AND p.configOnly = 0 AND p.removed = 0 " & _
+              "ORDER BY cp.POrder ASC, p.description ASC"
 
-'// Validate Category ID
-	if not validNum(pTempIntSubCategory) then
-		pTempIntSubCategory=""
-	end if
-	if pTempIntSubCategory="" or pTempIntSubCategory="0" then
-		pTempIntSubCategory=1
-	end if
-intIdCategory=pTempIntSubCategory
-
-'// Wholesale-only categories
-If Session("customerType")=1 Then
-	pcv_strTemp=""
-else
-	pcv_strTemp=" AND pccats_RetailHide<>1"
-end if
-
-'*******************************
-' START Display Settings
-'*******************************
-
-pFeaturedCategory=0
-pFeaturedCategoryImage=0
-
-If validNum(pTempIntSubCategory) and pTempIntSubCategory<>1 then
-	query="SELECT pcCats_SubCategoryView, pcCats_CategoryColumns, pcCats_CategoryRows, pcCats_PageStyle, pcCats_ProductOrder, pcCats_ProductColumns, pcCats_ProductRows, pcCats_FeaturedCategory, pcCats_FeaturedCategoryImage FROM categories WHERE (((idCategory)="&pTempIntSubCategory&")" & pcv_strTemp &");"
-
-	set rs=server.CreateObject("ADODB.RecordSet")
-	set rs=conntemp.execute(query)
-	
-	if rs.EOF then
-		set rs=nothing
-		call closeDb()
-		response.redirect "msg.asp?message=86"
-	end if	
-	
-	Dim pIntSubCategoryView
-	Dim pIntCategoryColumns
-	Dim pIntCategoryRows
-	Dim pIntProductColumns
-	Dim pIntProductRows
-	
-	pIntSubCategoryView=rs("pcCats_SubCategoryView")
-	pIntCategoryColumns=rs("pcCats_CategoryColumns")
-	pIntCategoryRows=rs("pcCats_CategoryRows")
-	pStrPageStyle=rs("pcCats_PageStyle")
-	pStrProductOrder=rs("pcCats_ProductOrder")
-	pIntProductColumns=rs("pcCats_ProductColumns")
-	pIntProductRows=rs("pcCats_ProductRows")
-	pFeaturedCategory=rs("pcCats_FeaturedCategory")
-	pFeaturedCategoryImage=rs("pcCats_FeaturedCategoryImage")
-	
-	set rs=nothing
-	
-	Session("pStrPageStyle")=pStrPageStyle
-End if
-	
-' START Load category-specific values. If empty, use storewide settings
-
-' How sub-categories are displayed
-' 	0 = in a list, with images
-'	1 = in a list, without images
-'	2 = drop-down
-'	3 = default
-'	4 = thumbnail only
-if NOT validNum(pIntSubCategoryView) OR pIntSubCategoryView=3 then
-	 pIntSubCategoryView=scCatImages
-end if
-
-' How many per row: number of columns
-if NOT validNum(pIntCategoryColumns) OR pIntCategoryColumns=0 then
-	pIntCategoryColumns=scCatRow
-end if
-
-' How many rows per page
-if NOT validNum(pIntCategoryRows) OR pIntCategoryRows=0 then
-	pIntCategoryRows=scCatRowsPerPage
-end if
-
-' How many products per row
-if NOT validNum(pIntProductColumns) OR pIntProductColumns=0 then
-	pIntProductColumns=scPrdRow
-end if
-
-' How many rows per page
-if NOT validNum(pIntProductRows) OR pIntProductRows=0 then
-	pIntProductRows=scPrdRowsPerPage
-end if
-
-' END Load category-specific values
-
-
-' OVERRIDE page style: check to see if a querystring or a form is sending the page style.
-Dim pcPageStyle, strSeoQueryString
-
-pcPageStyle = LCase(getUserInput(Request("pageStyle"),1))
-
-'// Check querystring saved to session by 404.asp
-if pcPageStyle = "" then
-	strSeoQueryString=lcase(session("strSeoQueryString"))
-	if strSeoQueryString<>"" then
-		if InStr(strSeoQueryString,"pagestyle")>0 then
-			pcPageStyle=left(replace(strSeoQueryString,"pagestyle=",""),1)
-		end if
-	end if
-end if
-
-'// Category Level Settings
-if pcPageStyle = "" then
-	pcPageStyle = pStrPageStyle
-end if
-
-'// Global Settings
-if isNULL(pcPageStyle) OR trim(pcPageStyle) = "" then
-	pcPageStyle = LCase(bType)
-end if
-
-if pcPageStyle <> "h" and pcPageStyle <> "l" and pcPageStyle <> "m" and pcPageStyle <> "p" then
-	pcPageStyle = LCase(bType)
-end if
-
-' OTHER display settings
-' These variables show/hide information when products are shown with Page Style = L or M
-Dim pShowSKU, pShowSmallImg
-pShowSKU = scShowSKU ' If 0, then the SKU is hidden
-pShowSmallImg = scShowSmallImg ' If 0, then the small image is not shown
-' Note: the size of the small image is set via the css/pcStorefront.css stylesheet
-
-'FB-S
-if (session("Facebook")="1") AND (session("pcFBS_CustomDisplay")="1") then
-	pIntSubCategoryView=session("pcFBS_CatImages")
-	pIntCategoryColumns=session("pcFBS_CatRow")
-	pIntCategoryRows=session("pcFBS_CatRowsperPage")
-	pIntProductColumns=session("pcFBS_PrdRow")
-	pIntProductRows=session("pcFBS_PrdRowsPerPage")
-	pcPageStyle = session("pcFBS_BType")
-	pShowSKU = session("pcFBS_ShowSKU")
-	pShowSmallImg = session("pcFBS_ShowSmallImg")
-end if
-'FB-E
-
-'// Check For Mobile Storefront Overrides
-If session("Mobile")="1" Then
-	pIntSubCategoryViewBAK=pIntSubCategoryView
-	pIntSubCategoryView=0
-	pIntCategoryColumns=1
-	pIntCategoryRows=10
-	pIntProductColumns=1
-	pIntProductRows=10
-	pcPageStyle = "h"
+Set mmStandsRs = Server.CreateObject("ADODB.Recordset")
+On Error Resume Next
+mmStandsRs.Open mmStandsSql, connTemp, adOpenStatic, adLockReadOnly, adCmdText
+If err.number <> 0 Then
+    On Error Goto 0
+    call LogErrorToDatabase()
+    Set mmStandsRs = Nothing
+    call closeDB()
+    Response.Redirect "techErr.asp?err=" & pcStrCustRefID
 End If
+On Error Goto 0
 
-'*******************************
-' END Display Settings
-'*******************************
-
-
-if pFeaturedCategory<>0 then
-	pcv_strTemp=pcv_strTemp&" AND idCategory<>"&pFeaturedCategory & " "
-end if
-
-dim pIdCategory, pCategoryDesc, pcStrViewAll
-
-rMode=server.HTMLEncode(request.querystring("mode"))
-if rMode="" then
-	iPageSize=(pIntProductColumns*pIntProductRows)
-	iCatPageSize=(pIntCategoryColumns*pIntCategoryRows)
-	If Request("page")="" Then
-		iPageCurrent=1
-	Else
-		iPageCurrent=CInt(Request("page"))
-	End If
-end if
-
-'// View All
-pcStrViewAll = Lcase(getUserInput(Request("viewAll"),3))
-if pcStrViewAll = "yes" then
-	iPageSize = 9999
-end if	
-
-if NOT validNum(iPageSize) OR iPageSize=0 then
-	iPageSize=5
-end if
-
-pIdCategory=session("idCategoryRedirect")
-mIdCategory=session("idCategoryRedirect")
-'DA - EDIT
-pIdCategory=pTempIntSubCategory
-mIdCategory=pTempIntSubCategory
-if pIdCategory="" then
-	pIdCategory=getUserInput(request.querystring("idCategory"),10)
-	mIdCategory=getUserInput(request.querystring("idCategory"),10)
-	'// Validate Category ID
-	if not validNum(pIdCategory) then
-		pIdCategory=""          
-	end if
-	if not validNum(mIdCategory) then
-		mIdCategory=""          
-	end if
-	
-	if pIdCategory="" then
-		pIdCategory=1
-		mIdCategory=1
-	end if
-end if
-session("idCategoryRedirect")=""
-
-'*******************************
-' get category tree array
-'*******************************
-if pIdCategory<>1 then %>
-	<!--#include file="pcBreadCrumbs.asp"-->
-<% end if
-
-'*******************************
-' End get category tree array
-'*******************************
-
-'*******************************
-' Get sub-categories array
-'*******************************
-Dim intSubCatExist
-Dim iCategoriesPageCount
-intSubCatExist=0
-
-IF pIdCategory=1 THEN
-	scCatTotal=(pIntCategoryColumns*pIntCategoryRows)
-	if pIntSubCategoryView="2" then
-		scCatTotal=999999
-	end if
-	iCategoriesPageSize=scCatTotal
-	if pcStrViewAll = "yes" then
-		iCategoriesPageSize = 9999
-	end if
-	
-	Dim pcInt_CategoriesPage
-	pcInt_CategoriesPage=getUserInput(request("CategoriesPage"),10)
-	if not validNum(pcInt_CategoriesPage) then
-		iCategoriesPageCurrent=1
-	Else
-		iCategoriesPageCurrent=Cint(pcInt_CategoriesPage)
-	End If
-
-	query = "SELECT idCategory,categoryDesc,[image],idParentCategory,SDesc,HideDesc FROM Categories WHERE idParentCategory=1 AND idCategory<>1 AND iBTOhide=0 " & pcv_strTemp & " ORDER BY priority, categoryDesc ASC;"
-	SET rs=Server.CreateObject("ADODB.RecordSet")
-
-	rs.PageSize=iCategoriesPageSize
-	pcv_strPageSize=iCategoriesPageSize
-	rs.CacheSize=iCategoriesPageSize
-		
-	rs.Open query, conntemp, adOpenStatic, adLockReadOnly, adCmdText
-	
-	'// Page Count
-	iCategoriesPageCount=rs.PageCount
-	If Cint(iCategoriesPageCurrent) > Cint(iCategoriesPageCount) Then iCategoriesPageCurrent=Cint(iCategoriesPageCount)
-	If Cint(iCategoriesPageCurrent) < 1 Then iCategoriesPageCurrent=1	
-ELSE
-	scCatTotal=(pIntCategoryColumns*pIntCategoryRows)
-	if pIntSubCategoryView="2" then
-		scCatTotal=999999
-	end if
-	iCategoriesPageSize=scCatTotal
-	if pcStrViewAll = "yes" then
-		iCategoriesPageSize = 9999
-	end if
-	
-	pcInt_CategoriesPage=getUserInput(request("CategoriesPage"),10)
-	if not validNum(pcInt_CategoriesPage) then
-		iCategoriesPageCurrent=1
-	else
-		iCategoriesPageCurrent=Cint(pcInt_CategoriesPage)
-	end if
-	
-	query = "SELECT idCategory, categoryDesc FROM Categories WHERE idParentCategory = " & pIdCategory & " AND idCategory<>1 AND iBTOhide=0 " & pcv_strTemp & " ORDER BY priority, categoryDesc ASC;"
-	set rs=Server.CreateObject("ADODB.RecordSet")
-
-	rs.PageSize=iCategoriesPageSize
-	pcv_strPageSize=iCategoriesPageSize
-	rs.CacheSize=iCategoriesPageSize
-		
-	rs.Open query, conntemp, adOpenStatic, adLockReadOnly, adCmdText
-	
-	'// Page Count
-	iCategoriesPageCount=rs.PageCount
-	If Cint(iCategoriesPageCurrent) > Cint(iCategoriesPageCount) Then iCategoriesPageCurrent=Cint(iCategoriesPageCount)
-	If Cint(iCategoriesPageCurrent) < 1 Then iCategoriesPageCurrent=1	
-END IF
-
-If NOT rs.EOF Then
-	rs.AbsolutePage=iCategoriesPageCurrent
-	intSubCatExist=1
-	SubCatArray=rs.GetRows(iCategoriesPageSize)
-	intSubCatCount=ubound(SubCatArray,2)
+If Not mmStandsRs.EOF Then
+    mmStandsRows = mmStandsRs.GetRows()
+    mmStandsCount = UBound(mmStandsRows, 2) + 1
 End If
+Set mmStandsRs = Nothing
 
-SET rs=nothing
-'*******************************
-' End get sub-categories array
-'*******************************
+' ------------------------------------------------------------
+' Screen count from the first word of the product description.
+' Dual=2, Triple=3, Quad=4, Five=5, Six=6, Eight=8.
+' Returns 0 for anything unrecognised (product will be skipped).
+' ------------------------------------------------------------
+Function mmStandScreenCount(ByVal descr)
+    Dim firstWord, pos, s
+    s = LCase(Trim(descr & ""))
+    pos = InStr(s, " ")
+    If pos > 0 Then
+        firstWord = Left(s, pos - 1)
+    Else
+        firstWord = s
+    End If
+    Select Case firstWord
+        Case "dual"   : mmStandScreenCount = 2
+        Case "triple" : mmStandScreenCount = 3
+        Case "quad"   : mmStandScreenCount = 4
+        Case "five"   : mmStandScreenCount = 5
+        Case "six"    : mmStandScreenCount = 6
+        Case "eight"  : mmStandScreenCount = 8
+        Case Else     : mmStandScreenCount = 0
+    End Select
+End Function
+
+' ------------------------------------------------------------
+' Style label from SKU suffix letters (everything after the
+' first digit). v/h/p/s/sp/rp/r map to Vertical/Horizontal/
+' Pyramid/Square/Pole/Pole/Side-by-side. For the 8-screen
+' stand, a lone 'r' suffix means "2-over-2 quad".
+' Returns "" if the SKU doesn't match a known style.
+' ------------------------------------------------------------
+Function mmStandStyle(ByVal sku, ByVal screenCount)
+    Dim s, i, ch, tail
+    s = LCase(Trim(sku & ""))
+    tail = ""
+    For i = 1 To Len(s)
+        ch = Mid(s, i, 1)
+        If ch >= "0" And ch <= "9" Then
+            tail = Mid(s, i + 1)
+            Exit For
+        End If
+    Next
+    Select Case tail
+        Case "v"  : mmStandStyle = "Vertical"
+        Case "h"  : mmStandStyle = "Horizontal"
+        Case "p"  : mmStandStyle = "Pyramid"
+        Case "s"  : mmStandStyle = "Square"
+        Case "sp" : mmStandStyle = "Pole"
+        Case "rp" : mmStandStyle = "Pole"
+        Case "r"
+            If screenCount = 8 Then
+                mmStandStyle = "2-over-2 quad"
+            Else
+                mmStandStyle = "Side-by-side"
+            End If
+        Case Else
+            mmStandStyle = ""
+    End Select
+End Function
+
+' ------------------------------------------------------------
+' Render every card whose screen count is in the allowed list.
+' allowed is a comma-separated string like "2,3" or "5,6,8".
+' ------------------------------------------------------------
+Sub mmRenderStandGroup(ByVal allowed)
+    Dim i, screens, idProduct, sku, descr, price, img, purl
+    Dim eyebrow, style, href, imgSrc, priceDisp, altText, delayIdx
+
+    If mmStandsCount < 1 Then Exit Sub
+
+    delayIdx = 0
+    For i = 0 To mmStandsCount - 1
+        idProduct = mmStandsRows(0, i)
+        sku       = mmStandsRows(1, i) & ""
+        descr     = mmStandsRows(2, i) & ""
+        price     = mmStandsRows(3, i)
+        img       = mmStandsRows(4, i) & ""
+        purl      = mmStandsRows(5, i) & ""
+
+        screens = mmStandScreenCount(descr)
+        If screens > 0 And InStr("," & allowed & ",", "," & screens & ",") > 0 Then
+
+            style = mmStandStyle(sku, screens)
+            If style <> "" Then
+                eyebrow = screens & "-Screen &middot; " & style
+            Else
+                eyebrow = screens & "-Screen"
+            End If
+
+            If img <> "" Then
+                imgSrc = "/shop/pc/catalog/" & img
+            Else
+                imgSrc = "/shop/pc/catalog/no_image.gif"
+            End If
+
+            If purl <> "" Then
+                href = "/shop/pc/" & purl & ".htm"
+            Else
+                href = "/shop/pc/viewPrd.asp?idproduct=" & idProduct
+            End If
+
+            altText   = Server.HTMLEncode(descr)
+            priceDisp = scCursign & money(price / 1.2)
+
+            Response.Write "<a href=""" & href & """ class=""bundle-card reveal"""
+            If delayIdx > 0 Then
+                Response.Write " style=""transition-delay:." & Right("0" & (delayIdx * 6), 2) & "s"""
+            End If
+            Response.Write ">" & vbCrLf
+            Response.Write "  <div class=""bundle-card__media"">" & vbCrLf
+            Response.Write "    <img src=""" & imgSrc & """ alt=""" & altText & """>" & vbCrLf
+            Response.Write "  </div>" & vbCrLf
+            Response.Write "  <div class=""bundle-card__body"">" & vbCrLf
+            Response.Write "    <div class=""bundle-card__eyebrow"">" & eyebrow & "</div>" & vbCrLf
+            Response.Write "    <h4 class=""bundle-card__title"">" & altText & "</h4>" & vbCrLf
+            Response.Write "    <div class=""bundle-card__price"">" & vbCrLf
+            Response.Write "      <span class=""bundle-card__from"">From</span>" & vbCrLf
+            Response.Write "      <span class=""bundle-card__amount"">" & priceDisp & "</span>" & vbCrLf
+            Response.Write "    </div>" & vbCrLf
+            Response.Write "    <span class=""btn btn-primary bundle-card__cta"">View stand <i class=""fa fa-arrow-right""></i></span>" & vbCrLf
+            Response.Write "  </div>" & vbCrLf
+            Response.Write "</a>" & vbCrLf
+
+            delayIdx = delayIdx + 1
+        End If
+    Next
+End Sub
 %>
-
 <!--#include file="header_wrapper.asp"-->
-<!--#include file="pcValidateHeader.asp"-->
-<!--#include file="pcValidateQty.asp"-->
 
-	<!-- Header: pagetitle -->
-    <header id="stands-header" class="stands-header">
-		<div class="intro-content">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-6">
-                         <div class="wow fadeInDown pt-headtext maxW-fix marginT-xlfix" data-wow-offset="0" data-wow-delay="0">
-							<h1 class="">Multiple Monitor Stands</h1>
-							<h2 class="text-uppercase">HOLD YOUR SCREENS IN <span class="color-sb">PERFECT ALIGNMENT</span> WITH A STRONG AND EASY TO SETUP MULTIPLE MONITOR</h2>
-						 </div>
-						 <div class="wow fadeInUp maxW-fix" data-wow-offset="0" data-wow-delay="0">
-							<p class="home-head-text text-white text-justify">A multi-monitor stand is more than just a luxury item, they massively improve your computing experience by allowing you to <span class="color-sb">position your screens exactly</span> where you want them to <span class="color-sb">avoid both neck and eye strain</span>.</p>
-						    <p class="home-head-text text-white text-justify">All Synergy Stands are strong, stable, and <span class="color-sb">easy to assemble</span>, they allow for a range of adjustments letting you <span class="color-sb">achieve the perfect layout</span> for your needs.</p>
-						</div>
-                    </div>
-					<div class="col-md-6">
-                         <div class="wow fadeInRight text-center" data-wow-offset="0" data-wow-delay="0.1s">
-							  <img src="/images/banners/stands.png">
-						 </div>
-                    </div>
-					
-				</div>		
-			</div>		
-		</div>	
-    </header>
+<div class="mm-site">
 
-	<section id="product-stands" class="product-stands bg-smog product-grid paddingtop-70 paddingbot-40">
-		<div class="container">
-			<div class="row">
+<!-- ===================================================================
+     HERO
+     =================================================================== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="reveal">
+        <div class="eyebrow">Synergy Stands &middot; UK designed &amp; manufactured</div>
+        <h1>
+          Synergy Stands &mdash; our own UK-designed, UK-manufactured <em>modular monitor mounts</em>.
+        </h1>
+        <p class="lead">
+          Developed by us, manufactured in the UK to our specifications. A modular system that scales from two screens to six on a single assembly. Built to hold up day after day, with thousands in use across trader desks, design studios and operations rooms.
+        </p>
+        <div class="hero-ctas">
+          <a href="#range" class="btn btn-primary btn-lg">See the range <i class="fa fa-arrow-right"></i></a>
+        </div>
+        <div class="hero-mini">
+          <div class="item"><i class="fa fa-industry"></i><span>UK-designed &amp; UK-made</span></div>
+          <div class="item"><i class="fa fa-th-large"></i><span>Modular &middot; 2 to 8 screens</span></div>
+          <div class="item"><i class="fa fa-clock-o"></i><span>Sold since 2016</span></div>
+        </div>
+      </div>
 
-			<% 
-	
-		
-		'*******************************
-		' START show products
-		'*******************************
-	
-		'Query order	
-		Dim UONum, pcIntProductOrder
-		query="SELECT POrder FROM categories_products WHERE idCategory="& pIdCategory &";"
-		set rs=Server.CreateObject("ADODB.Recordset")     
-		set rs=connTemp.execute(query)
-			if err.number<>0 then
-				call LogErrorToDatabase()
-				set rs=nothing
-				call closedb()
-				response.redirect "techErr.asp?err="&pcStrCustRefID
-			end if
-		UONum=0
-		do while not rs.eof
-			pcIntProductOrder=rs("POrder")
-			if not validNum(pcIntProductOrder) then pcIntProductOrder=0
-			if pcIntProductOrder>0 then
-				UONum=UONum+CLng(pcIntProductOrder)
-			end if
-			rs.MoveNext
-		loop
-		SET rs=nothing
-		
-		'Decide Order By
-		Dim ProdSort 
-		ProdSort=trim(getUserInput(request("prodsort"),2))
-		if NOT validNum(ProdSort) then
-			ProdSort=""
-		end if
-		if ProdSort="" then
-			if UONum>0 then
-				ProdSort="19"
-			elseif pStrProductOrder <> "" then
-        ProdSort=CInt(pStrProductOrder)
-      else
-				ProdSort=PCOrd
-			end if
-		end if
-	
-		select case ProdSort
-			Case "19": query1 = " ORDER BY categories_products.POrder Asc"
-			Case "0": query1 = " ORDER BY products.SKU Asc"
-			Case "1": query1 = " ORDER BY products.description Asc" 	
-			Case "2": 
-				If Session("customerType")=1 then
-					if Ucase(scDB)="SQL" then
-						query1 = " ORDER BY (CASE (CASE (CASE WHEN Products.pcProd_BTODefaultWPrice IS NULL THEN 0 ELSE Products.pcProd_BTODefaultWPrice END) WHEN 0 THEN (CASE WHEN Products.pcProd_BTODefaultPrice IS NULL THEN 0 ELSE Products.pcProd_BTODefaultPrice END) ELSE Products.pcProd_BTODefaultWPrice END) WHEN 0 THEN (CASE Products.bToBPrice WHEN 0 THEN Products.Price ELSE Products.bToBPrice END) ELSE (CASE (CASE WHEN Products.pcProd_BTODefaultWPrice IS NULL THEN 0 ELSE Products.pcProd_BTODefaultWPrice END) WHEN 0 THEN Products.pcProd_BTODefaultPrice ELSE Products.pcProd_BTODefaultWPrice END) END) DESC"
-					else
-						query1 = " ORDER BY (iif(iif((Products.pcProd_BTODefaultWPrice=0) OR (IsNull(Products.pcProd_BTODefaultWPrice)),iif(IsNull(Products.pcProd_BTODefaultPrice),0,Products.pcProd_BTODefaultPrice),Products.pcProd_BTODefaultWPrice)=0,iif(Products.btoBPrice=0,Products.Price,Products.btoBPrice),iif((Products.pcProd_BTODefaultWPrice=0) OR (IsNull(Products.pcProd_BTODefaultWPrice)),Products.pcProd_BTODefaultPrice,Products.pcProd_BTODefaultWPrice))) DESC"
-					end if
-				else
-					if Ucase(scDB)="SQL" then
-						query1 = " ORDER BY (CASE (CASE WHEN Products.pcProd_BTODefaultPrice IS NULL THEN 0 ELSE Products.pcProd_BTODefaultPrice END) WHEN 0 THEN Products.Price ELSE Products.pcProd_BTODefaultPrice END) DESC"
-					else
-						query1 = " ORDER BY (iif((Products.pcProd_BTODefaultPrice=0) OR (IsNull(Products.pcProd_BTODefaultPrice)),Products.Price,Products.pcProd_BTODefaultPrice)) DESC"
-					end if
-				End if
-			Case "3":
-				If Session("customerType")=1 then
-					if Ucase(scDB)="SQL" then
-						query1 = " ORDER BY (CASE (CASE (CASE WHEN Products.pcProd_BTODefaultWPrice IS NULL THEN 0 ELSE Products.pcProd_BTODefaultWPrice END) WHEN 0 THEN (CASE WHEN Products.pcProd_BTODefaultPrice IS NULL THEN 0 ELSE Products.pcProd_BTODefaultPrice END) ELSE Products.pcProd_BTODefaultWPrice END) WHEN 0 THEN (CASE Products.bToBPrice WHEN 0 THEN Products.Price ELSE Products.bToBPrice END) ELSE (CASE (CASE WHEN Products.pcProd_BTODefaultWPrice IS NULL THEN 0 ELSE Products.pcProd_BTODefaultWPrice END) WHEN 0 THEN Products.pcProd_BTODefaultPrice ELSE Products.pcProd_BTODefaultWPrice END) END) ASC"
-					else
-						query1 = " ORDER BY (iif(iif((Products.pcProd_BTODefaultWPrice=0) OR (IsNull(Products.pcProd_BTODefaultWPrice)),iif(IsNull(Products.pcProd_BTODefaultPrice),0,Products.pcProd_BTODefaultPrice),Products.pcProd_BTODefaultWPrice)=0,iif(Products.btoBPrice=0,Products.Price,Products.btoBPrice),iif((Products.pcProd_BTODefaultWPrice=0) OR (IsNull(Products.pcProd_BTODefaultWPrice)),Products.pcProd_BTODefaultPrice,Products.pcProd_BTODefaultWPrice))) ASC"
-					end if
-				else
-					if Ucase(scDB)="SQL" then
-						query1 = " ORDER BY (CASE (CASE WHEN Products.pcProd_BTODefaultPrice IS NULL THEN 0 ELSE Products.pcProd_BTODefaultPrice END) WHEN 0 THEN Products.Price ELSE Products.pcProd_BTODefaultPrice END) ASC"
-					else
-						query1 = " ORDER BY (iif((Products.pcProd_BTODefaultPrice=0) OR (IsNull(Products.pcProd_BTODefaultPrice)),Products.Price,Products.pcProd_BTODefaultPrice)) ASC"
-					end if
-				End if	
-		end select
-		
-		'////////////////////////////////////////////////////////////////
-		'// START: Category Seach Fields 
-		'////////////////////////////////////////////////////////////////
-        If SRCH_CSFON = "1" Then 
-			pcv_strCSFieldQuery = Session("pcv_strCSFieldQuery")
-            pcv_strCSFilters = Session("pcv_strCSFilters")
-		End If
-		'////////////////////////////////////////////////////////////////
-		'// END: Category Seach Fields
-		'////////////////////////////////////////////////////////////////
-		
-		%>
-    	<!--#include file="pcShowProducts.asp" -->
-    <%
-		
-		'DA -EDIT
-		'// Query Products of current category
-		query="SELECT products.idProduct, products.sku, products.description, products.price, products.listhidden, products.listprice, products.serviceSpec, products.bToBPrice, products.smallImageUrl,products.noprices,products.stock, products.noStock,products.pcprod_HideBTOPrice,products.pcProd_BackOrder,products.FormQuantity,products.pcProd_BTODefaultPrice,cast(products.sDesc as varchar(8000)) sDesc, 0, 0, products.pcprod_OrdInHome, products.sales, products.pcprod_EnteredOn, products.hotdeal, products.pcProd_SkipDetailsPage, products.pcUrl FROM products, categories_products WHERE products.idProduct=categories_products.idProduct AND categories_products.idCategory="& mIdCategory&" AND active=-1 AND configOnly=0 and removed=0 " & pcv_strCSFilters & query1
-		set rs=Server.CreateObject("ADODB.Recordset")   
-		rs.CacheSize=iPageSize
-		rs.PageSize=iPageSize
-		pcv_strPageSize=iPageSize
-			
-		rs.Open query, Conntemp, adOpenStatic, adLockReadOnly, adCmdText
-	
-		if err.number<>0 then
-			call LogErrorToDatabase()
-			set rs=nothing
-			call closedb()
-			response.redirect "techErr.asp?err="&pcStrCustRefID
-		end if
-	
-		dim iPageCount, pcv_intProductCount
-		iPageCount=rs.PageCount
-		If Cint(iPageCurrent) > Cint(iPageCount) Then iPageCurrent=Cint(iPageCount)
-		If Cint(iPageCurrent) < 1 Then iPageCurrent=1
-		
-		if NOT rs.eof then
-			rs.AbsolutePage=Cint(iPageCurrent)
-			pcArray_Products = rs.getRows(iPageSize)
-			pcv_intProductCount = UBound(pcArray_Products,2)+1
-		end if
-	
-		set rs = nothing
-	
-		if pcv_intProductCount<1 then ' START IF-1: check if there are no products in this category...
-			if intSubCatExist <> 1 then ' ... and there are no sub-categories, then show a message  %>
-				<p><%=dictLanguage.Item(Session("language")&"_viewCat_P_4")%></p>
-			<% end if
-		
-		else ' ELSE IF-1: there are products or sub-categories
-			
-        	Dim pcv_strFacetContent, pcv_boolIsFacetContent 
-			pcv_boolIsFacetContent = False
+      <div class="hero-visual reveal" style="transition-delay:.1s">
+        <img src="/images/pages/ss-6r.png" alt="Six-screen Synergy Stand in a curved configuration" />
+      </div>
+    </div>
+  </div>
+</section>
 
-			If scSearch_IsEnabled = "1" Then
-        		pcv_strFacetContent = pcs_SolrCatalog(pIdCategory)        		
-        		If len(pcv_strFacetContent)>0 Then
-            		pcv_boolIsFacetContent = True
-        		Else
-            		pcv_boolIsFacetContent = False
-        		End If
-			End If
+<!-- ===================================================================
+     TRUST STRIP
+     =================================================================== -->
+<section class="truststrip" id="trust">
+  <div class="container">
+    <div class="inner">
+      <div class="trust-item bbc">
+        <div class="icon"><i class="fa fa-television"></i></div>
+        <div>
+          <div class="label">As seen on the <span class="bbc-mark">BBC</span></div>
+          <div class="val">Traders: Millions by the Minute</div>
+        </div>
+      </div>
+      <div class="trust-item tp">
+        <div class="icon"><i class="fa fa-star"></i></div>
+        <div>
+          <div class="label">Trustpilot &middot; 4.9&thinsp;/&thinsp;5</div>
+          <div class="val">90+ Unsolicited Reviews</div>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="icon"><i class="fa fa-clock-o"></i></div>
+        <div>
+          <div class="label">Established 2008</div>
+          <div class="val">17+ years of experience</div>
+        </div>
+      </div>
+      <div class="trust-item accent">
+        <div class="icon"><i class="fa fa-th-large"></i></div>
+        <div>
+          <div class="label">Sold since 2016</div>
+          <div class="val">3,000+ stands in use</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-        	%>
-            
-        <% If pcv_boolIsFacetContent = True Then %>
-        
-            <script>
-                var category = <%=pIdCategory %>;
-            </script>
-            <div data-ng-controller="solrSearchCtrl">
-                <htmldiv content="myhtml">
-                    <%= pcs_SolrCatalog(pIdCategory) %>
-                </htmldiv>
+<!-- ===================================================================
+     BENEFIT CARDS
+     =================================================================== -->
+<section class="s-tight" style="border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <h5>What makes a Synergy Stand different</h5>
+        <h2>Not a generic import. <span class="display-em">Our own product, made properly.</span></h2>
+        <p style="max-width:760px; margin-top:12px;">Most multi-monitor stands on the market are rebranded imports, priced on volume. Ours aren&rsquo;t. Four things set a Synergy Stand apart from what you&rsquo;ll find on Amazon.</p>
+      </div>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar reveal">
+        <div class="icon"><i class="fa fa-industry"></i></div>
+        <h4>UK-designed &amp; UK-made</h4>
+        <p>We designed the Synergy Stand. We don&rsquo;t rebrand imports &mdash; we work with a specialist UK design and manufacturing partner to build what the market didn&rsquo;t. Every stand also fits every monitor we sell, so compatibility is never a guessing game.</p>
+        <div class="tag">UK DESIGN &amp; BUILD</div>
+      </div>
+      <div class="pillar reveal" style="transition-delay:.06s">
+        <div class="icon"><i class="fa fa-th-large"></i></div>
+        <h4>Modular, 2 to 8 screens</h4>
+        <p>Start with two screens. Add arms and columns as your needs grow &mdash; three, four, five, six, all the way up to eight on our largest stand. Same base assembly, no wasted spend when you scale up.</p>
+        <div class="tag">MODULAR SYSTEM</div>
+      </div>
+      <div class="pillar reveal" style="transition-delay:.12s">
+        <div class="icon"><i class="fa fa-shield"></i></div>
+        <h4>All-steel, built for daily use</h4>
+        <p>Every part is steel &mdash; not a metal frame with plastic joints. Plastic bends, flexes, and fails under the weight of real screens. Synergy Stands are built for desks that run ten hours a day, every day.</p>
+        <div class="tag">ALL-STEEL</div>
+      </div>
+      <div class="pillar reveal" style="transition-delay:.18s">
+        <div class="icon"><i class="fa fa-sliders"></i></div>
+        <h4>Adjustability that actually works</h4>
+        <p>Height position, arm hinge, horizontal slide, pivot, tilt and 30&nbsp;mm of fine height adjustment at every mount. Six degrees of freedom per screen &mdash; and everything locks solid once positioned.</p>
+        <div class="tag">FULL ADJUSTMENT</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================================================================
+     DESIGN & MANUFACTURING STORY
+     =================================================================== -->
+<section class="s depth">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="reveal">
+        <div class="eyebrow">Where the Synergy Stand came from</div>
+        <h2>Designed by us. <span class="display-em">Made in the UK.</span> Refined since 2016.</h2>
+        <p class="lead">
+          Multiple Monitors, founded in 2008, spent a long time battling with inadequate and expensive stands. After years of frustration we developed the Synergy Stand range. The result of a decade-plus collaboration with a specialist UK design and manufacturing team, producing the stands we knew the market needed, but nobody was making.
+        </p>
+        <p style="color:var(--slate); margin-top:14px; max-width:640px;">
+          Every stand we ship is manufactured in the UK to our specifications and packaged in our workshop. Multiple generations of refinement, driven by real customer feedback, have gone into the system you buy today.
+        </p>
+        <div class="hero-mini" style="margin-top:22px;">
+          <div class="item"><i class="fa fa-check"></i><span>Our own design</span></div>
+          <div class="item"><i class="fa fa-check"></i><span>UK manufactured</span></div>
+          <div class="item"><i class="fa fa-check"></i><span>10+ years of real-world refinement</span></div>
+        </div>
+      </div>
+
+      <div class="hero-visual reveal" style="transition-delay:.1s">
+        <img src="/images/pages/ss-4p.png" alt="Quad Pyramid Synergy Stand &mdash; UK-designed modular assembly" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     MODULAR UPGRADE PATH
+     =================================================================== -->
+<section class="bundle">
+  <div class="container">
+    <div class="bundle-grid">
+      <div class="reveal">
+        <h5>The modular system</h5>
+        <h2>Start small. Scale up. <em>Don&rsquo;t buy twice.</em></h2>
+        <p>There&rsquo;s a voice in a lot of our customers&rsquo; heads saying <em>&lsquo;wouldn&rsquo;t it be easier if I just had one more screen&rsquo;</em>. We hear it a lot. The Synergy Stand is a system, not a fixed product &mdash; buy the base today, buy the extra arms when you need them.</p>
+        <p style="color:#C7D2DF; margin-top:14px;">Starting with two screens? The same base stand accepts additional arms. Scale up to four, five or six as your needs grow &mdash; no need to buy a whole new stand.</p>
+        <div class="bundle-pills" style="margin-top:20px;">
+          <span class="bundle-pill"><i class="fa fa-check"></i>One base, multiple configurations</span>
+          <span class="bundle-pill"><i class="fa fa-check"></i>Add arms &amp; mounts later</span>
+          <span class="bundle-pill"><i class="fa fa-check"></i>Same parts, always in stock</span>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:20px;">
+          <a href="#range" class="btn btn-accent btn-lg">Pick a starting configuration <i class="fa fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="reveal" style="transition-delay:.1s">
+        <div class="save-card">
+          <span class="save-tag">Scale path</span>
+          <div class="kicker">The same base, three configurations</div>
+          <div class="breakdown" style="margin-top:6px; gap:14px;">
+            <div class="r" style="align-items:center;">
+              <span style="display:flex; align-items:center; gap:12px;">
+                <img src="/shop/pc/catalog/2h-front-angle-thm.jpg" alt="Dual Synergy Stand" style="width:56px; height:56px; object-fit:contain; background:#fff; border-radius:4px;">
+                <span><b style="color:var(--ink);">Start</b><br><small style="color:var(--muted);">2 screens</small></span>
+              </span>
+              <b>Dual Stand</b>
             </div>
-            
-        <% Else %>
-
-			<%
-			call pcShowProducts(iPageSize, 0)
-			%>
-
-			<!--#include file="atc_viewprd.asp"-->
-    
-        <% End If %>
-            
-        <% End If %>
-  
-				<div class="clr"></div>
-				<div class="wow fadeInUp productBox-wrap text-center" data-wow-delay="0.1s">
-				    <div class="productBox-Large">		 
-						<div class="pb-present pb-icon-xxl">
-							<i class="fa fa-question"></i>
-						</div>
-						<div class="pb-details pb-xl-text">
-							<h2>Synergy <span class="color">Stand<span></h2>
-							<h4 class="color-med">Strong | Modular | Stable | Flexible | Attractive</h4>
-							<p class="color-med">A Synergy Stand is the best way to mount multiple screens together.</p>
-							<div class="pb-actionBox"><a href="/pages/synergy-stand/" class="btn btn-skin btn-lg">Discover Why <i class="fa fa-angle-right"></i></a></div>
-						</div>
-							 
-					</div>
-				</div> 
-			</div>
-		</div>
-	</section>
-    <!-- /Section: Welcome -->
-	<section id="callaction" class="callact-row">	
-           <div class="container">
-				<div class="row">
-					<div class="col-md-12">
-						<div class="callaction">
-							<div class="row">
-								<div class="col-md-10">
-									<div class="wow fadeInUp" data-wow-delay="0.1s">
-									<div class="cta-text">
-									<h2 class="h-bold font-light disp-inline">Save Money,</h2>
-									<h3 class="h-light font-light disp-inline">Get Free Cables & Free Delivery with a Bundle</h3>
-									</div>
-									</div>
-								</div>
-								<div class="col-md-2">
-									<div class="wow fadeInRight" data-wow-delay="0.1s">
-										<div class="cta-btn">
-										<a data-toggle="lightbox" data-title="Multi-Screen Bundles" href="/pop-pages/bundles.htm" class="btn btn-outline">Learn More</a>	
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+            <div class="r" style="align-items:center;">
+              <span style="display:flex; align-items:center; gap:12px;">
+                <img src="/shop/pc/catalog/4s-front-angle-thm.jpg" alt="Quad Square Synergy Stand" style="width:56px; height:56px; object-fit:contain; background:#fff; border-radius:4px;">
+                <span><b style="color:var(--ink);">Scale</b><br><small style="color:var(--muted);">4 screens</small></span>
+              </span>
+              <b>Add arms</b>
             </div>
-	</section>
+            <div class="r" style="align-items:center;">
+              <span style="display:flex; align-items:center; gap:12px;">
+                <img src="/shop/pc/catalog/6r-front-angle-thm.jpg" alt="Six-screen Synergy Stand" style="width:56px; height:56px; object-fit:contain; background:#fff; border-radius:4px;">
+                <span><b style="color:var(--ink);">Grow</b><br><small style="color:var(--muted);">6 screens</small></span>
+              </span>
+              <b>Add more</b>
+            </div>
+            <div class="r total"><span>Same base assembly throughout</span><b>&mdash;</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     28" SCREENS + CURVE
+     =================================================================== -->
+<section class="s depth">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-visual reveal">
+        <img src="/images/pages/ss-3p.png" alt="Triple Pyramid Synergy Stand showing curved layout" />
+      </div>
+      <div class="reveal" style="transition-delay:.08s">
+        <div class="eyebrow">Built for today&rsquo;s bigger screens</div>
+        <h2>Supports up to 28&Prime; screens &mdash; <span class="display-em">with room to curve</span>.</h2>
+        <p class="lead">
+          Screens keep getting larger. 24&Prime; &amp; 27&Prime; widescreens are now our most popular sizes, and most customers now like to go bigger. We designed the Synergy Stand knowing that trend wasn&rsquo;t going away.
+        </p>
+        <p style="color:var(--slate); margin-top:14px;">
+          Many competitor stands specify &lsquo;up to 24&Prime;&rsquo; &mdash; which leaves no room to angle the outer screens inward for a proper curved layout. Every Synergy Stand is designed to comfortably mount monitors up to and including 28&Prime; widescreens, and still achieve a gentle curve at full screen count.
+        </p>
+        <div class="hero-mini" style="margin-top:20px;">
+          <div class="item"><i class="fa fa-expand"></i><span>Up to 28&Prime; per screen</span></div>
+          <div class="item"><i class="fa fa-refresh"></i><span>Comfortable curve at full count</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     ADJUSTABILITY DETAIL
+     =================================================================== -->
+<section class="s-tight" style="border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--sand);">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <h5>Designed for real-world use</h5>
+        <h2>Six ways to get every screen <span class="display-em">exactly where you need it</span>.</h2>
+        <p style="max-width:760px; margin-top:12px;">Adjustability isn&rsquo;t a single thing &mdash; it&rsquo;s the difference between a stand you fight and a stand you forget about. Every Synergy Stand mount gives you six independent degrees of freedom, then locks solid once positioned.</p>
+      </div>
+    </div>
+
+    <div class="bench-panels">
+      <div class="bench-panel reveal">
+        <h4>Per-screen adjustment</h4>
+        <span class="sub">Six degrees of freedom at every mount</span>
+        <div style="margin-top:18px; display:grid; gap:14px;">
+          <div style="display:flex; gap:14px; align-items:flex-start;">
+            <i class="fa fa-arrows-v" style="color:var(--brand); font-size:18px; margin-top:3px; width:22px;"></i>
+            <div><b style="color:var(--ink);">Height position</b><br><small style="color:var(--slate);">Mount arms at any height up the central column.</small></div>
+          </div>
+          <div style="display:flex; gap:14px; align-items:flex-start;">
+            <i class="fa fa-refresh" style="color:var(--brand); font-size:18px; margin-top:3px; width:22px;"></i>
+            <div><b style="color:var(--ink);">Arm hinge</b><br><small style="color:var(--slate);">Arms hinge from the centre so outer screens pull forward into a curve.</small></div>
+          </div>
+          <div style="display:flex; gap:14px; align-items:flex-start;">
+            <i class="fa fa-arrows-h" style="color:var(--brand); font-size:18px; margin-top:3px; width:22px;"></i>
+            <div><b style="color:var(--ink);">Horizontal slide</b><br><small style="color:var(--slate);">Screens slide along the arm to set spacing.</small></div>
+          </div>
+          <div style="display:flex; gap:14px; align-items:flex-start;">
+            <i class="fa fa-compass" style="color:var(--brand); font-size:18px; margin-top:3px; width:22px;"></i>
+            <div><b style="color:var(--ink);">Pivot</b><br><small style="color:var(--slate);">Each screen pivots left or right independently.</small></div>
+          </div>
+          <div style="display:flex; gap:14px; align-items:flex-start;">
+            <i class="fa fa-sort" style="color:var(--brand); font-size:18px; margin-top:3px; width:22px;"></i>
+            <div><b style="color:var(--ink);">Tilt</b><br><small style="color:var(--slate);">Wide range of up / down tilt on every screen.</small></div>
+          </div>
+          <div style="display:flex; gap:14px; align-items:flex-start;">
+            <i class="fa fa-sliders" style="color:var(--brand); font-size:18px; margin-top:3px; width:22px;"></i>
+            <div><b style="color:var(--ink);">30&nbsp;mm fine height adjust</b><br><small style="color:var(--slate);">Per-mount micro-adjust so top edges line up perfectly across the row.</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bench-panel reveal" style="transition-delay:.08s; display:flex; flex-direction:column;">
+        <h4>Illustrated</h4>
+        <span class="sub">The same mount, six degrees of freedom</span>
+        <div style="flex:1; display:flex; align-items:center; justify-content:center; margin-top:20px;">
+          <img src="/images/pages/ss-flexible.png" alt="Diagram of Synergy Stand adjustability &mdash; height, tilt, pivot, slide, hinge" style="max-width:100%; height:auto;">
+        </div>
+        <p class="bench-caption">Everything locks solid once positioned &mdash; this is a stand you set up once and forget, not one you fight with every Monday morning.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     SHARED SPECIFICATIONS
+     =================================================================== -->
+<section class="s specs">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <h5>Shared specifications</h5>
+        <h2>Built to the <span class="display-em">same standard</span>.</h2>
+        <p style="max-width:760px; margin-top:12px;">Whichever stand you pick, these specifications are the same. Every Synergy Stand shares the same core engineering &mdash; no variations in quality, no compromises as screen count scales up.</p>
+      </div>
+    </div>
+
+    <div class="spec-grid">
+      <div class="spec-card reveal">
+        <div class="spec-card__icon"><i class="fa fa-crosshairs"></i></div>
+        <div class="spec-card__label">Mounting standard</div>
+        <div class="spec-card__value">VESA 75&times;75 &amp; 100&times;100</div>
+        <div class="spec-card__desc">Fits every monitor we sell &mdash; no adapters, no surprises.</div>
+      </div>
+      <div class="spec-card reveal" style="transition-delay:.06s">
+        <div class="spec-card__icon"><i class="fa fa-cubes"></i></div>
+        <div class="spec-card__label">Materials</div>
+        <div class="spec-card__value">All-steel throughout</div>
+        <div class="spec-card__desc">No weak or load-bearing plastic parts anywhere.</div>
+      </div>
+      <div class="spec-card reveal" style="transition-delay:.12s">
+        <div class="spec-card__icon"><i class="fa fa-expand"></i></div>
+        <div class="spec-card__label">Max screen size</div>
+        <div class="spec-card__value">Up to 28&Prime; per mount</div>
+        <div class="spec-card__desc">With room to curve the outer screens at full count.</div>
+      </div>
+      <div class="spec-card reveal">
+        <div class="spec-card__icon"><i class="fa fa-sliders"></i></div>
+        <div class="spec-card__label">Adjustability</div>
+        <div class="spec-card__value">Six degrees of freedom</div>
+        <div class="spec-card__desc">Height, arm hinge, horizontal slide, pivot, tilt, 30&nbsp;mm fine adjust.</div>
+      </div>
+      <div class="spec-card reveal" style="transition-delay:.06s">
+        <div class="spec-card__icon"><i class="fa fa-wrench"></i></div>
+        <div class="spec-card__label">Assembly</div>
+        <div class="spec-card__value">20&ndash;60 min, no drilling</div>
+        <div class="spec-card__desc">All tools included. No wall fixings.</div>
+      </div>
+      <div class="spec-card reveal" style="transition-delay:.12s">
+        <div class="spec-card__icon"><i class="fa fa-certificate"></i></div>
+        <div class="spec-card__label">Warranty</div>
+        <div class="spec-card__value">Lifetime on all parts</div>
+        <div class="spec-card__desc">Every stand, every configuration.</div>
+      </div>
+    </div>
+
+    <div class="spec-box reveal" style="transition-delay:.18s">
+      <div class="spec-box__lead">
+        <div class="spec-box__icon"><i class="fa fa-archive"></i></div>
+        <div>
+          <div class="spec-box__label">In the box</div>
+          <div class="spec-box__title">Everything you need, one carton.</div>
+        </div>
+      </div>
+      <div class="spec-chips">
+        <span class="spec-chip"><i class="fa fa-check"></i>Stand assembly</span>
+        <span class="spec-chip"><i class="fa fa-check"></i>All mounting hardware</span>
+        <span class="spec-chip"><i class="fa fa-check"></i>VESA plates</span>
+        <span class="spec-chip"><i class="fa fa-check"></i>Fixings</span>
+        <span class="spec-chip"><i class="fa fa-check"></i>Cable management</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================================================================
+     PRODUCT RANGE — GROUPED BY SCREEN COUNT
+     (Dynamic: the only DB-backed section on the page.)
+     =================================================================== -->
+<section class="s depth" id="range">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <h5>The range</h5>
+        <h2>12 Synergy Stands, <span class="display-em">pick your perfect layout</span>.</h2>
+        <p style="max-width:760px; margin-top:12px;">All stands in the range share the same core components &mdash; you can add arms mounts later to scale up.</p>
+      </div>
+    </div>
+
+    <!-- 2- & 3-screen -->
+    <div class="range-group reveal" style="margin-top:8px;">
+      <div style="display:flex; align-items:baseline; gap:14px; margin-bottom:18px; flex-wrap:wrap;">
+        <h3 style="margin:0;">Dual &amp; Triple-screen stands</h3>
+        <span class="eyebrow" style="margin:0;">2 - 3 screens</span>
+      </div>
+      <div class="bundle-cards">
+<% mmRenderStandGroup "2,3" %>
+      </div>
+    </div>
+
+    <!-- 4-screen -->
+    <div class="range-group reveal" style="margin-top:56px;">
+      <div style="display:flex; align-items:baseline; gap:14px; margin-bottom:18px; flex-wrap:wrap;">
+        <h3 style="margin:0;">Quad-screen stands</h3>
+        <span class="eyebrow" style="margin:0;">4 screens</span>
+      </div>
+      <div class="bundle-cards">
+<% mmRenderStandGroup "4" %>
+      </div>
+    </div>
+
+    <!-- 5-, 6- & 8-screen -->
+    <div class="range-group reveal" style="margin-top:56px;">
+      <div style="display:flex; align-items:baseline; gap:14px; margin-bottom:18px; flex-wrap:wrap;">
+        <h3 style="margin:0;">Five, Six &amp; Eight-screen stands</h3>
+        <span class="eyebrow" style="margin:0;">5 - 8 screens</span>
+      </div>
+      <div class="bundle-cards">
+<% mmRenderStandGroup "5,6,8" %>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ===================================================================
+     BUNDLE CROSS-LINK
+     =================================================================== -->
+<section class="bundle">
+  <div class="container">
+    <div class="bundle-grid">
+      <div class="reveal">
+        <h5>Complete monitor arrays &amp; bundles</h5>
+        <h2>Need some screens or a PC with your stand? <em>Save money</em> with a monitor array or computer bundle.</h2>
+        <p>We offer a range of screens and computers that work perfectly with our Synergy Stands. Monitor arrays come with screens, stand, free cabling and free UK delivery. Bundles with a PC included can save you up to &pound;300.</p>
+        <div class="bundle-pills">
+          <span class="bundle-pill"><i class="fa fa-check"></i>Free premium long-length cables</span>
+          <span class="bundle-pill"><i class="fa fa-check"></i>Free UK delivery</span>
+          <span class="bundle-pill"><i class="fa fa-check"></i>Free WiFi card<span>*</span></span>
+          <span class="bundle-pill"><i class="fa fa-check"></i>Free Speakers<span>*</span></span>
+          <span class="bundle-pill"><i class="fa fa-check"></i>Auto bundle discount<span>*</span></span>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <a href="/display-systems/" class="btn btn-accent btn-lg">See monitor arrays <i class="fa fa-arrow-right"></i></a>
+          <a href="/bundles/" class="btn btn-accent btn-lg">See bundle deals <i class="fa fa-arrow-right"></i></a>
+        </div>
+        <p class="bundle-foot"><span class="bundle-foot__star">*</span>Available on computer bundles only</p>
+      </div>
+      <div class="reveal" style="transition-delay:.1s">
+        <div class="save-card">
+          <span class="save-tag">Example &middot; 6-screen bundle</span>
+          <div class="kicker">Typical saving vs buying separately</div>
+          <div class="big"><small>&pound;</small>270</div>
+          <div class="sub">on a six-screen Synergy Stand &plus; 6 screens &plus; Trader PC bundle.</div>
+          <div class="breakdown">
+            <div class="r"><span>6&thinsp;&times;&thinsp;3m video cables</span><b>&pound;90</b></div>
+            <div class="r"><span>Wifi, BT &amp; speakers</span><b>&pound;60</b></div>
+            <div class="r"><span>UK mainland delivery</span><b>&pound;20</b></div>
+            <div class="r"><span>Bundle discount</span><b>&pound;100</b></div>
+            <div class="r total"><span>Total savings</span><b>&minus; &pound;270</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     DARREN CTA
+     =================================================================== -->
+<section class="darren" id="darren">
+  <div class="container">
+    <div class="darren-grid">
+      <div class="darren-photo reveal">
+        <img src="/images/pages/darren.jpg" alt="Darren Atkinson, founder of Multiple Monitors Ltd">
+      </div>
+      <div class="reveal" style="transition-delay:.08s">
+        <h5>Still deciding on a stand?</h5>
+        <h2>Talk to <em>Darren</em> &mdash; the founder, not a call centre.</h2>
+        <p>Seventeen years of speccing these stands means most of our customers&rsquo; questions have pretty direct answers. &ldquo;Will my screens fit?&rdquo; &ldquo;Which configuration for my desk?&rdquo; &ldquo;Can I add screens later?&rdquo; Fifteen minutes on the phone is usually enough to figure out what you need.</p>
+        <div class="darren-ctas">
+          <a href="tel:03302236655" class="btn btn-primary btn-lg"><i class="fa fa-phone"></i>0330 223 66 55</a>
+          <a href="#" class="btn btn-ghost btn-lg"><i class="fa fa-calendar"></i>Book a 15-min call</a>
+        </div>
+        <div class="darren-sig">&mdash; Darren Atkinson, founder, Multiple Monitors Ltd</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /.mm-site -->
 
 <!--#include file="footer_wrapper.asp"-->
-<!--#include file="bulkAddToCart.asp"-->

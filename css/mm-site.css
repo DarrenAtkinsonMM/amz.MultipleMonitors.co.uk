@@ -354,7 +354,7 @@ footer a:hover { color:var(--accent); }
 .mm-site .hero-grid { display:grid; grid-template-columns:1fr; gap:56px; align-items:center; }
 @media (min-width:992px) { .mm-site .hero-grid { grid-template-columns: 1.05fr 1fr; gap:72px; } }
 .mm-site .hero h1 em { font-family:'EB Garamond', 'Georgia', serif; font-style:italic; color:var(--brand); font-weight:400; }
-.mm-site .hero p.lead { max-width:560px; margin-top:26px; }
+.mm-site .hero p.lead { max-width:560px; margin-top:26px; font-weight: 400; }
 .mm-site .hero-ctas { display:flex; gap:12px; margin-top:34px; flex-wrap:wrap; }
 .mm-site .hero-mini {
   margin-top:46px; display:flex; align-items:center; gap:22px; flex-wrap:wrap;

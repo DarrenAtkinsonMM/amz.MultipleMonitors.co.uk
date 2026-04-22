@@ -37,7 +37,8 @@
       "Bash(mkdir -p /c/tmp)",
       "Bash(curl -sL -A \"Mozilla/5.0\" \"https://www.multiplemonitors.co.uk/products/quad-monitor-stand/\" -o /c/tmp/quad.html)",
       "Bash(curl -sL -A \"Mozilla/5.0\" \"https://www.multiplemonitors.co.uk/products/triple-monitor-stand/\" -o /c/tmp/triple.html)",
-      "Bash(start \"\" \"c:/Private/Sites/amz.MultipleMonitors.co.uk/redesign/standproduct.html\")"
+      "Bash(start \"\" \"c:/Private/Sites/amz.MultipleMonitors.co.uk/redesign/standproduct.html\")",
+      "Bash(xargs grep *)"
     ]
   }
 }

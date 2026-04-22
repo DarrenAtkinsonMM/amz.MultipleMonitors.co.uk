@@ -20,104 +20,64 @@
 
 
 <!-- DA - EDIT -->
-<footer>	
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-12 col-md-5 mobi-first-row">
-					<div class="row">
-						<div class="col-sm-6 fcol-custom">
-							<div class="wow fadeInDown" data-wow-delay="0.1s">
-								<div class="widget">
-									<h5 class="text-white">Policies &amp; Legal</h5>
-									<div class="footer-content">
-										<ul class="footer-list">
-											<li><a href="/pages/delivery/">Delivery Information</a></li>
-											<li><a href="/pages/international/">International Orders</a></li>
-											<li><a href="/pages/warranty/">Warranty Information</a></li>
-											<li><a href="/pages/returns/">Returns Policy</a></li>
-											<li><a href="/pages/privacy-policy/">Privacy Policy</a></li>
-											<li><a href="/pages/terms/">Terms &amp; Conditions</a></li>
-										</ul>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-sm-6 fcol-custom">
-							<div class="wow fadeInDown" data-wow-delay="0.1s">
-								<div class="widget">
-									<h5 class="text-white">Recently Viewed</h5>
-									<div class="footer-content">
-										<ul class="footer-list">
-											<!--#include file="smallRecentProducts.asp"-->
-										</ul>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+<footer>
+	<div class="mm-container">
+		<div class="foot-grid">
+			<div class="foot-brand">
+				<div class="logo-w">
+					<img src="/images/mm-logo-trans-w.png" alt="Multiple Monitors Ltd" style="height:40px; filter:brightness(0.8);">
 				</div>
-				<div class="col-sm-12 col-md-7">
-					<div class="row">
-						<div class="col-sm-7 fcol-custom">
-							<div class="wow fadeInDown" data-wow-delay="0.1s">
-								<div class="widget">
-									<h5 class="text-white h-semi">Get In touch</h5>
-									<div class="footer-content footer-git">
-										<h4 class="h-bold font-light">
-											<a href="tel:03302236655" class="hlink-contact hlink-phone text-white"><i class="fa fa-mobile-phone"></i> 0330 223 66 55</a>
-										</h4>
-										<h6 class="h-semi font-light footer-mail">
-											<a href="mailto:sales@multiplemonitors.co.uk" class="hlink-contact hlink-mail text-white"><i class="fa  fa-envelope"></i> sales@multiplemonitors.co.uk</a>
-										</h6>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-sm-5 fcol-custom">
-							<div class="wow fadeInDown" data-wow-delay="0.1s">
-								<div class="widget">
-									<h5 class="text-white h-semi">FREE BUYERS GUIDE</h5>
-									<div class="footer-content footer-subscribe">
-										<p>Learn all about  multi-screen PC components with our FREE buyers guide.</p>
-										<a href="https://www.getdrip.com/forms/206455195/submissions/new" data-drip-show-form="206455195" class="btn footer-submit bg-skin transition-nm medium manual-optin-trigger">Get It Now</a>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+				<p>UK multi-screen specialists since 2008. Trading computers, monitor arrays, Synergy stands &amp; complete bundles &mdash; custom built, benchmark tested, supported for life.</p>
+				<div class="contacts">
+					<div><i class="fa fa-phone"></i><a href="tel:03302236655">0330 223 66 55</a></div>
+					<div><i class="fa fa-envelope-o"></i><a href="mailto:sales@multiplemonitors.co.uk">sales@multiplemonitors.co.uk</a></div>
+					<div><i class="fa fa-map-marker"></i>United Kingdom</div>
 				</div>
-			</div>	
+			</div>
+
+			<div class="foot">
+				<h6>Shop</h6>
+				<ul>
+					<li><a href="/pages/trading-computers/">Trading Computers</a></li>
+					<li><a href="/computers/">Computers</a></li>
+					<li><a href="/display-systems/">Monitor Arrays</a></li>
+					<li><a href="/stands/">Synergy Stands</a></li>
+					<li><a href="/bundles/">Bundles</a></li>
+				</ul>
+			</div>
+
+			<div class="foot">
+				<h6>About</h6>
+				<ul>
+					<li><a href="/pages/about-us/">About us</a></li>
+					<li><a href="/blog/">Blog</a></li>
+					<li><a href="https://traderspec.com">TraderSpec.com</a></li>
+					<li><a href="/pages/testimonials/">Testimonials</a></li>
+					<li><a href="/pages/contact-us/">Contact</a></li>
+				</ul>
+			</div>
+
+			<div class="foot">
+				<h6>Policies</h6>
+				<ul>
+					<li><a href="/pages/delivery/">Delivery</a></li>
+					<li><a href="/pages/international/">International</a></li>
+					<li><a href="/pages/warranty/">Warranty</a></li>
+					<li><a href="/pages/returns/">Returns</a></li>
+					<li><a href="/pages/privacy-policy/">Privacy</a></li>
+					<li><a href="/pages/terms/">Terms</a></li>
+				</ul>
+			</div>
 		</div>
-		<div class="sub-footer">
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-5">
-					<div class="wow fadeInLeft" data-wow-delay="0.1s">
-					<div class="text-left">
-					<p>&copy; Copyright <%= Year(Now()) %> - MultipleMonitors Ltd. All rights reserved.</p>
-					</div>
-					</div>
-				</div>
-				<div class="col-sm-7">
-					<div class="wow fadeInRight" data-wow-delay="0.1s">
-					<div class="text-right">
-						<ul class="footer-base-menu">
-							<li><a href="/">Home</a></li>
-							<li><a href="/blog/">Blog</a></li>
-							<li><a href="/shop/pc/checkout.asp?cmode=1">Support</a></li>
-							<li><a href="/pages/about-us/">About Us</a></li>
-							<li><a href="/pages/contact-us/">Contact Us</a></li>
-							<li><a href="/pages/testimonials/">Testimonials</a></li>
-							<li><a href="/pages/site-map/">Site Map</a></li>
-						</ul>
-						</ul>
-					</div>
-					</div>
-				</div>
-			</div>	
+
+		<div class="foot-bottom">
+			<div>&copy; Copyright <%= Year(Now()) %> Multiple Monitors Ltd. All rights reserved.</div>
+			<div class="legal">
+				UK Company No. 6863410 &middot; VAT Reg. 971 7562 87
+			</div>
 		</div>
-		</div>
-	</footer>
+	</div>
+</footer>
 
 </div>
 <!--#include file="inc_footer.asp" -->
@@ -165,5 +125,26 @@ end if
 </script>
 <!-- end Drip -->
 <script src="/js/cookie.js"></script>
+
+<!-- 2026 redesign: reveal-on-scroll for .mm-site .reveal elements (no-op on legacy pages) -->
+<script>
+(function(){
+	var els = document.querySelectorAll('.reveal');
+	if (!els.length) return;
+	if (!('IntersectionObserver' in window)) {
+		els.forEach(function(e){ e.classList.add('is-in'); });
+		return;
+	}
+	var io = new IntersectionObserver(function(entries){
+		entries.forEach(function(entry){
+			if (entry.isIntersecting) {
+				entry.target.classList.add('is-in');
+				io.unobserve(entry.target);
+			}
+		});
+	}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+	els.forEach(function(e){ io.observe(e); });
+})();
+</script>
 </body>
 </html>
