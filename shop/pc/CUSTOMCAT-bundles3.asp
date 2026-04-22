@@ -13,7 +13,8 @@ if not request.querystring("cid") = "" then
 			Case 307
 		response.redirect("/products/extreme-multi-screen-computer/?sid=" & request.querystring("sid") & "&mid=" & request.querystring("mid") & "&cid=" & request.querystring("cid"))
 			Case 333
-		response.redirect("/products/trader-pc/?sid=" & request.querystring("sid") & "&mid=" & request.querystring("mid") & "&cid=" & request.querystring("cid"))
+		'2026 redesign - route Trader PC bundles to the new bundle end-page
+		response.redirect("/shop/pc/viewPrd-TraderPC-bundle-v2.asp?sid=" & request.querystring("sid") & "&mid=" & request.querystring("mid") & "&cid=" & request.querystring("cid"))
 			Case 343
 		response.redirect("/products/trader-pro-pc/?sid=" & request.querystring("sid") & "&mid=" & request.querystring("mid") & "&cid=" & request.querystring("cid"))
 		end select

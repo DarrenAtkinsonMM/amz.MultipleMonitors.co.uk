@@ -38,7 +38,8 @@
       "Bash(curl -sL -A \"Mozilla/5.0\" \"https://www.multiplemonitors.co.uk/products/quad-monitor-stand/\" -o /c/tmp/quad.html)",
       "Bash(curl -sL -A \"Mozilla/5.0\" \"https://www.multiplemonitors.co.uk/products/triple-monitor-stand/\" -o /c/tmp/triple.html)",
       "Bash(start \"\" \"c:/Private/Sites/amz.MultipleMonitors.co.uk/redesign/standproduct.html\")",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(grep -E \"idProduct.*3[0-4][0-9]|cid.*3[0-4][0-9]|sid.*[0-9]{2,3}\" \"c:/Private/Sites/amz.MultipleMonitors.co.uk/shop/pc/CUSTOMCAT-bundles1.asp\")"
     ]
   }
 }
