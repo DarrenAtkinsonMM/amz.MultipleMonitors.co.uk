@@ -530,4 +530,8 @@
 <file name="xml_srcListPrds.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="130959110040000000" remote="130959110040000000" Dst="2" />
 <file name="xml_srcPrdsCount.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="130959110040000000" remote="130959110040000000" Dst="2" />
 <file name="smallCartButton.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134213217069948486" remote="134213220650000000" Dst="2" />
+<file name="inc_darrenCTA.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134213372797979956" remote="134213378430000000" Dst="2" />
+<file name="inc_firmsStrip.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134213372670907887" remote="134213378430000000" Dst="2" />
+<file name="inc_trustStripTrader.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134213372576750334" remote="134213378430000000" Dst="2" />
+<file name="viewPrd-TraderPC-v2.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134213376431385880" remote="134213378430000000" Dst="2" />
 </dwsync>
