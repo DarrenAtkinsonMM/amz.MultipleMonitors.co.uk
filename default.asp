@@ -388,7 +388,7 @@ pcStrPageName = "home.asp"
         <p>Eighteen years of speccing these builds means we've probably heard your questions before. We don't do scripts, and there's no hard sell. A quick call is usually enough to figure out whether we&rsquo;re right for you.</p>
         <div class="darren-ctas">
           <a href="tel:03302236655" class="btn btn-primary btn-lg"><i class="fa fa-phone"></i>0330 223 66 55</a>
-          <a href="#" class="btn btn-ghost btn-lg"><i class="fa fa-calendar"></i>Book a 15-min call</a>
+          <a href="#" class="btn btn-ghost btn-lg js-book-call"><i class="fa fa-calendar"></i>Book a 15-min call</a>
         </div>
         <div class="darren-sig">&mdash; Darren Atkinson, founder, Multiple Monitors Ltd</div>
       </div>

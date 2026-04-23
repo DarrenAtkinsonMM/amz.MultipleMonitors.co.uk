@@ -270,24 +270,24 @@ End Sub
       <div class="pillar reveal">
         <div class="icon"><i class="fa fa-industry"></i></div>
         <h4>UK-designed &amp; UK-made</h4>
-        <p>We designed the Synergy Stand. We don&rsquo;t rebrand imports &mdash; we work with a specialist UK design and manufacturing partner to build what the market didn&rsquo;t. Every stand also fits every monitor we sell, so compatibility is never a guessing game.</p>
+        <p>We designed the Synergy Stand. These are not cheap rebranded imports. We work with a specialist UK design and manufacturing partner to build what the market didn&rsquo;t.</p>
         <div class="tag">UK DESIGN &amp; BUILD</div>
       </div>
       <div class="pillar reveal" style="transition-delay:.06s">
         <div class="icon"><i class="fa fa-th-large"></i></div>
         <h4>Modular, 2 to 8 screens</h4>
-        <p>Start with two screens. Add arms and columns as your needs grow &mdash; three, four, five, six, all the way up to eight on our largest stand. Same base assembly, no wasted spend when you scale up.</p>
+        <p>Start with two screens. Add arms and columns as your needs grow, three, four, five and six monitor capable mounts using a single central column. Same base assembly, no wasted spend when you scale up.</p>
         <div class="tag">MODULAR SYSTEM</div>
       </div>
       <div class="pillar reveal" style="transition-delay:.12s">
         <div class="icon"><i class="fa fa-shield"></i></div>
         <h4>All-steel, built for daily use</h4>
-        <p>Every part is steel &mdash; not a metal frame with plastic joints. Plastic bends, flexes, and fails under the weight of real screens. Synergy Stands are built for desks that run ten hours a day, every day.</p>
+        <p>Every part is steel, not a cheap metal frame with plastic joints. Plastic bends, flexes, and fails under the weight of real screens. Synergy Stands are built for desks that run ten hours a day, every day.</p>
         <div class="tag">ALL-STEEL</div>
       </div>
       <div class="pillar reveal" style="transition-delay:.18s">
         <div class="icon"><i class="fa fa-sliders"></i></div>
-        <h4>Adjustability that actually works</h4>
+        <h4>Adjustability that works</h4>
         <p>Height position, arm hinge, horizontal slide, pivot, tilt and 30&nbsp;mm of fine height adjustment at every mount. Six degrees of freedom per screen &mdash; and everything locks solid once positioned.</p>
         <div class="tag">FULL ADJUSTMENT</div>
       </div>
@@ -644,7 +644,7 @@ End Sub
         <p>Seventeen years of speccing these stands means most of our customers&rsquo; questions have pretty direct answers. &ldquo;Will my screens fit?&rdquo; &ldquo;Which configuration for my desk?&rdquo; &ldquo;Can I add screens later?&rdquo; Fifteen minutes on the phone is usually enough to figure out what you need.</p>
         <div class="darren-ctas">
           <a href="tel:03302236655" class="btn btn-primary btn-lg"><i class="fa fa-phone"></i>0330 223 66 55</a>
-          <a href="#" class="btn btn-ghost btn-lg"><i class="fa fa-calendar"></i>Book a 15-min call</a>
+          <a href="#" class="btn btn-ghost btn-lg js-book-call"><i class="fa fa-calendar"></i>Book a 15-min call</a>
         </div>
         <div class="darren-sig">&mdash; Darren Atkinson, founder, Multiple Monitors Ltd</div>
       </div>

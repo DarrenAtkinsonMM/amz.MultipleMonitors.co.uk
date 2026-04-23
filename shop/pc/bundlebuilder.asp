@@ -570,7 +570,7 @@ End Sub
         <p>Seventeen years of speccing these bundles means most customers&rsquo; questions have pretty direct answers. Tell him the screens you want, the platforms you run, your budget, and he&rsquo;ll spec it properly &mdash; and tell you if a smaller bundle would do the job.</p>
         <div class="darren-ctas">
           <a href="tel:03302236655" class="btn btn-primary btn-lg"><i class="fa fa-phone"></i>0330 223 66 55</a>
-          <a href="#" class="btn btn-ghost btn-lg"><i class="fa fa-calendar"></i>Book a 15-min call</a>
+          <a href="#" class="btn btn-ghost btn-lg js-book-call"><i class="fa fa-calendar"></i>Book a 15-min call</a>
         </div>
         <div class="darren-sig">&mdash; Darren Atkinson, founder, Multiple Monitors Ltd</div>
       </div>

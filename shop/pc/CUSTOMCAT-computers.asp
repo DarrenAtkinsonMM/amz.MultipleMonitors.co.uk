@@ -262,7 +262,7 @@ End Function
     </div>
 
     <p style="text-align:center; color:var(--muted); font-size:17px; margin:30px 0 0; font-family:'EB Garamond', serif; font-style:italic;" class="reveal">
-      Not sure which fits? <a href="#darren" style="color:var(--brand); font-weight:500;">Talk to Darren</a> &mdash; most decisions settle in a ten-minute call.
+      Not sure which fits? <a href="#darren" style="color:var(--brand); font-weight:500;">Talk to our team</a> most decisions are settled in a ten-minute call.
     </p>
   </div>
 </section>
@@ -621,7 +621,7 @@ End Function
         <p>Eighteen years of speccing multi-screen builds for traders, finance teams, control rooms and professional users of all walks. Tell him about your work and he&rsquo;ll steer you to the right machine, often a cheaper one than you were about to buy. No hard sell.</p>
         <div class="darren-ctas">
           <a href="tel:03302236655" class="btn btn-primary btn-lg"><i class="fa fa-phone"></i>0330 223 66 55</a>
-          <a href="#" class="btn btn-ghost btn-lg"><i class="fa fa-calendar"></i>Book a 15-min call</a>
+          <a href="#" class="btn btn-ghost btn-lg js-book-call"><i class="fa fa-calendar"></i>Book a 15-min call</a>
         </div>
         <div class="darren-sig">&mdash; Darren Atkinson, founder, Multiple Monitors Ltd</div>
         <div class="darren-note">&ldquo;If we think you don&rsquo;t need us, we&rsquo;ll tell you. That&rsquo;s why the Trustpilot score looks like it does.&rdquo;</div>
@@ -639,7 +639,7 @@ End Function
     <strong>Not sure which PC?</strong>
     <span>Ultra from <%= mmPcPrice(mmPriceUltra) %> &middot; Extreme from <%= mmPcPrice(mmPriceExtreme) %> + VAT</span>
   </div>
-  <a href="tel:03302236655" class="btn btn-primary btn-sm"><i class="fa fa-phone"></i>Talk to Darren</a>
+  <a href="tel:03302236655" class="btn btn-primary btn-sm"><i class="fa fa-phone"></i>Talk to our Team</a>
 </div>
 
 </div><!-- /.mm-site -->

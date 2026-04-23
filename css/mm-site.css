@@ -233,6 +233,205 @@ footer a:hover { color:var(--accent); }
 }
 
 /* ============================================================
+   CALL-US MODAL (chrome — sitewide)
+   Unscoped on purpose: .call-modal-* markup sits outside
+   .mm-site (injected via shop/pc/inc_callModal.asp at the end
+   of footer_wrapper.asp) so it also serves topbar/chrome tel:
+   links and works on legacy pages that don't wrap content in
+   .mm-site. The distinctive prefix prevents any collision.
+   ============================================================ */
+
+.call-modal {
+  position:fixed; inset:0;
+  z-index:1000;
+  display:none;
+  align-items:center; justify-content:center;
+  padding:24px;
+}
+.call-modal.is-open { display:flex; }
+
+.call-modal-backdrop {
+  position:absolute; inset:0;
+  background:rgba(14,27,44,.55);
+  -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+  animation:callModalFadeIn 180ms ease-out;
+}
+
+.call-modal-dialog {
+  position:relative;
+  width:100%; max-width:440px;
+  background:#fff;
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-lg);
+  padding:32px 28px 28px;
+  max-height:calc(100vh - 48px);
+  overflow-y:auto;
+  animation:callModalSlideIn 200ms ease-out;
+}
+
+@keyframes callModalFadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes callModalSlideIn {
+  from { opacity:0; transform:translateY(8px) scale(.98); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+
+.call-modal-close {
+  position:absolute; top:12px; right:12px;
+  width:36px; height:36px;
+  border:0; background:transparent;
+  color:var(--muted);
+  font-size:26px; line-height:1;
+  border-radius:999px;
+  cursor:pointer;
+  transition:background .15s ease, color .15s ease;
+}
+.call-modal-close:hover { background:var(--line); color:var(--ink); }
+.call-modal-close:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+
+.call-modal-hd { text-align:center; margin-bottom:20px; }
+.call-modal-eyebrow {
+  font-family:'JetBrains Mono', monospace;
+  font-size:10.5px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--muted);
+  margin:0 0 8px;
+}
+.call-modal-number {
+  display:inline-block;
+  font-family:'EB Garamond', serif;
+  font-size:36px; font-weight:500;
+  color:var(--brand);
+  letter-spacing:-.01em; line-height:1.1;
+  text-decoration:none;
+}
+.call-modal-number:hover { color:var(--brand-deep); }
+.call-modal-hours {
+  margin:6px 0 0;
+  font-size:13px;
+  color:var(--muted);
+}
+
+/* Desktop: disable click behaviour on the modal's own number link
+   so it can't trigger the OS app picker or re-open the modal. */
+@media (hover: hover) and (pointer: fine) {
+  .call-modal-number { pointer-events:none; cursor:default; }
+}
+
+.call-modal-divider {
+  display:flex; align-items:center; gap:12px;
+  color:var(--muted);
+  font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+  margin:4px 0 18px;
+}
+.call-modal-divider::before,
+.call-modal-divider::after {
+  content:''; flex:1; height:1px; background:var(--line);
+}
+
+.call-modal-bd h3 {
+  font-family:'EB Garamond', serif;
+  font-size:22px; font-weight:500;
+  color:var(--ink);
+  margin:0 0 6px;
+  letter-spacing:-.005em;
+}
+.call-modal-sub {
+  font-size:13.5px;
+  color:var(--slate);
+  margin:0 0 18px;
+}
+
+.call-modal-form { display:flex; flex-direction:column; gap:12px; }
+
+.call-modal-field { display:flex; flex-direction:column; gap:5px; }
+.call-modal-field > span {
+  font-size:12.5px; font-weight:500;
+  color:var(--ink);
+}
+.call-modal-field em {
+  font-style:normal; color:var(--muted); font-weight:400;
+}
+.call-modal-field input {
+  font-family:'Geist', sans-serif;
+  font-size:14.5px;
+  color:var(--ink);
+  padding:10px 12px;
+  border:1px solid var(--line-strong);
+  border-radius:var(--radius-lg);
+  background:#fff;
+  -webkit-appearance:none; appearance:none;
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+.call-modal-field input::placeholder { color:#B1BAC6; }
+.call-modal-field input:hover { border-color:#A7B2C0; }
+.call-modal-field input:focus-visible {
+  outline:0;
+  border-color:var(--brand);
+  box-shadow:0 0 0 3px rgba(15,110,168,.15);
+}
+
+.call-modal-submit {
+  margin-top:6px;
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  width:100%;
+  font-family:'Geist', sans-serif;
+  font-size:15px; font-weight:500;
+  color:#fff;
+  background:var(--brand); border:1px solid var(--brand);
+  border-radius:999px;
+  padding:14px 20px;
+  cursor:pointer;
+  transition:background .15s ease, border-color .15s ease, transform .1s ease;
+}
+.call-modal-submit:hover { background:var(--brand-deep); border-color:var(--brand-deep); }
+.call-modal-submit:active { transform:translateY(1px); }
+.call-modal-submit:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+.call-modal-submit .fa { font-size:13px; }
+.call-modal-submit[disabled],
+.call-modal-submit.is-busy {
+  opacity:.65; cursor:progress;
+  background:var(--brand); border-color:var(--brand);
+  transform:none;
+}
+
+/* Honeypot: off-screen but still interactable by bots. */
+.call-modal-hp {
+  position:absolute !important;
+  left:-10000px !important;
+  top:auto !important;
+  width:1px !important;
+  height:1px !important;
+  overflow:hidden !important;
+}
+
+/* Inline submission error — appended to the form on failure. */
+.call-modal-error {
+  margin-top:10px;
+  padding:10px 12px;
+  background:#FDECEC;
+  border:1px solid #F5B4B4;
+  border-radius:var(--radius-lg);
+  color:#8A1F1F;
+  font-size:13.5px;
+  line-height:1.45;
+}
+
+.call-modal-success { text-align:center; padding:20px 4px 8px; }
+.call-modal-success .fa { font-size:44px; color:#1E9E67; margin-bottom:12px; }
+.call-modal-success h3 {
+  font-family:'EB Garamond', serif;
+  font-size:22px; font-weight:500;
+  color:var(--ink);
+  margin:0 0 6px;
+}
+.call-modal-success p { color:var(--slate); font-size:14px; margin:0; }
+
+@media (max-width: 479px) {
+  .call-modal { padding:16px; }
+  .call-modal-dialog { padding:28px 22px 22px; }
+  .call-modal-number { font-size:30px; }
+}
+
+/* ============================================================
    CONTENT DESIGN SYSTEM — scoped under .mm-site
    ============================================================ */
 

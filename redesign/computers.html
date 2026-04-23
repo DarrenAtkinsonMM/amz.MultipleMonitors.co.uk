@@ -516,6 +516,179 @@
 
   /* -- Hero micro-adjustments for product-render variant --------- */
   .mm-site .hero-visual.has-tower { display:flex; align-items:center; justify-content:center; }
+
+  /* ============================================================
+     CALL-US MODAL (prototype — kept page-local for testing).
+     Unscoped selectors on purpose: the modal markup sits OUTSIDE
+     .mm-site so it can also serve topbar/chrome tel: links, and
+     so the future sitewide include works on legacy ASP pages
+     that don't wrap their content in .mm-site. The distinctive
+     .call-modal-* prefix prevents any collision.
+     Candidate for promotion into mm-site.css chrome section once
+     the UX is proven.
+     ============================================================ */
+
+  .call-modal {
+    position:fixed; inset:0;
+    z-index:1000;
+    display:none;
+    align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .call-modal.is-open { display:flex; }
+
+  .call-modal-backdrop {
+    position:absolute; inset:0;
+    background:rgba(14,27,44,.55);
+    -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+    animation:callModalFadeIn 180ms ease-out;
+  }
+
+  .call-modal-dialog {
+    position:relative;
+    width:100%; max-width:440px;
+    background:#fff;
+    border-radius:var(--radius-xl);
+    box-shadow:var(--shadow-lg);
+    padding:32px 28px 28px;
+    max-height:calc(100vh - 48px);
+    overflow-y:auto;
+    animation:callModalSlideIn 200ms ease-out;
+  }
+
+  @keyframes callModalFadeIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes callModalSlideIn {
+    from { opacity:0; transform:translateY(8px) scale(.98); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+  }
+
+  .call-modal-close {
+    position:absolute; top:12px; right:12px;
+    width:36px; height:36px;
+    border:0; background:transparent;
+    color:var(--muted);
+    font-size:26px; line-height:1;
+    border-radius:999px;
+    cursor:pointer;
+    transition:background .15s ease, color .15s ease;
+  }
+  .call-modal-close:hover { background:var(--line); color:var(--ink); }
+  .call-modal-close:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+
+  .call-modal-hd { text-align:center; margin-bottom:20px; }
+  .call-modal-eyebrow {
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--muted);
+    margin:0 0 8px;
+  }
+  .call-modal-number {
+    display:inline-block;
+    font-family:'EB Garamond', serif;
+    font-size:36px; font-weight:500;
+    color:var(--brand);
+    letter-spacing:-.01em; line-height:1.1;
+    text-decoration:none;
+  }
+  .call-modal-number:hover { color:var(--brand-deep); }
+  .call-modal-hours {
+    margin:6px 0 0;
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  /* Desktop: disable click behaviour on the modal's own number link
+     so it can't trigger the OS app picker or re-open the modal. */
+  @media (hover: hover) and (pointer: fine) {
+    .call-modal-number { pointer-events:none; cursor:default; }
+  }
+
+  .call-modal-divider {
+    display:flex; align-items:center; gap:12px;
+    color:var(--muted);
+    font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+    margin:4px 0 18px;
+  }
+  .call-modal-divider::before,
+  .call-modal-divider::after {
+    content:''; flex:1; height:1px; background:var(--line);
+  }
+
+  .call-modal-bd h3 {
+    font-family:'EB Garamond', serif;
+    font-size:22px; font-weight:500;
+    color:var(--ink);
+    margin:0 0 6px;
+    letter-spacing:-.005em;
+  }
+  .call-modal-sub {
+    font-size:13.5px;
+    color:var(--slate);
+    margin:0 0 18px;
+  }
+
+  .call-modal-form { display:flex; flex-direction:column; gap:12px; }
+
+  .call-modal-field { display:flex; flex-direction:column; gap:5px; }
+  .call-modal-field > span {
+    font-size:12.5px; font-weight:500;
+    color:var(--ink);
+  }
+  .call-modal-field em {
+    font-style:normal; color:var(--muted); font-weight:400;
+  }
+  .call-modal-field input {
+    font-family:'Geist', sans-serif;
+    font-size:14.5px;
+    color:var(--ink);
+    padding:10px 12px;
+    border:1px solid var(--line-strong);
+    border-radius:var(--radius-lg);
+    background:#fff;
+    -webkit-appearance:none; appearance:none;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .call-modal-field input::placeholder { color:#B1BAC6; }
+  .call-modal-field input:hover { border-color:#A7B2C0; }
+  .call-modal-field input:focus-visible {
+    outline:0;
+    border-color:var(--brand);
+    box-shadow:0 0 0 3px rgba(15,110,168,.15);
+  }
+
+  .call-modal-submit {
+    margin-top:6px;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    width:100%;
+    font-family:'Geist', sans-serif;
+    font-size:15px; font-weight:500;
+    color:#fff;
+    background:var(--brand); border:1px solid var(--brand);
+    border-radius:999px;
+    padding:14px 20px;
+    cursor:pointer;
+    transition:background .15s ease, border-color .15s ease, transform .1s ease;
+  }
+  .call-modal-submit:hover { background:var(--brand-deep); border-color:var(--brand-deep); }
+  .call-modal-submit:active { transform:translateY(1px); }
+  .call-modal-submit:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+  .call-modal-submit .fa { font-size:13px; }
+
+  .call-modal-success { text-align:center; padding:20px 4px 8px; }
+  .call-modal-success .fa { font-size:44px; color:#1E9E67; margin-bottom:12px; }
+  .call-modal-success h3 {
+    font-family:'EB Garamond', serif;
+    font-size:22px; font-weight:500;
+    color:var(--ink);
+    margin:0 0 6px;
+  }
+  .call-modal-success p { color:var(--slate); font-size:14px; margin:0; }
+
+  @media (max-width: 479px) {
+    .call-modal { padding:16px; }
+    .call-modal-dialog { padding:28px 22px 22px; }
+    .call-modal-number { font-size:30px; }
+  }
 </style>
 
 </head>
@@ -1120,7 +1293,7 @@
         <p>Eighteen years of speccing multi-screen builds for traders, finance teams, control rooms and professional users of all walks. Tell him about your work and he&rsquo;ll steer you to the right machine, often a cheaper one than you were about to buy. No hard sell.</p>
         <div class="darren-ctas">
           <a href="tel:03302236655" class="btn btn-primary btn-lg"><i class="fa fa-phone"></i>0330 223 66 55</a>
-          <a href="#" class="btn btn-ghost btn-lg"><i class="fa fa-calendar"></i>Book a 15-min call</a>
+          <a href="#" class="btn btn-ghost btn-lg js-book-call"><i class="fa fa-calendar"></i>Book a 15-min call</a>
         </div>
         <div class="darren-sig">&mdash; Darren Atkinson, founder, Multiple Monitors Ltd</div>
         <div class="darren-note">&ldquo;If we think you don&rsquo;t need us, we&rsquo;ll tell you. That&rsquo;s why the Trustpilot score looks like it does.&rdquo;</div>
@@ -1207,6 +1380,54 @@
   </div>
 </footer>
 
+<!-- ===================================================================
+     CALL-US MODAL
+     Prototype — page-local for testing. Will be lifted to a shared
+     include (covering all redesigned pages) once UX is validated.
+     Sits outside .mm-site so it's chrome-level and works for
+     topbar tel: links too.
+     =================================================================== -->
+<div class="call-modal" id="callModal" role="dialog" aria-modal="true" aria-labelledby="callModalTitle" aria-hidden="true">
+  <div class="call-modal-backdrop" data-close></div>
+  <div class="call-modal-dialog" role="document">
+    <button type="button" class="call-modal-close" aria-label="Close" data-close>&times;</button>
+
+    <div class="call-modal-hd">
+      <p class="call-modal-eyebrow">Call us now</p>
+      <a href="tel:03302236655" class="call-modal-number">0330 223 66 55</a>
+      <p class="call-modal-hours">Mon&ndash;Fri, 9:00am&ndash;5:00pm</p>
+    </div>
+
+    <div class="call-modal-divider"><span>or</span></div>
+
+    <div class="call-modal-bd">
+      <h3 id="callModalTitle">Prefer we call you back?</h3>
+      <p class="call-modal-sub">Drop your details below and Darren will get back to you.</p>
+      <form class="call-modal-form" novalidate>
+        <label class="call-modal-field">
+          <span>Your name</span>
+          <input type="text" name="name" required autocomplete="name">
+        </label>
+        <label class="call-modal-field">
+          <span>Phone number</span>
+          <input type="tel" name="phone" required autocomplete="tel" inputmode="tel">
+        </label>
+        <label class="call-modal-field">
+          <span>When suits you?</span>
+          <input type="text" name="time" required placeholder="e.g. Tomorrow afternoon, Weds 2pm">
+        </label>
+        <label class="call-modal-field">
+          <span>Email <em>(optional)</em></span>
+          <input type="email" name="email" autocomplete="email">
+        </label>
+        <button type="submit" class="call-modal-submit">
+          <i class="fa fa-calendar-check-o"></i>Request a callback
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
   // Dynamic copyright year
   document.getElementById('year').textContent = new Date().getFullYear();
@@ -1249,6 +1470,76 @@
     }
     window.addEventListener('scroll', onScroll, { passive:true });
     onScroll();
+  })();
+
+  // Call-us modal — desktop-intercepts tel: links, hosts the callback form.
+  // Prototype implementation; will be lifted to js/call-modal.js once proven.
+  (function(){
+    var modal = document.getElementById('callModal');
+    if (!modal) return;
+
+    var form = modal.querySelector('.call-modal-form');
+    var bodyEl = document.body;
+
+    function isDesktop(){
+      return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    }
+
+    function open(){
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      bodyEl.style.overflow = 'hidden';
+      setTimeout(function(){
+        var first = form && form.querySelector('input[name="name"]');
+        if (first) first.focus();
+      }, 50);
+    }
+
+    function close(){
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      bodyEl.style.overflow = '';
+    }
+
+    // Delegated open trigger — covers every tel: link on the page
+    // (desktop only) and the "Book a 15-min call" button (all viewports).
+    document.addEventListener('click', function(e){
+      var book = e.target.closest('.js-book-call');
+      if (book) { e.preventDefault(); open(); return; }
+
+      // Don't intercept clicks originating inside the modal. Its own
+      // tel: number is rendered inert on desktop via CSS pointer-events.
+      if (modal.contains(e.target)) return;
+
+      var tel = e.target.closest('a[href^="tel:"]');
+      if (tel && isDesktop()) { e.preventDefault(); open(); }
+    });
+
+    // Close triggers — backdrop / × button (both marked [data-close]) and Escape.
+    modal.addEventListener('click', function(e){
+      if (e.target.closest('[data-close]')) close();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
+    });
+
+    // Form submission (stubbed — email wiring handled in a future plan).
+    if (form) {
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        var fd = new FormData(form);
+        if (!fd.get('name') || !fd.get('phone') || !fd.get('time')) {
+          form.reportValidity();
+          return;
+        }
+        form.innerHTML =
+          '<div class="call-modal-success">' +
+            '<i class="fa fa-check-circle"></i>' +
+            '<h3>Thanks &mdash; we&rsquo;ll be in touch.</h3>' +
+            '<p>Darren will call you at your preferred time.</p>' +
+          '</div>';
+      });
+    }
   })();
 </script>
 
