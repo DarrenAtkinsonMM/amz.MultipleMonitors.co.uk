@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Computers &mdash; Multi-screen PCs for CAD, finance, analytics &amp; security | Multiple Monitors</title>
+<meta name="description" content="Multi-screen PCs for professionals who need more than two displays. Built in the UK since 2008 with the same build quality, stress-testing and lifetime support as our specialist trading computers &mdash; configured for CAD, finance, analytics and security operations." />
+
+<!-- Fonts: EB Garamond (display serif), Geist (body sans), JetBrains Mono (micro) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome 4.7 (same version as live ProductCart templates) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- 2026 redesign design system -->
+<link rel="stylesheet" href="../css/mm-site.css">
+
+<style>
+  /* ============================================================
+     Page-specific: /computers/ landing page (non-trader front door).
+     All selectors scoped under .mm-site so they cannot leak
+     onto legacy ASP pages that load mm-site.css via the storefront
+     header. Candidates for promotion into mm-site.css once proven.
+
+     New components:
+       .hero-tower        hero product render (audit 4.3.1)
+       .trader-redirect   detour band above-the-fold (audit 4.3.2)
+       .use-cases         5-card persona grid       (audit 4.3.3)
+       .mm-chip           software-name pills
+       .pc-picks          two-up Ultra vs Extreme   (audit 4.3.4)
+       .honest-panel      trust-builder overlap     (audit 4.3.8)
+       .computers-xlink   tonal xlink variant
+     ============================================================ */
+
+  /* -- Hero product tower (replaces trader benchmark chart) ------ */
+  .mm-site .hero-tower {
+    position:relative;
+    aspect-ratio: 1 / 1;
+    width:100%; max-width:500px; margin:0 auto;
+    border-radius:var(--radius-xl);
+    background:
+      radial-gradient(65% 55% at 32% 28%, rgba(15,110,168,.12), transparent 70%),
+      radial-gradient(45% 55% at 80% 90%, rgba(242,167,27,.09), transparent 70%),
+      linear-gradient(160deg, #F3F7FB 0%, #E4ECF3 100%);
+    border:1px solid var(--line);
+    box-shadow:var(--shadow-lg), inset 0 0 0 1px rgba(255,255,255,.55);
+    overflow:hidden;
+  }
+  .mm-site .hero-tower::before {
+    content:""; position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(14,27,44,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(14,27,44,.05) 1px, transparent 1px);
+    background-size:28px 28px;
+    mask-image:radial-gradient(ellipse at 50% 45%, #000 40%, transparent 85%);
+    -webkit-mask-image:radial-gradient(ellipse at 50% 45%, #000 40%, transparent 85%);
+    opacity:.55; pointer-events:none;
+  }
+  .mm-site .hero-tower .tower-img {
+    position:absolute; left:50%; top:50%;
+    transform:translate(-50%, -50%);
+    width:82%; height:82%;
+    object-fit:contain;
+    object-position:center;
+    filter:
+      drop-shadow(0 40px 40px rgba(8,14,24,.28))
+      drop-shadow(0 14px 18px rgba(8,14,24,.18));
+  }
+  .mm-site .hero-tower .halo {
+    /* Soft brand glow behind the product */
+    position:absolute; left:50%; top:54%;
+    transform:translate(-50%, -50%);
+    width:72%; aspect-ratio:1;
+    background:radial-gradient(closest-side, rgba(15,110,168,.18) 0%, rgba(15,110,168,0) 70%);
+    pointer-events:none;
+  }
+  .mm-site .hero-tower .badge {
+    position:absolute; left:22px; top:22px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--brand-deep);
+    background:rgba(255,255,255,.85);
+    border:1px solid var(--line);
+    padding:6px 10px; border-radius:999px;
+    backdrop-filter:blur(4px);
+  }
+  .mm-site .hero-tower .badge::before {
+    content:""; display:inline-block; width:6px; height:6px;
+    border-radius:50%; background:var(--up);
+    margin-right:6px; vertical-align:middle;
+    box-shadow:0 0 0 2px rgba(33,166,122,.18);
+  }
+  .mm-site .hero-tower .captions {
+    position:absolute; left:0; right:0; bottom:22px;
+    display:flex; justify-content:center; gap:18px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--slate);
+  }
+  .mm-site .hero-tower .captions span {
+    background:rgba(255,255,255,.8);
+    border:1px solid var(--line);
+    padding:5px 10px; border-radius:999px;
+    backdrop-filter:blur(4px);
+  }
+
+  /* -- Trader redirect band -------------------------------------- */
+  .mm-site .trader-redirect {
+    background:
+      linear-gradient(90deg, rgba(242,167,27,.09) 0%, rgba(242,167,27,.02) 100%),
+      #fff;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .mm-site .trader-redirect .inner {
+    display:grid; grid-template-columns:48px 1fr auto;
+    align-items:center; gap:18px;
+    padding:22px 0;
+  }
+  .mm-site .trader-redirect .icon {
+    width:48px; height:48px; border-radius:50%;
+    background:var(--accent);
+    color:#fff; display:flex; align-items:center; justify-content:center;
+    font-size:20px;
+    box-shadow:0 6px 14px -4px rgba(212,141,14,.45);
+  }
+  .mm-site .trader-redirect p {
+    margin:0; color:var(--ink-2); font-size:15px; line-height:1.55;
+  }
+  .mm-site .trader-redirect strong {
+    color:var(--ink); font-weight:600;
+  }
+  .mm-site .trader-redirect .detour-link {
+    font-weight:600; color:var(--brand); white-space:nowrap;
+    display:inline-flex; align-items:center; gap:8px;
+    padding:10px 18px; border-radius:999px;
+    background:#fff; border:1px solid var(--line);
+    transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+  }
+  .mm-site .trader-redirect .detour-link:hover {
+    border-color:var(--brand);
+    transform:translateX(2px);
+    box-shadow:var(--shadow);
+  }
+  .mm-site .trader-redirect .detour-link .fa { transition:transform .2s ease; }
+  .mm-site .trader-redirect .detour-link:hover .fa { transform:translateX(3px); }
+  @media (max-width:768px) {
+    .mm-site .trader-redirect .inner {
+      grid-template-columns:40px 1fr;
+      grid-template-rows:auto auto;
+      gap:14px;
+    }
+    .mm-site .trader-redirect .icon { width:40px; height:40px; font-size:16px; }
+    .mm-site .trader-redirect .detour-link {
+      grid-column:1 / -1;
+      justify-content:center;
+    }
+  }
+
+  /* -- Use-case grid (audit 4.3.3) ------------------------------- */
+  .mm-site .use-cases {
+    display:grid;
+    grid-template-columns:1fr;
+    gap:20px;
+  }
+  @media (min-width:600px) {
+    .mm-site .use-cases { grid-template-columns:repeat(2, 1fr); }
+  }
+  @media (min-width:992px) {
+    .mm-site .use-cases { grid-template-columns:repeat(3, 1fr); }
+  }
+  .mm-site .use-case {
+    position:relative;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    padding:28px 26px 26px;
+    display:flex; flex-direction:column;
+    transition:border-color .22s ease, transform .22s ease, box-shadow .22s ease;
+  }
+  .mm-site .use-case:hover {
+    border-color:var(--brand);
+    transform:translateY(-3px);
+    box-shadow:var(--shadow-lg);
+  }
+  .mm-site .use-case .uc-illus {
+    width:56px; height:56px; border-radius:10px;
+    background:var(--brand-soft);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--brand);
+    margin-bottom:18px;
+    position:relative; overflow:hidden;
+  }
+  .mm-site .use-case .uc-illus .fa { font-size:22px; position:relative; z-index:1; }
+  .mm-site .use-case .uc-illus::after {
+    /* Subtle mono grid overlay so the icon chip feels engineered */
+    content:""; position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(15,110,168,.18) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15,110,168,.18) 1px, transparent 1px);
+    background-size:8px 8px;
+    mask-image:linear-gradient(135deg, #000 20%, transparent 80%);
+    -webkit-mask-image:linear-gradient(135deg, #000 20%, transparent 80%);
+    opacity:.5;
+  }
+  .mm-site .use-case[data-rec="extreme"] .uc-illus {
+    background:rgba(242,167,27,.12);
+    color:var(--accent-deep);
+  }
+  .mm-site .use-case[data-rec="extreme"] .uc-illus::after {
+    background-image:
+      linear-gradient(rgba(212,141,14,.25) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(212,141,14,.25) 1px, transparent 1px);
+  }
+  .mm-site .use-case h3 {
+    font-family:'EB Garamond', 'Georgia', serif;
+    font-size:24px; line-height:1.2; letter-spacing:-.015em;
+    margin:0 0 10px; color:var(--ink);
+  }
+  .mm-site .use-case p {
+    font-size:14.5px; line-height:1.6; color:var(--slate);
+    margin:0 0 16px; flex:1;
+  }
+  .mm-site .use-case .chips {
+    display:flex; flex-wrap:wrap; gap:6px; margin-bottom:20px;
+  }
+  .mm-site .mm-chip {
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--slate);
+    background:var(--sand);
+    border:1px solid var(--line);
+    padding:5px 9px; border-radius:999px;
+    line-height:1;
+  }
+  .mm-site .use-case .uc-rec {
+    margin-top:auto;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+    font-size:13.5px; color:var(--ink-2);
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px;
+  }
+  .mm-site .use-case .uc-rec b { font-weight:600; color:var(--ink); }
+  .mm-site .use-case .uc-rec .pc-name {
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--brand); font-weight:600;
+  }
+  .mm-site .use-case[data-rec="extreme"] .uc-rec .pc-name {
+    color:var(--accent-deep);
+  }
+  .mm-site .use-case .uc-rec .fa {
+    transition:transform .2s ease;
+  }
+  .mm-site .use-case:hover .uc-rec .fa { transform:translateX(3px); }
+
+  /* Cards flow naturally left-to-right — no grid-column overrides,
+     so adding a 6th card just fills the last slot cleanly. */
+
+  /* -- PC picks (Ultra vs Extreme) ------------------------------- */
+  .mm-site .pc-picks {
+    display:grid; grid-template-columns:1fr; gap:22px;
+  }
+  @media (min-width:768px) {
+    .mm-site .pc-picks { grid-template-columns:1fr 1fr; gap:24px; }
+  }
+  .mm-site .pc-pick {
+    position:relative;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    padding:32px 30px 30px;
+    display:flex; flex-direction:column;
+    overflow:hidden;
+  }
+  .mm-site .pc-pick::before {
+    content:""; position:absolute; left:0; top:0; bottom:0;
+    width:4px;
+    background:var(--brand);
+  }
+  .mm-site .pc-pick[data-tier="extreme"]::before {
+    background:var(--accent);
+  }
+  .mm-site .pc-pick__head {
+    display:grid;
+    grid-template-columns:1fr 104px;
+    gap:18px;
+    align-items:start;
+    margin-bottom:8px;
+  }
+  .mm-site .pc-pick__img {
+    position:relative;
+    width:104px; height:94px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:10px;
+    background:
+      radial-gradient(closest-side, rgba(15,110,168,.14) 0%, rgba(15,110,168,0) 72%),
+      linear-gradient(160deg, var(--sand) 0%, var(--sand-2) 100%);
+    border:1px solid var(--line);
+  }
+  .mm-site .pc-pick[data-tier="extreme"] .pc-pick__img {
+    background:
+      radial-gradient(closest-side, rgba(242,167,27,.16) 0%, rgba(242,167,27,0) 72%),
+      linear-gradient(160deg, var(--sand) 0%, var(--sand-2) 100%);
+  }
+  .mm-site .pc-pick__img img {
+    max-width:86%; max-height:86%;
+    object-fit:contain;
+    filter:drop-shadow(0 6px 8px rgba(8,14,24,.18));
+  }
+  .mm-site .pc-pick .kicker {
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--brand); margin-bottom:10px;
+  }
+  .mm-site .pc-pick[data-tier="extreme"] .kicker { color:var(--accent-deep); }
+  .mm-site .pc-pick h3 {
+    font-family:'EB Garamond', 'Georgia', serif;
+    font-size:34px; line-height:1.1; letter-spacing:-.02em;
+    margin:0;
+  }
+  .mm-site .pc-pick .lead-line {
+    font-size:15px; color:var(--slate);
+    margin:14px 0 22px;
+  }
+  @media (max-width:480px) {
+    .mm-site .pc-pick__head { grid-template-columns:1fr 84px; gap:14px; }
+    .mm-site .pc-pick__img { width:84px; height:76px; }
+  }
+  .mm-site .pc-pick .price-row {
+    display:flex; align-items:baseline; gap:10px;
+    padding:14px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    margin-bottom:20px;
+  }
+  .mm-site .pc-pick .price-row .from {
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted);
+  }
+  .mm-site .pc-pick .price-row .amount {
+    font-family:'EB Garamond', serif;
+    font-size:28px; font-weight:500; color:var(--ink);
+    letter-spacing:-.01em;
+  }
+  .mm-site .pc-pick .price-row small {
+    font-size:12px; color:var(--muted); font-weight:400;
+    font-family:'Geist', sans-serif;
+  }
+  .mm-site .pc-pick .pc-spec-list {
+    list-style:none; margin:0 0 22px; padding:0;
+  }
+  .mm-site .pc-pick .pc-spec-list li {
+    display:grid; grid-template-columns:110px 1fr;
+    gap:14px; padding:10px 0;
+    border-bottom:1px dashed var(--line);
+    font-size:14px;
+    align-items:baseline;
+  }
+  .mm-site .pc-pick .pc-spec-list li:last-child { border-bottom:none; }
+  .mm-site .pc-pick .pc-spec-list .k {
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted);
+  }
+  .mm-site .pc-pick .pc-spec-list .v {
+    color:var(--ink-2); font-weight:500;
+  }
+  .mm-site .pc-pick .who {
+    font-family:'EB Garamond', serif;
+    font-size:17px; font-style:italic; line-height:1.5;
+    color:var(--ink-2);
+    margin:0 0 22px;
+    padding:14px 0 0;
+    border-top:1px solid var(--line);
+  }
+  .mm-site .pc-pick .who::before {
+    content:"\201C"; color:var(--brand);
+    font-size:28px; line-height:0;
+    position:relative; top:6px; margin-right:4px;
+  }
+  .mm-site .pc-pick[data-tier="extreme"] .who::before { color:var(--accent-deep); }
+  .mm-site .pc-pick .cta-row {
+    margin-top:auto;
+    display:flex; gap:12px; flex-wrap:wrap;
+  }
+
+  /* -- Honest overlap panel (audit 4.3.8) ------------------------ */
+  .mm-site .honest-panel {
+    position:relative;
+    background:
+      linear-gradient(180deg, var(--sand) 0%, var(--sand-2) 100%);
+    border:1px solid var(--line);
+    border-radius:var(--radius-xl);
+    padding:44px 40px 40px;
+    overflow:hidden;
+  }
+  .mm-site .honest-panel::before {
+    /* Big decorative quote mark, editorial flourish */
+    content:"\201C";
+    position:absolute; top:-28px; left:28px;
+    font-family:'EB Garamond', serif;
+    font-size:220px; line-height:1;
+    color:var(--brand);
+    opacity:.09;
+    pointer-events:none;
+  }
+  .mm-site .honest-panel .hp-grid {
+    display:grid; grid-template-columns:1fr;
+    gap:26px; position:relative; z-index:1;
+  }
+  @media (min-width:900px) {
+    .mm-site .honest-panel .hp-grid {
+      grid-template-columns:.9fr 1.6fr;
+      gap:50px; align-items:start;
+    }
+  }
+  .mm-site .honest-panel h5 {
+    color:var(--brand);
+  }
+  .mm-site .honest-panel h2 {
+    font-family:'EB Garamond', serif;
+    font-size:34px; line-height:1.15; letter-spacing:-.02em;
+    margin:8px 0 0;
+  }
+  .mm-site .honest-panel h2 em {
+    color:var(--brand); font-style:italic;
+  }
+  .mm-site .honest-panel p {
+    font-size:16px; line-height:1.65;
+    color:var(--ink-2);
+    margin:0 0 14px;
+  }
+  .mm-site .honest-panel p:last-child { margin-bottom:0; }
+  .mm-site .honest-panel p strong {
+    color:var(--ink); font-weight:600;
+    background:linear-gradient(transparent 62%, rgba(242,167,27,.24) 62%, rgba(242,167,27,.24) 90%, transparent 90%);
+    padding:0 2px;
+  }
+  .mm-site .honest-panel .attr {
+    display:inline-flex; align-items:center; gap:10px;
+    margin-top:22px;
+    padding-top:16px; border-top:1px solid var(--line-strong);
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--muted);
+  }
+  .mm-site .honest-panel .attr .dot {
+    width:6px; height:6px; border-radius:50%;
+    background:var(--up);
+    box-shadow:0 0 0 3px rgba(33,166,122,.15);
+  }
+
+  /* -- Cross-link band (tonal variant, tight for footer-of-content) */
+  .mm-site .computers-xlink {
+    background:var(--ink);
+    color:#fff;
+    border-radius:var(--radius-xl);
+    padding:40px 36px;
+    display:grid; grid-template-columns:1fr; gap:20px;
+    align-items:center;
+    position:relative; overflow:hidden;
+  }
+  @media (min-width:768px) {
+    .mm-site .computers-xlink {
+      grid-template-columns:1fr auto; gap:40px;
+    }
+  }
+  .mm-site .computers-xlink::before {
+    /* Faint benchmark-bar motif in the background to signal 'trader territory' */
+    content:""; position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(
+        180deg,
+        transparent 0 22px,
+        rgba(242,167,27,.08) 22px 24px);
+    mask-image:linear-gradient(90deg, transparent 0%, #000 60%, transparent 100%);
+    -webkit-mask-image:linear-gradient(90deg, transparent 0%, #000 60%, transparent 100%);
+    pointer-events:none;
+  }
+  .mm-site .computers-xlink h5 {
+    color:var(--accent); position:relative; z-index:1;
+    margin:0 0 8px;
+  }
+  .mm-site .computers-xlink h3 {
+    font-family:'EB Garamond', serif;
+    font-size:28px; line-height:1.2; letter-spacing:-.015em;
+    margin:0 0 10px; color:#fff;
+    position:relative; z-index:1;
+  }
+  .mm-site .computers-xlink h3 em { color:var(--accent); font-style:italic; }
+  .mm-site .computers-xlink p {
+    margin:0; color:rgba(255,255,255,.75);
+    max-width:60ch; position:relative; z-index:1;
+  }
+  .mm-site .computers-xlink .cta-col {
+    position:relative; z-index:1;
+    display:flex; flex-direction:column; gap:6px;
+    text-align:left;
+  }
+  .mm-site .computers-xlink .cta-col small {
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; letter-spacing:.18em; text-transform:uppercase;
+    color:rgba(255,255,255,.55);
+  }
+
+  /* -- Adjust the reused .darren-sig tone for this page ---------- */
+  .mm-site .darren-note {
+    font-family:'EB Garamond', serif; font-style:italic;
+    color:var(--muted); font-size:14.5px;
+    margin-top:8px;
+  }
+
+  /* -- Hero micro-adjustments for product-render variant --------- */
+  .mm-site .hero-visual.has-tower { display:flex; align-items:center; justify-content:center; }
+</style>
+
+</head>
+<body>
+
+<!-- ===================================================================
+     TOPBAR + NAV (sticky together)
+     =================================================================== -->
+<div class="site-header">
+<div class="topbar">
+  <div class="mm-container inner">
+    <div>
+      <a href="tel:03302236655"><i class="fa fa-phone"></i>0330 223 66 55</a>
+      <span class="sep hide-xs">|</span>
+      <a class="hide-xs" href="mailto:sales@multiplemonitors.co.uk"><i class="fa fa-envelope-o"></i>sales@multiplemonitors.co.uk</a>
+    </div>
+    <div>
+      <span class="hide-xs"><a href="#"><i class="fa fa-user" style="color:var(--accent);"></i>Existing Customer Login</a></span>
+      <span class="show-xs"><a href="#"><i class="fa fa-shopping-basket"></i>Basket <strong>(0)</strong></a></span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================================
+     NAV
+     =================================================================== -->
+<div class="navwrap">
+  <div class="mm-container nav-inner">
+    <a href="/" class="brand-mark" aria-label="Multiple Monitors home">
+      <img src="https://www.multiplemonitors.co.uk/images/mm-logo-trans.png" alt="Multiple Monitors Ltd" />
+      <span class="brand-est">Est 2008<b>UK Specialist</b></span>
+    </a>
+
+    <nav class="mainnav">
+      <a href="/">Home</a>
+      <a href="/computers/" class="is-trader">Computers</a>
+      <a href="/bundles/">Bundles</a>
+      <a href="/stands/">Stands</a>
+      <a href="/display-systems/">Monitor Arrays</a>
+    </nav>
+
+    <div class="nav-actions ">
+      <div class="nav-cta">
+        <a href="/shop/pc/viewcart.asp" class="cart-btn" aria-label="View basket">
+          <i class="fa fa-shopping-basket"></i>
+          <span>Basket (0)</span>
+        </a>
+      </div>
+      <button class="nav-toggle" aria-label="Open menu" onclick="document.getElementById('mobnav').classList.toggle('is-open')"><i class="fa fa-bars"></i></button>
+    </div>
+  </div>
+  <div class="mobnav" id="mobnav">
+    <a href="/">Home</a>
+    <a href="/computers/">Computers</a>
+    <a href="/trading-computers/">Trading Computers</a>
+    <a href="/bundles/">Bundles</a>
+    <a href="/stands/">Stands</a>
+    <a href="/display-systems/">Monitor Arrays</a>
+  </div>
+</div>
+</div><!-- /.site-header -->
+
+<div class="mm-site">
+
+<!-- ===================================================================
+     HERO  —  audit 4.3.1
+     Non-trader positioning. No benchmark chart (that's trader territory).
+     =================================================================== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="reveal">
+        <div class="eyebrow">Multi-screen specialists &middot; Since 2008</div>
+        <h1>
+          Multi-screen PCs for professionals who need <em>more than two displays</em>.
+        </h1>
+        <p class="lead">
+          Built in the UK since 2008. High build quality, stress-testing and lifetime support as standard across our range. Configured for CAD, finance, analytics, security operations, and any workload that's outgrown a standard desktop.
+        </p>
+        <div class="hero-ctas">
+          <a href="#use-cases" class="btn btn-primary btn-lg">See which PC fits your work <i class="fa fa-arrow-right"></i></a>
+        </div>
+        <div class="hero-mini">
+          <div class="item"><i class="fa fa-industry"></i><b>UK-built</b><span>in our workshop</span></div>
+          <div class="item"><i class="fa fa-users"></i><b>3,500+</b><span>PCs delivered</span></div>
+          <div class="item"><i class="fa fa-shield"></i><b>5-year cover</b><span>&middot; lifetime support</span></div>
+        </div>
+      </div>
+
+      <div class="hero-visual has-tower reveal" style="transition-delay:.1s">
+        <div class="hero-tower">
+          <div class="badge">Ultra &middot; UK Built</div>
+          <span class="halo" aria-hidden="true"></span>
+          <img class="tower-img" src="/images/computers/ultra-open.png" alt="Inside view of an Ultra multi-screen PC, custom built in the UK" />
+          <div class="captions">
+            <span>32-hr stress test</span>
+            <span>5-yr cover</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     TRADER REDIRECT STRIP  —  audit 4.3.2
+     =================================================================== -->
+<section class="trader-redirect">
+  <div class="container">
+    <div class="inner reveal">
+      <div class="icon" aria-hidden="true"><i class="fa fa-line-chart"></i></div>
+      <p>
+        <strong>Building a trading setup?</strong> Our Trader PC and Trader Pro are spec&rsquo;d specifically for MT4, NinjaTrader, TradeStation, Bloomberg and other trading platforms &mdash; with published benchmark data.
+      </p>
+      <a href="/trading-computers/" class="detour-link">
+        See the trading computers <i class="fa fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     USE-CASE GRID  —  audit 4.3.3
+     Five personas. Each recommends Ultra or Extreme.
+     =================================================================== -->
+<section class="s" id="use-cases">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <h5>Which machine do I need?</h5>
+        <h2>By the work, <span class="display-em">not by the spec sheet</span>.</h2>
+        <p style="max-width:720px; margin-top:12px;">Pick the card that looks closest to the work you actually do. We&rsquo;ll point you at the right starting machine &mdash; and you&rsquo;re two clicks from a human who can tailor from there.</p>
+      </div>
+    </div>
+
+    <div class="use-cases">
+
+      <!-- Security & Operations -->
+      <article class="use-case reveal" data-rec="extreme" style="transition-delay:.18s">
+        <div class="uc-illus"><i class="fa fa-shield"></i></div>
+        <h3>Security &amp; Operations</h3>
+        <p>Monitoring dashboards and multi-feed video walls for SOC, NOC and control-room environments. Built for 24/7 use with proper thermals.</p>
+        <div class="chips">
+          <span class="mm-chip">SOC</span>
+          <span class="mm-chip">NOC</span>
+          <span class="mm-chip">IVMS</span>
+          <span class="mm-chip">CCTV VMS</span>
+        </div>
+        <div class="uc-rec">
+          <span>Start with the <b>Extreme</b></span>
+          <span class="pc-name">EXTREME &rarr;</span>
+        </div>
+      </article>
+
+      <!-- Finance & Accounting -->
+      <article class="use-case reveal" data-rec="ultra" style="transition-delay:.06s">
+        <div class="uc-illus"><i class="fa fa-table"></i></div>
+        <h3>Finance &amp; Accounting</h3>
+        <p>Heavy Excel models, multiple broker platforms, accounting suites and research screens, all running at once without the extreme fan noise.</p>
+        <div class="chips">
+          <span class="mm-chip">Excel</span>
+          <span class="mm-chip">Sage</span>
+          <span class="mm-chip">QuickBooks</span>
+          <span class="mm-chip">Xero</span>
+        </div>
+        <div class="uc-rec">
+          <span>Start with the <b>Ultra</b></span>
+          <span class="pc-name">ULTRA &rarr;</span>
+        </div>
+      </article>
+
+      <!-- Coding & Development -->
+      <article class="use-case reveal" data-rec="ultra" style="transition-delay:.12s">
+        <div class="uc-illus"><i class="fa fa-code"></i></div>
+        <h3>Coding  &amp; Development</h3>
+        <p>Programming IDE's tend to be fairly lightweight on computer resources making them a great fit for our Ultra PC.</p>
+        <div class="chips">
+          <span class="mm-chip">VS Code</span>
+          <span class="mm-chip">PyCharm</span>
+          <span class="mm-chip">Visual Studio</span>
+        </div>
+        <div class="uc-rec">
+          <span>Start with the <b>Ultra</b></span>
+          <span class="pc-name">ULTRA &rarr;</span>
+        </div>
+      </article>
+
+
+
+      <!-- CAD & Engineering -->
+      <article class="use-case reveal" data-rec="extreme">
+        <div class="uc-illus"><i class="fa fa-cube"></i></div>
+        <h3>CAD &amp; Engineering</h3>
+        <p>Heavy 3D assemblies, multi-viewport drawings, and workstation-class rendering. Running on stable hardware tested for sustained load.</p>
+        <div class="chips">
+          <span class="mm-chip">Solidworks</span>
+          <span class="mm-chip">AutoCAD</span>
+          <span class="mm-chip">Fusion 360</span>
+          <span class="mm-chip">Revit</span>
+        </div>
+        <div class="uc-rec">
+          <span>Start with the <b>Extreme</b></span>
+          <span class="pc-name">Extreme &rarr;</span>
+        </div>
+      </article>
+
+      <!-- Analytics & Data -->
+      <article class="use-case reveal" data-rec="extreme" style="transition-delay:.24s">
+        <div class="uc-illus"><i class="fa fa-bar-chart"></i></div>
+        <h3>Analytics &amp; Data</h3>
+        <p>Large dashboards, Python/Jupyter notebooks, heavy pivot models and extract-transform jobs. More cores, more RAM, less waiting.</p>
+        <div class="chips">
+          <span class="mm-chip">Power BI</span>
+          <span class="mm-chip">Tableau</span>
+          <span class="mm-chip">SQL</span>
+          <span class="mm-chip">Python</span>
+        </div>
+        <div class="uc-rec">
+          <span>Start with the <b>Extreme</b></span>
+          <span class="pc-name">EXTREME &rarr;</span>
+        </div>
+      </article>
+
+      <!-- General Multi-Screen Productivity -->
+      <article class="use-case reveal" data-rec="ultra" style="transition-delay:.30s">
+        <div class="uc-illus"><i class="fa fa-th-large"></i></div>
+        <h3>General Multi-Screen Productivity</h3>
+        <p>Writers, project managers, entrepreneurs and anyone with too many windows open. When your off-the-shelf desktop runs out of breath.</p>
+        <div class="chips">
+          <span class="mm-chip">Writing</span>
+          <span class="mm-chip">Web Interfaces</span>
+          <span class="mm-chip">Research</span>
+        </div>
+        <div class="uc-rec">
+          <span>Start with the <b>Ultra</b></span>
+          <span class="pc-name">ULTRA &rarr;</span>
+        </div>
+      </article>
+
+      
+
+    </div>
+
+    <p style="text-align:center; color:var(--muted); font-size:17px; margin:30px 0 0; font-family:'EB Garamond', serif; font-style:italic;" class="reveal">
+      Not sure which fits? <a href="#darren" style="color:var(--brand); font-weight:500;">Talk to Darren</a> &mdash; most decisions settle in a ten-minute call.
+    </p>
+  </div>
+</section>
+
+<!-- ===================================================================
+     THE TWO PCs  —  audit 4.3.4
+     Ultra vs Extreme. No four-way configurator, no full comparison.
+     =================================================================== -->
+<section class="s depth" id="pcs">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <h5>Ultra &amp; Extreme</h5>
+        <h2>Two machines, <span class="display-em">the range in summary</span>.</h2>
+        <p style="max-width:760px; margin-top:12px;">The Ultra can handle most standard workloads fine and can be spec'd to a high level. The Extreme exists for the jobs where more processing power is required, complex dashboards, rendering, number crunching and large multi-tasking workloads.</p>
+      </div>
+    </div>
+
+    <div class="pc-picks">
+      <!-- Ultra -->
+      <article class="pc-pick reveal" data-tier="ultra">
+        <div class="pc-pick__head">
+          <div>
+            <div class="kicker">The flexible multi-screen computer</div>
+            <h3>Ultra</h3>
+            <p class="lead-line">Our most popular non-trader machine. Highly configurable across a range of tasks.</p>
+          </div>
+          <div class="pc-pick__img">
+            <img src="/images/bundles/bun-ultra-pc.png" alt="Ultra multi-screen PC" />
+          </div>
+        </div>
+        
+        <div class="price-row">
+          <span class="from">From</span>
+          <span class="amount">&pound;925</span>
+          <small>+ VAT</small>
+        </div>
+        <ul class="pc-spec-list">
+          <li><span class="k">CPU</span><span class="v">Intel Core i3 &rarr; i9 (14th gen)</span></li>
+          <li><span class="k">RAM</span><span class="v">16 &ndash; 64 GB DDR4</span></li>
+          <li><span class="k">Screens</span><span class="v">Up to 8 displays</span></li>
+        </ul>
+        <p class="who">For anyone looking for a capable multi-screen productivity PC.</p>
+        <div class="cta-row">
+          <a href="/products/ultra/" class="btn btn-primary">Configure your Ultra <i class="fa fa-arrow-right"></i></a>
+          <a href="tel:03302236655" class="btn btn-ghost"><i class="fa fa-phone"></i>Talk it through</a>
+        </div>
+      </article>
+
+      <!-- Extreme -->
+      <article class="pc-pick reveal" data-tier="extreme" style="transition-delay:.08s">
+        <div class="pc-pick__head">
+          <div>
+            <div class="kicker">The uncompromising workstation class PC</div>
+            <h3>Extreme</h3>
+            <p class="lead-line">Assembled using the latest and fastest processors, designed for the workloads that break on everything else.</p>
+          </div>
+          <div class="pc-pick__img">
+            <img src="/images/bundles/bun-extreme-pc.png" alt="Extreme high-end multi-screen workstation" />
+          </div>
+        </div>
+        
+        <div class="price-row">
+          <span class="from">From</span>
+          <span class="amount">&pound;1,195</span>
+          <small>+ VAT</small>
+        </div>
+        <ul class="pc-spec-list">
+          <li><span class="k">CPU</span><span class="v">Intel Core Ultra 5 &rarr; 9 // AMD 9000 Series</span></li>
+          <li><span class="k">RAM</span><span class="v">16 &ndash; 128 GB DDR5</span></li>
+          <li><span class="k">Screens</span><span class="v">Up to 12 displays</span></li>
+        </ul>
+        <p class="who">For power users who need serious processing power on their desk.</p>
+        <div class="cta-row">
+          <a href="/products/extreme/" class="btn btn-primary">Configure your Extreme <i class="fa fa-arrow-right"></i></a>
+          <a href="tel:03302236655" class="btn btn-ghost"><i class="fa fa-phone"></i>Talk it through</a>
+        </div>
+      </article>
+    </div>
+
+    <p style="text-align:center; margin:26px 0 0; color:var(--muted); font-size:14px;" class="reveal">
+      Side-by-side differences above. Basically if the Ultra won&rsquo;t do it, the Extreme will. And if that&rsquo;s not clear, <a href="tel:03302236655" style="color:var(--brand);">phone us</a>.
+    </p>
+  </div>
+</section>
+
+<!-- ===================================================================
+     CROSS-LINK TO TRADING — audit 4.3.9
+     =================================================================== -->
+<section class="s">
+  <div class="container">
+    <div class="computers-xlink reveal">
+      <div>
+        <h5>Trading?</h5>
+        <h3>Our Trader PC and Trader Pro are configured <em>specifically</em> for trading platforms.</h3>
+        <p>Published benchmark data. MT4/5 Trading View, NinjaTrader, TradeStation, Bloomberg and more tested.</p>
+      </div>
+      <div class="cta-col">
+        <a href="/trading-computers/" class="btn btn-accent btn-lg">Go to trading computers <i class="fa fa-arrow-right"></i></a>
+        <small>Trader PC from &pound;1,045 &middot; Trader Pro from &pound;1,345</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     WHAT YOU GET (shared across the range) — audit 4.3.5
+     =================================================================== -->
+<section class="s">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <h5>Shared across the range</h5>
+        <h2>Same workshop. Same build quality. <span class="display-em">No matter which one you pick.</span></h2>
+        <p style="max-width:720px; margin-top:12px;">Four computer options, built to one standard. The Ultra and Extreme share the same workshop, the same stress-tests, and the same 5-year cover as the Trader PC and Trader Pro. The spec changes the build quality and support doesn't.</p>
+      </div>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar reveal">
+        <div class="icon"><i class="fa fa-industry"></i></div>
+        <h4>UK-built, in our workshop</h4>
+        <p>Every PC assembled, stress-tested and packaged up in our UK workshop. Our in-house team builds and tests every single PC before dispatch.</p>
+        <div class="tag">UK ASSEMBLY</div>
+      </div>
+      <div class="pillar reveal" style="transition-delay:.06s">
+        <div class="icon"><i class="fa fa-flask"></i></div>
+        <h4>32-hour stress tests</h4>
+        <p>Before it ships, every PC runs a 32-hour intensive stress test across CPU, RAM, hard drive and graphics card. If a component is going to fail, it fails here, not at your desk.</p>
+        <div class="tag">32-HR SOAK</div>
+      </div>
+      <div class="pillar reveal" style="transition-delay:.12s">
+        <div class="icon"><i class="fa fa-shield"></i></div>
+        <h4>Extended hardware cover</h4>
+        <p>Extendable on-site support packages for every computer we sell, combine with 5 year cover and lifetime telephone, email and remote desktop support.</p>
+        <div class="tag">5YR + LIFETIME</div>
+      </div>
+      <div class="pillar reveal" style="transition-delay:.18s">
+        <div class="icon"><i class="fa fa-desktop"></i></div>
+        <h4>Multi-screen graphics</h4>
+        <p>Tried and tested multi-screen capable graphics setups. Run from 1 - 12 screens at a variety of resolutions without any hassle or compatibility issues.</p>
+        <div class="tag">PRO GPU OPTIONS</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     TRUST STRIP  —  audit 4.3.6
+     =================================================================== -->
+<section class="truststrip" id="trust">
+  <div class="container">
+    <div class="inner">
+      <div class="trust-item bbc">
+        <div class="icon"><i class="fa fa-television"></i></div>
+        <div>
+          <div class="label">As seen on the <span class="bbc-mark">BBC</span></div>
+          <div class="val">Traders: Millions by the Minute</div>
+        </div>
+      </div>
+      <div class="trust-item tp">
+        <div class="icon"><i class="fa fa-star"></i></div>
+        <div>
+          <div class="label">Trustpilot &middot; 4.9&thinsp;/&thinsp;5</div>
+          <div class="val">90+ Unsolicited Reviews</div>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="icon"><i class="fa fa-clock-o"></i></div>
+        <div>
+          <div class="label">Since 2008</div>
+          <div class="val">3,500+ PCs Delivered</div>
+        </div>
+      </div>
+      <div class="trust-item accent">
+        <div class="icon"><i class="fa fa-life-ring"></i></div>
+        <div>
+          <div class="label">Lifetime UK support</div>
+          <div class="val">The team that built your PC</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     REVIEWS (non-trader) — audit 4.3.6
+     =================================================================== -->
+<section class="s reviews" id="reviews">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <h5>What customers say</h5>
+        <h2>From the desks, labs &amp; studios <span class="display-em">we build for</span>.</h2>
+        <p>All reviews are voluntary &mdash; we don&rsquo;t ask for them.</p>
+      </div>
+      <div class="tp-summary">
+        <span class="tp-stars"><span></span><span></span><span></span><span></span><span></span></span>
+        <span><b>4.9</b> <small>&middot; based on 90+ reviews</small></span>
+        <a href="https://uk.trustpilot.com/review/multiplemonitors.co.uk" class="link" style="margin-left:10px;">See all on Trustpilot <i class="fa fa-external-link"></i></a>
+      </div>
+    </div>
+
+    <div class="reviews-grid">
+      <div class="review reveal">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <h4>Frist-class service</h4>
+        <p>First-class service from initial enquiry to delivery. Great advice received during the process from Darren, who is very knowledgable and responsive. Really happy with my customised PC package, the price, and peace of mind that after-sales support is there if needed.</p>
+        <div class="meta">
+          <div class="ava">GF</div>
+          <div class="who">Gavin Foster</div>
+          <div class="when">08&thinsp;/&thinsp;2025</div>
+        </div>
+      </div>
+      <div class="review reveal" style="transition-delay:.08s">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <h4>These Guys are fantastic</h4>
+        <p>These Guys are fantastic! Had a 6 screen system including monitor stand. I'm definitely not a techy and this worked straight out of the box. I asked for some advice after approx 10 months about screen configuration, they logged into my PC to assist in getting this altered to suit my needs. Nothing too much trouble. 100% reccomend from me.</p>
+        <div class="meta">
+          <div class="ava">JC</div>
+          <div class="who">James Andrew Clegg</div>
+          <div class="when">08&thinsp;/&thinsp;2025</div>
+        </div>
+      </div>
+      <div class="review reveal" style="transition-delay:.16s">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <h4>Very happy with the team</h4>
+        <p>I was particularly impressed in the way they helped me to choose the right machine specification while taking their time to answer all my questions to ensure I was happy. I wouldn't hesitate to recommend Multiple Monitors to anyone looking for a high-power and quality set-up from a company that delivers fabulous customer support.</p>
+        <div class="meta">
+          <div class="ava">GD</div>
+          <div class="who">Gerry Drew</div>
+          <div class="when">04&thinsp;/&thinsp;2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     HONEST OVERLAP PANEL — audit 4.3.8
+     The differentiator. Trust-builder. Do not bury.
+     =================================================================== -->
+<section class="s">
+  <div class="container">
+    <div class="honest-panel reveal">
+      <div class="hp-grid">
+        <div>
+          <h5 class="eyebrow" style="margin:0;">Straight answer</h5>
+          <h2>Ultra vs Trader PC &mdash; <em>the honest version</em>.</h2>
+        </div>
+        <div>
+          <p>You might see a Trader PC and wonder how it relates to the Ultra? <strong>The honest answer is they share the same base platform</strong>. The Trader PC is configured, spec&rsquo;d and tested specifically for trading software workloads. The Ultra is the same base machine starting at a slight lower spec but with a broader range of options for general-purpose multi-screen work.</p>
+          <p>Same build quality, same workshop, same 5-year cover. Pick the one with the configuration that fits your use case, the underlying hardware quality is identical. <strong>It's the same story for the Extreme and Trader Pro</strong>.</p>
+          <div class="attr"><span class="dot"></span>Written by Darren &middot; Multiple Monitors</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     FAQ — audit 4.3.7
+     Workload-specific questions, not platform-specific.
+     =================================================================== -->
+<section class="s depth" id="faq">
+  <div class="container-narrow">
+    <div class="section-head reveal" style="display:block; margin-bottom:38px;">
+      <h5>Common questions</h5>
+      <h2>The questions we answer <span class="display-em">on the phone</span>, every week.</h2>
+      <p style="margin-top:12px;">If yours isn&rsquo;t here, <a href="tel:03302236655" style="color:var(--brand); font-weight:500;">call us</a> on 0330 223 66 55 &mdash; Darren takes most of them himself.</p>
+    </div>
+
+    <div class="faq-list reveal">
+
+      <details class="faq-item" open>
+        <summary>What&rsquo;s the difference between your Ultra and your Trader PC?</summary>
+        <div class="faq-body">
+          <p>They share the same base platform. The <strong>Trader PC</strong> is configured and tested specifically for trading software, we run benchmark tests against platforms like MT4, NinjaTrader, TradeStation, Bloomberg. The <strong>Ultra</strong> is the same workshop, the same build quality, the same 5-year cover, configured for broader multi-screen work: CAD, finance, analytics, productivity.</p>
+          <p>If you&rsquo;re trading, the <strong>Trader PC</strong> is the right place to start. If you&rsquo;re not, the Ultra is a better option. It's exactly the same story for our Extreme and Trader Pro.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Will a multi-screen PC work with my existing monitors?</summary>
+        <div class="faq-body">
+          <p>Almost certainly. Every Ultra and Extreme ships with graphics that drive 4 digital screens as standard, and we have options to support 6, 8, 10 or 12 screens. Digital monitor ports can easily be switched from one type to another, so HDMI, DisplayPort and even the older DVI ports can all be supported, tell us what your monitors use and we&rsquo;ll advise on the right cables.</p>
+          <p>Key things to speak to us about are if you plan on driving a lot of higher resolution screens such as 4K and some of the larger ultrawide screens. They can be supported but it's best to get the right graphics setup decided upon upfront</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>I use Solidworks / heavy Excel / Power BI / some other software, which PC will handle it?</summary>
+        <div class="faq-body">
+          <p>The honest answer depends on your specific usage. A 50&thinsp;MB Excel workbook with a thousand formulas is different from a 1&thinsp;GB Power Query model with live SQL connections. One persons workload can be wildly different to anothers, even when running similar software.</p>
+          <p>The best thing to do is speak to us first, we can discuss your workload, look at your current setup, and then spec something appropriate for your needs.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How many screens do I actually need for my workload?</summary>
+        <div class="faq-body">
+          <p>For most finance and productivity workflows, three or four screens is the real productivity sweet-spot. Beyond that you can start having to turn your head to take everything in. For dashboards and monitoring work, six to eight is where most customers settle. Anything over eight is usually for a very specific workflow and worth a call before you buy.</p>
+          <p>A good idea is to count the windows you currently keep open while you work. That&rsquo;s roughly how many screens you want.</p>
+          <p>Also worth discussing is whether using higher resolution screens like QHD might allow you to fit your worload on to a lower number of screens.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Do I need a workstation-class / high end graphics card?</summary>
+        <div class="faq-body">
+          <p>It depends on what you are doing but often the answer is no.</p>
+          <p>For example, anyone running general business, Internet, email, office and dashboard type software on standard resolution screens (Full HD) then standard graphics cards are more than enough.</p>
+          <p>If you're running more graphically intense packages or anything that acutally uses the GPU to render or perform calculations (like AI models) then opting for a high-powered graphics card is usually worth the extra cost.</p>
+          <p>Running larger numbers of higher resolution screens can also benefit from a bump in graphics power. If you're not sure just give us a call.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Can you spec a machine for a specific industry or workflow?</summary>
+        <div class="faq-body">
+          <p>That&rsquo;s most of what the pre-sale conversation is. Tell us the industry and the application, and we&rsquo;ll put together the right CPU/RAM/GPU combination from what we&rsquo;ve already built for similar customers. We&rsquo;ve shipped Ultra and Extreme builds for architecture studios, accountancy firms, security integrators, analytics teams, universities and control rooms. If it involves more than two screens and a real workload, chances are we&rsquo;ve done something close.</p>
+          <p>For procurement teams buying multiple matched machines: mention it up front. There are bulk-build efficiencies that only kick in past three or four units.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>I need a full new setup including computer and screens, can you help?</summary>
+        <div class="faq-body">
+          <p>We certainly can. Any of our computers are available in a bundle deal. Bundles include your choice of computer, multi-screen Synergy Stand, screens, cabling, some free computer upgrades, free UK mainland delivery, and a bundle discount.</p>
+          <p>Save up to &pound;300 - <a href="/bundles/">View our bundle deals</a></p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>I need a few computers, are there any discounts available?</summary>
+        <div class="faq-body">
+          <p>For procurement teams buying multiple machines then let us know. There are some bulk-build efficiencies that can kick in past three or four units.</p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     DARREN CTA (non-trader copy)
+     =================================================================== -->
+<section class="darren" id="darren">
+  <div class="container">
+    <div class="darren-grid">
+      <div class="darren-photo reveal">
+        <img src="/images/pages/darren.jpg" alt="Darren Atkinson, founder of Multiple Monitors Ltd">
+      </div>
+      <div class="reveal" style="transition-delay:.08s">
+        <h5>Still deciding?</h5>
+        <h2>Talk to <em>Darren</em>, the founder, not a call centre.</h2>
+        <p>Eighteen years of speccing multi-screen builds for traders, finance teams, control rooms and professional users of all walks. Tell him about your work and he&rsquo;ll steer you to the right machine, often a cheaper one than you were about to buy. No hard sell.</p>
+        <div class="darren-ctas">
+          <a href="tel:03302236655" class="btn btn-primary btn-lg"><i class="fa fa-phone"></i>0330 223 66 55</a>
+          <a href="#" class="btn btn-ghost btn-lg"><i class="fa fa-calendar"></i>Book a 15-min call</a>
+        </div>
+        <div class="darren-sig">&mdash; Darren Atkinson, founder, Multiple Monitors Ltd</div>
+        <div class="darren-note">&ldquo;If we think you don&rsquo;t need us, we&rsquo;ll tell you. That&rsquo;s why the Trustpilot score looks like it does.&rdquo;</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ===================================================================
+     STICKY CTA  —  "Talk to Darren" (non-trader variant)
+     =================================================================== -->
+<div class="sticky-cta" id="stickyCta">
+  <div class="txt">
+    <strong>Not sure which PC?</strong>
+    <span>Ultra from &pound;925 &middot; Extreme from &pound;1,195 + VAT</span>
+  </div>
+  <a href="tel:03302236655" class="btn btn-primary btn-sm"><i class="fa fa-phone"></i>Talk to Darren</a>
+</div>
+
+</div><!-- /.mm-site -->
+
+<!-- ===================================================================
+     FOOTER
+     =================================================================== -->
+<footer>
+  <div class="mm-container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo-w">
+          <img src="https://www.multiplemonitors.co.uk/images/mm-logo-trans-w.png" alt="" style="height:40px; filter:brightness(0.8);">
+        </div>
+        <p>UK multi-screen specialists since 2008. Trading computers, monitor arrays, Synergy stands &amp; complete bundles &mdash; custom built, benchmark tested, supported for life.</p>
+        <div class="contacts">
+          <div><i class="fa fa-phone"></i>0330 223 66 55</div>
+          <div><i class="fa fa-envelope-o"></i>sales@multiplemonitors.co.uk</div>
+          <div><i class="fa fa-map-marker"></i>United Kingdom</div>
+        </div>
+      </div>
+
+      <div class="foot">
+        <h6>Shop</h6>
+        <ul>
+          <li><a href="/trading-computers/">Trading Computers</a></li>
+          <li><a href="/computers/">Computers</a></li>
+          <li><a href="/display-systems/">Monitor Arrays</a></li>
+          <li><a href="/stands/">Synergy Stands</a></li>
+          <li><a href="/bundles/">Bundles</a></li>
+        </ul>
+      </div>
+
+      <div class="foot">
+        <h6>About</h6>
+        <ul>
+          <li><a href="/about-us/">About us</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/pages/trading-computers/">Trader guide</a></li>
+          <li><a href="https://traderspec.com">TraderSpec.com</a></li>
+          <li><a href="/contact/">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="foot">
+        <h6>Policies</h6>
+        <ul>
+          <li><a href="/delivery/">Delivery</a></li>
+          <li><a href="/warranty/">Warranty</a></li>
+          <li><a href="/returns/">Returns</a></li>
+          <li><a href="/privacy/">Privacy</a></li>
+          <li><a href="/terms/">Terms</a></li>
+        </ul>
+      </div>
+
+
+    </div>
+
+    <div class="foot-bottom">
+      <div>&copy; Copyright <span id="year">2026</span> Multiple Monitors Ltd. All rights reserved. </div>
+      <div class="legal">
+        UK Company No. 6863410 &middot; VAT Reg. 971 7562 87
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Dynamic copyright year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Reveal on scroll
+  (function(){
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(function(e){ e.classList.add('is-in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(function(e){ io.observe(e); });
+  })();
+
+  // Sticky CTA — visible after scrolling past the hero, hidden near the footer
+  (function(){
+    var sticky = document.getElementById('stickyCta');
+    if (!sticky) return;
+    var hero = document.querySelector('.hero');
+    var footer = document.querySelector('footer');
+    if (!hero || !footer) return;
+    function onScroll(){
+      var y = window.scrollY || window.pageYOffset;
+      var heroBottom = hero.getBoundingClientRect().bottom + y;
+      var footerTop = footer.getBoundingClientRect().top + y;
+      var viewportBottom = y + window.innerHeight;
+      if (y > heroBottom + 200 && viewportBottom < footerTop) {
+        sticky.classList.add('visible');
+      } else {
+        sticky.classList.remove('visible');
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive:true });
+    onScroll();
+  })();
+</script>
+
+</body>
+</html>

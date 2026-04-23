@@ -126,7 +126,7 @@ pcStrPageName = "home.asp"
         <span class="icon-bg"><i class="fa fa-desktop"></i></span>
         <div class="num">02 / FOR PROFESSIONALS</div>
         <h3>I need a multi-screen PC</h3>
-        <p>Multi-monitor capable computers for any professional workload &mdash; CAD and engineering, financial control, security operations, data analytics, and anyone whose work outgrew a standard desktop / laptop.</p>
+        <p>Multi-monitor capable computers for any professional workload. CAD and engineering, financial control, security operations, data analytics, business management or anyone whose workload has outgrown a standard desktop / laptop.</p>
         <span class="arrow-link">See multi-screen PCs <i class="fa fa-arrow-right"></i></span>
       </a>
 
@@ -161,25 +161,25 @@ pcStrPageName = "home.asp"
       <div class="pillar reveal">
         <div class="icon"><i class="fa fa-industry"></i></div>
         <h4>UK-built, from our workshop</h4>
-        <p>Every PC assembled, stress-tested and packed in our UK workshop. Not drop-shipped, not white-labelled &mdash; our team puts hands on every build.</p>
+        <p>Every PC custom assembled, stress-tested and packaged in our UK workshop. Our team builds every computer and order from scratch.</p>
         <div class="tag">UK ASSEMBLY</div>
       </div>
       <div class="pillar reveal" style="transition-delay:.06s">
         <div class="icon"><i class="fa fa-line-chart"></i></div>
         <h4>In-house benchmark testing</h4>
-        <p>TraderSpec.com is our own benchmark data &mdash; the only UK trading-computer specialist with published test results across real trading platforms.</p>
-        <div class="tag">TRADERSPEC &middot; 2011&ndash;</div>
+        <p>TraderSpec.com is our own benchmark data website. The only UK trading-computer specialist with published test results across real trading platforms.</p>
+        <div class="tag">TRADERSPEC &middot; Established 2017</div>
       </div>
       <div class="pillar reveal" style="transition-delay:.12s">
         <div class="icon"><i class="fa fa-shield"></i></div>
-        <h4>5-year hardware cover</h4>
-        <p>Two years longer than US specialists typically offer, and matched by nobody selling generic multi-screen builds. Included on every PC.</p>
+        <h4>Extended hardware cover</h4>
+        <p>On-site support packages and 5 year hardware support included with every computer we sell. Lifetime guarantee on all stands sold.</p>
         <div class="tag">5YR STANDARD</div>
       </div>
       <div class="pillar reveal" style="transition-delay:.18s">
         <div class="icon"><i class="fa fa-life-ring"></i></div>
         <h4>Lifetime UK phone support</h4>
-        <p>Talk to the people who built your machine &mdash; not an overseas first-line script. The same team, years later, knowing your setup.</p>
+        <p>Talk to the people who built your machine, not an overseas call centre. The same team, years later, knowing your setup.</p>
         <div class="tag">FOR THE LIFE OF THE PC</div>
       </div>
     </div>
@@ -384,8 +384,8 @@ pcStrPageName = "home.asp"
       </div>
       <div class="reveal" style="transition-delay:.08s">
         <h5>Still deciding?</h5>
-        <h2>Talk to <em>Darren</em> &mdash; the founder, not a call centre.</h2>
-        <p>Seventeen years of speccing these builds means most of our customers&rsquo; questions have pretty direct answers. No scripts, no hard sell &mdash; a 15-minute call is usually enough to figure out whether we&rsquo;re right for you.</p>
+        <h2>Talk to <em>Darren</em>, the founder, not a call centre.</h2>
+        <p>Eighteen years of speccing these builds means we've probably heard your questions before. We don't do scripts, and there's no hard sell. A quick call is usually enough to figure out whether we&rsquo;re right for you.</p>
         <div class="darren-ctas">
           <a href="tel:03302236655" class="btn btn-primary btn-lg"><i class="fa fa-phone"></i>0330 223 66 55</a>
           <a href="#" class="btn btn-ghost btn-lg"><i class="fa fa-calendar"></i>Book a 15-min call</a>
