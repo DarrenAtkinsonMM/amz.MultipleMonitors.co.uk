@@ -1198,6 +1198,7 @@ footer a:hover { color:var(--accent); }
 }
 .mm-site .bench-row .name { color:var(--slate); font-weight:500; }
 .mm-site .bench-row .name.ours { color:var(--brand); font-weight:600; }
+.mm-site .bench-row .name.accent { color:var(--accent-deep); font-weight:600; }
 .mm-site .bench-row .barwrap { background:var(--sand); border-radius:999px; height:10px; overflow:hidden; }
 .mm-site .bench-row .bar {
   height:100%; background:linear-gradient(90deg, var(--brand-deep), var(--brand));
@@ -1205,9 +1206,23 @@ footer a:hover { color:var(--accent); }
   animation:grow 1.3s cubic-bezier(.2,.7,.2,1) forwards; transform:scaleX(0);
 }
 .mm-site .bench-row .bar.alt { background:linear-gradient(90deg, #B7C2D0, #D7E0EB); }
+.mm-site .bench-row .bar.accent { background:linear-gradient(90deg, var(--accent-deep), var(--accent)); }
 .mm-site .bench-row .val {
   font-family:'JetBrains Mono', monospace; font-size:12.5px;
   color:var(--ink); text-align:right; font-weight:500;
+}
+.mm-site .bench-bars > p {
+  font-family:'JetBrains Mono', monospace;
+  font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink); font-weight:600;
+  margin:0; padding:4px 0 10px;
+  border-bottom:1px dashed var(--line);
+  display:flex; align-items:center; gap:10px;
+}
+.mm-site .bench-bars > p:not(:first-child) { margin-top:10px; }
+.mm-site .bench-bars > p::before {
+  content:""; width:22px; height:2px;
+  background:var(--accent); flex:0 0 auto;
 }
 .mm-site .bench-caption {
   margin-top:18px; padding-top:14px;
@@ -1227,28 +1242,63 @@ footer a:hover { color:var(--accent); }
 .mm-site .compare col.col-pc     { width:36%; }
 .mm-site .compare col.col-pro    { width:36%; }
 .mm-site .compare thead th {
-  background:var(--sand); padding:20px 22px; text-align:left;
+  background:var(--sand); padding:24px 22px 22px; text-align:left;
   border-bottom:1px solid var(--line); vertical-align:top;
 }
 .mm-site .compare thead th:first-child { background:var(--sand-2); }
 .mm-site .compare thead th + th { border-left:1px solid var(--line); }
+.mm-site .compare thead th.is-pro {
+  background:linear-gradient(180deg, #FFF6E1 0%, var(--sand) 100%);
+  border-top:3px solid var(--accent);
+  padding-top:21px;
+}
 .mm-site .compare .col-head {
-  display:flex; flex-direction:column; gap:8px;
-  font-family:'EB Garamond', 'Georgia', serif; font-size:22px; font-weight:500;
-  color:var(--ink); letter-spacing:-.01em;
+  display:flex; align-items:center; gap:18px;
+}
+.mm-site .compare .col-head-info {
+  display:flex; flex-direction:column; gap:6px;
+  flex:1; min-width:0;
+}
+.mm-site .compare .col-head .model {
+  font-family:'EB Garamond', 'Georgia', serif;
+  font-size:26px; font-weight:500; line-height:1.05;
+  color:var(--ink); letter-spacing:-.015em;
 }
 .mm-site .compare .col-head .price {
-  font-family:'EB Garamond', 'Georgia', serif; font-size:17px; color:var(--brand);
-  font-weight:500; margin-top:2px;
+  display:inline-flex; align-items:baseline; gap:6px;
+  font-family:'EB Garamond', 'Georgia', serif;
+  font-size:22px; font-weight:500; line-height:1;
+  color:var(--brand); margin-top:2px;
 }
 .mm-site .compare .col-head .price small {
-  font-family:'Geist', sans-serif; font-size:12px;
-  color:var(--muted); font-weight:400; margin-left:4px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:9.5px; font-weight:500; letter-spacing:.15em;
+  text-transform:uppercase; color:var(--muted);
 }
 .mm-site .compare .badge-pop {
-  align-self:flex-start; background:var(--accent); color:var(--ink);
-  font-family:'JetBrains Mono', monospace; font-size:10px; font-weight:500;
-  letter-spacing:.15em; padding:4px 10px; border-radius:999px;
+  align-self:flex-start;
+  background:var(--accent); color:var(--ink);
+  font-family:'JetBrains Mono', monospace;
+  font-size:9.5px; font-weight:600;
+  letter-spacing:.18em; text-transform:uppercase;
+  padding:5px 11px; border-radius:999px;
+  box-shadow:0 2px 6px rgba(242,167,27,.35);
+  margin-bottom:2px;
+}
+.mm-site .compare .col-head-img {
+  flex:0 0 auto; width:92px; height:92px;
+  display:flex; align-items:center; justify-content:center;
+}
+.mm-site .compare .col-head-img img {
+  max-width:100%; max-height:100%;
+  object-fit:contain; display:block;
+  filter:drop-shadow(0 6px 14px rgba(14,27,44,.14));
+}
+@media (max-width:860px) {
+  .mm-site .compare .col-head { gap:12px; }
+  .mm-site .compare .col-head-img { width:68px; height:68px; }
+  .mm-site .compare .col-head .model { font-size:20px; }
+  .mm-site .compare .col-head .price { font-size:18px; }
 }
 .mm-site .compare tbody td {
   padding:16px 22px; border-bottom:1px solid var(--line);
@@ -1256,14 +1306,14 @@ footer a:hover { color:var(--accent); }
 }
 .mm-site .compare tbody td + td { border-left:1px solid var(--line); }
 .mm-site .compare tbody tr:nth-child(even) td { background:rgba(245,247,250,.45); }
-.mm-site .compare tbody td.label { background:var(--sand) !important; }
+.mm-site .compare tbody td.mm-label { background:var(--sand) !important; }
 .mm-site .compare tbody tr:last-child td { border-bottom:none; }
-.mm-site .compare td.label {
+.mm-site .compare td.mm-label {
   font-family:'JetBrains Mono', monospace; font-size:11.5px;
   letter-spacing:.1em; text-transform:uppercase;
   color:var(--ink); font-weight:500;
 }
-.mm-site .compare td.label small {
+.mm-site .compare td.mm-label small {
   display:block; margin-top:4px;
   font-family:'Geist', sans-serif; font-size:12px; font-weight:400;
   letter-spacing:0; text-transform:none; color:var(--muted);
@@ -1281,7 +1331,7 @@ footer a:hover { color:var(--accent); }
 .mm-site .compare .stars { color:var(--tp-green); letter-spacing:3px; font-size:16px; display:inline-block; }
 .mm-site .compare .stars .faint { color:var(--line-strong); }
 .mm-site .compare tr.row-foot td { padding:20px 22px; border-bottom:none; background:#fff; }
-.mm-site .compare tr.row-foot td.label { background:var(--sand); }
+.mm-site .compare tr.row-foot td.mm-label { background:var(--sand); }
 .mm-site .compare-cta-row { display:flex; }
 .mm-site .compare-cta-row .btn { width:100%; }
 
@@ -1623,21 +1673,38 @@ footer a:hover { color:var(--accent); }
   }
 .mm-site .stand-card.screens.is-detail .detail-name { font-size:16px; }
 
-/* Info banner — computer stage only. PCs are configurable on the next page. */
+/* Info banner — computer stage only. Telegraphs the next-page step
+   (PC customisation) and repeats the primary CTA right where the user
+   is looking, so the sidebar isn't the only commit point. */
 .mm-site .mmb-info {
-  display:flex; align-items:flex-start; gap:12px;
+  display:flex; align-items:center; gap:18px;
   margin-top:18px;
   background:var(--brand-soft); color:var(--brand-deep);
   border:1px solid #D5E4F0; border-radius:var(--radius);
-  padding:14px 18px;
+  padding:16px 20px;
   font-size:13.5px; font-weight:500; line-height:1.5;
 }
-.mm-site .mmb-info .fa {
-  color:var(--brand); font-size:16px;
-  margin-top:2px; flex-shrink:0;
+.mm-site .mmb-info__msg {
+  display:flex; align-items:flex-start; gap:12px;
+  flex:1; min-width:0;
 }
-.mm-site .mmb-info strong {
-  color:var(--ink); font-weight:600;
+.mm-site .mmb-info__copy {
+  display:flex; flex-direction:column; gap:2px;
+}
+.mm-site .mmb-info__copy strong {
+  color:var(--ink); font-weight:600; font-size:14.5px;
+}
+.mm-site .mmb-info .fa-arrow-right {
+  color:var(--brand); font-size:16px;
+  margin-top:3px; flex-shrink:0;
+}
+.mm-site .mmb-info__cta { flex-shrink:0; }
+.mm-site .mmb-info__cta.is-disabled {
+  opacity:.55; cursor:not-allowed; pointer-events:none;
+}
+@media (max-width:600px) {
+  .mm-site .mmb-info { flex-direction:column; align-items:stretch; gap:14px; }
+  .mm-site .mmb-info__cta { width:100%; justify-content:center; }
 }
 
 /* Running bundle sidebar */
@@ -1759,6 +1826,20 @@ footer a:hover { color:var(--accent); }
   font-size:12px; color:var(--brand-deep); line-height:1.4;
 }
 .mm-site .bsb-trust .fa { color:var(--brand); font-size:14px; flex-shrink:0; margin-top:1px; }
+
+/* Computer-stage variant — replaces the static trust line with two
+   "what happens next" reassurances. Green ticks tie visually to the
+   "Total savings" row directly above. */
+.mm-site .bsb-trust--next { padding:12px 14px; }
+.mm-site .bsb-trust--next ul {
+  list-style:none; margin:0; padding:0;
+  display:flex; flex-direction:column; gap:6px; width:100%;
+}
+.mm-site .bsb-trust--next li {
+  display:flex; align-items:flex-start; gap:8px;
+  color:var(--ink); font-weight:500;
+}
+.mm-site .bsb-trust--next .fa { color:var(--up); margin-top:2px; }
 
 /* ============================================================
    Sticky configure CTA (fixed overlay — unscoped; JS-driven)

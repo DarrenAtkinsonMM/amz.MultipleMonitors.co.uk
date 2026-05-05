@@ -36,12 +36,12 @@ Const MM_VAT_RATE = 1.2
 ' stands columns: 0=idProduct 1=jsKey 2=name 3=screens 4=discount 5=img 6=arrayimg
 Dim mmStands
 mmStands = Array( _
-  Array(  0, "s2v",  "Dual Vertical",      2,  25, "/images/bundles/bun-s2v-med.png",  "s2v"  ), _
+  Array(326, "s2v",  "Dual Vertical",      2,  25, "/images/bundles/bun-s2v-med.png",  "s2v"  ), _
   Array(287, "s2h",  "Dual Horizontal",    2,  25, "/images/bundles/bun-s2h-med.png",  "s2h"  ), _
   Array(312, "s3h",  "Triple Horizontal",  3,  25, "/images/bundles/bun-s3h-med.png",  "s3h"  ), _
   Array(324, "s3p",  "Triple Pyramid",     3,  25, "/images/bundles/bun-s3p-med.png",  "s3p"  ), _
   Array(313, "s4s",  "Quad Square",        4,  50, "/images/bundles/bun-s4s-med.png",  "s4s"  ), _
-  Array(  0, "s4sp", "Quad Multi Pole",    4,  50, "/images/bundles/bun-s4sp-med.png", "s4sp" ), _
+  Array(337, "s4sp", "Quad Multi Pole",    4,  50, "/images/bundles/bun-s4sp-med.png", "s4sp" ), _
   Array(325, "s4p",  "Quad Pyramid",       4,  50, "/images/bundles/bun-s4p-med.png",  "s4p"  ), _
   Array(327, "s4h",  "Quad Horizontal",    4,  50, "/images/bundles/bun-s4h-med.png",  "s4h"  ), _
   Array(318, "s5p",  "Five Pyramid",       5,  50, "/images/bundles/bun-s5p-med.png",  "s5p"  ), _
@@ -54,11 +54,11 @@ mmStands = Array( _
 Dim mmScreens
 mmScreens = Array( _
   Array(304, "scr24s", "21.5"" AOC - Full HD",     "1920 x 1080 FHD", "Thin bezel",     "VA Panel",  "/shop/pc/catalog/acer22_thumb.jpg",      "a22"), _
-  Array(317, "scr24i", "24"" Acer - Full HD",      "1920 x 1080 FHD", "24-inch screen", "VA Panel",  "/shop/pc/catalog/acer22_thumb.jpg",      "a24"), _
-  Array(  0, "scr27s", "27"" Acer - Full HD",      "1920 x 1080 FHD", "Thin bezel",     "VA Panel",  "/shop/pc/catalog/acer22_thumb.jpg",      "a27"), _
-  Array(  0, "scr27i", "24"" Iiyama - Full HD",    "1920 x 1080 FHD", "Thin bezel",     "IPS Panel", "/shop/pc/catalog/iiyama23ips-thumb.jpg", "i23"), _
-  Array(  0, "scrAw",  "27"" AOC - Quad HD",       "2560 x 1440 QHD", "Thin bezel",     "IPS Panel", "/shop/pc/catalog/aoc27-thumb.jpg",       "i27"), _
-  Array(  0, "scrIiy", "27"" Iiyama - Quad HD",    "2560 x 1440 QHD", "Thin Bezel",     "IPS Panel", "/shop/pc/catalog/iiyama23ips-thumb.jpg", "i27")  _
+  Array(317, "scr24i", "24"" Acer - Full HD",      "1920 x 1080 FHD", "Thin bezel",     "VA Panel",  "/shop/pc/catalog/acer22_thumb.jpg",      "a24"), _
+  Array(328, "scr27s", "27"" Acer - Full HD",      "1920 x 1080 FHD", "Thin bezel",     "VA Panel",  "/shop/pc/catalog/acer22_thumb.jpg",      "a27"), _
+  Array(320, "scr27i", "24"" Iiyama - Full HD",    "1920 x 1080 FHD", "Thin bezel",     "IPS Panel", "/shop/pc/catalog/iiyama23ips-thumb.jpg", "i23"), _
+  Array(344, "scrAw",  "27"" AOC - Quad HD",       "2560 x 1440 QHD", "Thin bezel",     "IPS Panel", "/shop/pc/catalog/aoc27-thumb.jpg",       "i27"), _
+  Array(345, "scrIiy", "27"" Iiyama - Quad HD",    "2560 x 1440 QHD", "Thin Bezel",     "IPS Panel", "/shop/pc/catalog/iiyama23ips-thumb.jpg", "i27")  _
 )
 
 ' computers columns: 0=idProduct 1=jsKey 2=name 3=six 4=eight 5=desc1 6=desc2 7=desc3 8=img 9=bunimg 10=cta
@@ -69,6 +69,77 @@ mmComputers = Array( _
   Array(333, "trader",  "Trader PC",  165, 165, "Designed for multi-screen trading", "Great for MT4, TradingView & broker platforms", "Quiet, stable & fast performance",          "/images/bundles/bun-trader-pc.png",  "/images/bundles/case1-bun.png", "/shop/pc/viewPrd-TraderPC-bundle-v2.asp"),       _
   Array(343, "pro",     "Trader Pro", 65,  175, "Built for Professional Traders", "Run platforms like NinjaTrader & Bloomberg easily", "Intels fastest CPUs & DDR5 RAM",            "/images/bundles/bun-pro-pc.png",     "/images/bundles/case1-bun.png", "/products/trader-pro-pc/")                       _
 )
+
+' ------------------------------------------------------------
+' Deep-link preselect: parse + validate sid/mid/cid.
+' Ordering rules (matches CUSTOMCAT-bundles2.asp / bundles3.asp):
+'   - cid without sid OR without mid        -> 301 /bundles/
+'   - mid without sid                        -> 301 /bundles/
+'   - any id non-numeric                     -> 301 /bundles/
+'   - id not in static array                 -> 301 back to longest
+'                                               valid prefix
+' Valid ids are emitted as MMB_PRESELECT (below). Zeros mean
+' "not set" so the JS bootstrap can treat them as falsy.
+' ------------------------------------------------------------
+Dim mmPreSid, mmPreMid, mmPreCid
+mmPreSid = 0 : mmPreMid = 0 : mmPreCid = 0
+
+Dim mmRawSid, mmRawMid, mmRawCid, mmGuardRow
+mmRawSid = Trim(Request.QueryString("sid") & "")
+mmRawMid = Trim(Request.QueryString("mid") & "")
+mmRawCid = Trim(Request.QueryString("cid") & "")
+
+If (mmRawCid <> "" And (mmRawSid = "" Or mmRawMid = "")) _
+Or (mmRawMid <> "" And mmRawSid = "") Then
+    Response.Status = "301 Moved Permanently"
+    Response.AddHeader "Location", "/bundles/"
+    Response.End
+End If
+
+If mmRawSid <> "" Then
+    Dim mmOkSid : mmOkSid = False
+    If IsNumeric(mmRawSid) Then
+        mmPreSid = CLng(mmRawSid)
+        For Each mmGuardRow In mmStands
+            If CLng(mmGuardRow(0)) = mmPreSid Then mmOkSid = True : Exit For
+        Next
+    End If
+    If Not mmOkSid Then
+        Response.Status = "301 Moved Permanently"
+        Response.AddHeader "Location", "/bundles/"
+        Response.End
+    End If
+End If
+
+If mmRawMid <> "" Then
+    Dim mmOkMid : mmOkMid = False
+    If IsNumeric(mmRawMid) Then
+        mmPreMid = CLng(mmRawMid)
+        For Each mmGuardRow In mmScreens
+            If CLng(mmGuardRow(0)) = mmPreMid Then mmOkMid = True : Exit For
+        Next
+    End If
+    If Not mmOkMid Then
+        Response.Status = "301 Moved Permanently"
+        Response.AddHeader "Location", "/bundles/?sid=" & mmPreSid
+        Response.End
+    End If
+End If
+
+If mmRawCid <> "" Then
+    Dim mmOkCid : mmOkCid = False
+    If IsNumeric(mmRawCid) Then
+        mmPreCid = CLng(mmRawCid)
+        For Each mmGuardRow In mmComputers
+            If CLng(mmGuardRow(0)) = mmPreCid Then mmOkCid = True : Exit For
+        Next
+    End If
+    If Not mmOkCid Then
+        Response.Status = "301 Moved Permanently"
+        Response.AddHeader "Location", "/bundles/?sid=" & mmPreSid & "&mid=" & mmPreMid
+        Response.End
+    End If
+End If
 
 ' ------------------------------------------------------------
 ' Single-round-trip price hydration: collect every non-zero
@@ -591,6 +662,8 @@ End Sub
      =================================================================== -->
 <script>
 (function(){
+  const MMB_PRESELECT = { sid: <%= mmPreSid %>, mid: <%= mmPreMid %>, cid: <%= mmPreCid %> };
+
   const BUNDLE_CONFIG = {
     stands: [
 <% Dim i
@@ -881,7 +954,29 @@ End Sub
     els.forEach(el => el.classList.add('is-in'));
   }
 
+  if (MMB_PRESELECT.sid) {
+    const s = BUNDLE_CONFIG.stands.find(x => x.id === MMB_PRESELECT.sid);
+    if (s) state.stand = s;
+  }
+  if (state.stand && MMB_PRESELECT.mid) {
+    const m = BUNDLE_CONFIG.screens.find(x => x.id === MMB_PRESELECT.mid);
+    if (m) state.screens = m;
+  }
+  if (state.screens && MMB_PRESELECT.cid) {
+    const c = BUNDLE_CONFIG.computers.find(x => x.id === MMB_PRESELECT.cid);
+    if (c) state.computer = c;
+  }
+
+  if (state.computer)                   state.view = 'computer';
+  else if (state.screens)                state.view = 'screens';
+  else if (state.stand)                state.view = 'stand';
+
   render();
+
+  if (MMB_PRESELECT.sid) {
+    const el = document.getElementById('builder');
+    if (el) el.scrollIntoView({ behavior: 'auto', block: 'start' });
+  }
 })();
 </script>
 

@@ -66,6 +66,7 @@
   if (!modal) return;
 
   var form = modal.querySelector('.call-modal-form');
+  var eyebrow = modal.querySelector('.call-modal-eyebrow');
   var bodyEl = document.body;
   var openedAt = 0;
 
@@ -73,7 +74,34 @@
     return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   }
 
+  // Return a context-aware prompt for the modal heading based on UK
+  // wall-clock time, so an overseas visitor sees the right status
+  // regardless of their own timezone. Business hours are Mon-Fri
+  // 9:00 to 17:00 UK time.
+  function callPhrase(){
+    var uk = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/London' }));
+    var day = uk.getDay();       // 0=Sun ... 6=Sat
+    var hour = uk.getHours();
+    var isWeekday = day >= 1 && day <= 5;
+
+    if (isWeekday && hour >= 9 && hour < 17) return 'Call us now';
+    if (isWeekday && hour < 9)               return 'Call us later today';
+
+    // Find the next weekday.
+    var daysAhead = 1;
+    while (true) {
+      var d = (day + daysAhead) % 7;
+      if (d >= 1 && d <= 5) break;
+      daysAhead++;
+    }
+    if (daysAhead === 1) return 'Call us tomorrow';
+
+    var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    return 'Call us ' + dayNames[(day + daysAhead) % 7];
+  }
+
   function open(){
+    if (eyebrow) eyebrow.textContent = callPhrase();
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
     bodyEl.style.overflow = 'hidden';

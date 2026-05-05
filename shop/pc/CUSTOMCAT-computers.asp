@@ -548,14 +548,14 @@ End Function
         <summary>Will a multi-screen PC work with my existing monitors?</summary>
         <div class="faq-body">
           <p>Almost certainly. Every Ultra and Extreme ships with graphics that drive 4 digital screens as standard, and we have options to support 6, 8, 10 or 12 screens. Digital monitor ports can easily be switched from one type to another, so HDMI, DisplayPort and even the older DVI ports can all be supported, tell us what your monitors use and we&rsquo;ll advise on the right cables.</p>
-          <p>Key things to speak to us about are if you plan on driving a lot of higher resolution screens such as 4K and some of the larger ultrawide screens. They can be supported but it&rsquo;s best to get the right graphics setup decided upon upfront</p>
+          <p>Key things to speak to us about are if you plan on driving a lot of higher resolution screens such as 4K and some of the larger ultrawide screens. They can be supported but it&rsquo;s best to get the right graphics setup decided upon upfront.</p>
         </div>
       </details>
 
       <details class="faq-item">
-        <summary>I use Solidworks / heavy Excel / Power BI / some other software, which PC will handle it?</summary>
+        <summary>I use Solidworks / heavy Excel / Power BI / some other software - which PC will handle it?</summary>
         <div class="faq-body">
-          <p>The honest answer depends on your specific usage. A 50&thinsp;MB Excel workbook with a thousand formulas is different from a 1&thinsp;GB Power Query model with live SQL connections. One persons workload can be wildly different to anothers, even when running similar software.</p>
+          <p>The honest answer depends on your specific usage. A 50&thinsp;MB Excel workbook with a thousand formulas is different from a 1&thinsp;GB Power Query model with live SQL connections. One person's workload can be wildly different to another's, even when running similar software.</p>
           <p>The best thing to do is speak to us first, we can discuss your workload, look at your current setup, and then spec something appropriate for your needs.</p>
         </div>
       </details>
@@ -565,7 +565,7 @@ End Function
         <div class="faq-body">
           <p>For most finance and productivity workflows, three or four screens is the real productivity sweet-spot. Beyond that you can start having to turn your head to take everything in. For dashboards and monitoring work, six to eight is where most customers settle. Anything over eight is usually for a very specific workflow and worth a call before you buy.</p>
           <p>A good idea is to count the windows you currently keep open while you work. That&rsquo;s roughly how many screens you want.</p>
-          <p>Also worth discussing is whether using higher resolution screens like QHD might allow you to fit your worload on to a lower number of screens.</p>
+          <p>Also worth discussing is whether using higher resolution screens like QHD might allow you to fit your workload on to a lower number of screens.</p>
         </div>
       </details>
 
@@ -574,7 +574,7 @@ End Function
         <div class="faq-body">
           <p>It depends on what you are doing but often the answer is no.</p>
           <p>For example, anyone running general business, Internet, email, office and dashboard type software on standard resolution screens (Full HD) then standard graphics cards are more than enough.</p>
-          <p>If you&rsquo;re running more graphically intense packages or anything that acutally uses the GPU to render or perform calculations (like AI models) then opting for a high-powered graphics card is usually worth the extra cost.</p>
+          <p>If you&rsquo;re running more graphically intense packages or anything that actually uses the GPU to render or perform calculations (like AI models) then opting for a high-powered graphics card is usually worth the extra cost.</p>
           <p>Running larger numbers of higher resolution screens can also benefit from a bump in graphics power. If you&rsquo;re not sure just give us a call.</p>
         </div>
       </details>

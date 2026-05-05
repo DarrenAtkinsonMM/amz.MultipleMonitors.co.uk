@@ -26,12 +26,12 @@ Dim mmStandsSql, mmStandsRs, mmStandsRows, mmStandsCount
 mmStandsCount = 0
 
 mmStandsSql = "SELECT p.idProduct, p.sku, p.description, p.price, " & _
-              "p.smallImageUrl, p.pcUrl " & _
+              "p.imageUrl, p.pcUrl " & _
               "FROM products p " & _
               "INNER JOIN categories_products cp ON p.idProduct = cp.idProduct " & _
               "WHERE cp.idCategory = 5 " & _
               "  AND p.active = -1 AND p.configOnly = 0 AND p.removed = 0 " & _
-              "ORDER BY cp.POrder ASC, p.description ASC"
+              "ORDER BY p.price ASC"
 
 Set mmStandsRs = Server.CreateObject("ADODB.Recordset")
 On Error Resume Next
@@ -103,7 +103,7 @@ Function mmStandStyle(ByVal sku, ByVal screenCount)
         Case "rp" : mmStandStyle = "Pole"
         Case "r"
             If screenCount = 8 Then
-                mmStandStyle = "2-over-2 quad"
+                mmStandStyle = "4-over-4"
             Else
                 mmStandStyle = "Side-by-side"
             End If
@@ -148,7 +148,7 @@ Sub mmRenderStandGroup(ByVal allowed)
             End If
 
             If purl <> "" Then
-                href = "/shop/pc/" & purl & ".htm"
+                href = "/products/" & purl & "/"
             Else
                 href = "/shop/pc/viewPrd.asp?idproduct=" & idProduct
             End If
@@ -193,17 +193,17 @@ End Sub
       <div class="reveal">
         <div class="eyebrow">Synergy Stands &middot; UK designed &amp; manufactured</div>
         <h1>
-          Synergy Stands &mdash; our own UK-designed, UK-manufactured <em>modular monitor mounts</em>.
+          Synergy Stands, our own UK-designed, UK-manufactured <em>modular monitor mounts</em>.
         </h1>
         <p class="lead">
-          Developed by us, manufactured in the UK to our specifications. A modular system that scales from two screens to six on a single assembly. Built to hold up day after day, with thousands in use across trader desks, design studios and operations rooms.
+          Developed by us, manufactured in the UK to our specifications. A modular system that scales from two to six screens on a single assembly. Built to hold up day after day, with thousands in use across trader desks, operations rooms, and home offices.
         </p>
         <div class="hero-ctas">
           <a href="#range" class="btn btn-primary btn-lg">See the range <i class="fa fa-arrow-right"></i></a>
         </div>
         <div class="hero-mini">
           <div class="item"><i class="fa fa-industry"></i><span>UK-designed &amp; UK-made</span></div>
-          <div class="item"><i class="fa fa-th-large"></i><span>Modular &middot; 2 to 8 screens</span></div>
+          <div class="item"><i class="fa fa-th-large"></i><span>Modular &middot; 2 to 8 screen packages</span></div>
           <div class="item"><i class="fa fa-clock-o"></i><span>Sold since 2016</span></div>
         </div>
       </div>
@@ -276,7 +276,7 @@ End Sub
       <div class="pillar reveal" style="transition-delay:.06s">
         <div class="icon"><i class="fa fa-th-large"></i></div>
         <h4>Modular, 2 to 8 screens</h4>
-        <p>Start with two screens. Add arms and columns as your needs grow, three, four, five and six monitor capable mounts using a single central column. Same base assembly, no wasted spend when you scale up.</p>
+        <p>Start with two screens. Add arms and mounts as your needs grow, three, four, five and six monitor capable mounts using a single central column. No wasted spend if you scale up.</p>
         <div class="tag">MODULAR SYSTEM</div>
       </div>
       <div class="pillar reveal" style="transition-delay:.12s">
@@ -288,7 +288,7 @@ End Sub
       <div class="pillar reveal" style="transition-delay:.18s">
         <div class="icon"><i class="fa fa-sliders"></i></div>
         <h4>Adjustability that works</h4>
-        <p>Height position, arm hinge, horizontal slide, pivot, tilt and 30&nbsp;mm of fine height adjustment at every mount. Six degrees of freedom per screen &mdash; and everything locks solid once positioned.</p>
+        <p>Height position, arm hinge, horizontal slide, pivot, tilt and 30&nbsp;mm of fine height adjustment at every arm mount. Six degrees of freedom per screen and everything locks solid once positioned.</p>
         <div class="tag">FULL ADJUSTMENT</div>
       </div>
     </div>
@@ -306,7 +306,7 @@ End Sub
         <div class="eyebrow">Where the Synergy Stand came from</div>
         <h2>Designed by us. <span class="display-em">Made in the UK.</span> Refined since 2016.</h2>
         <p class="lead">
-          Multiple Monitors, founded in 2008, spent a long time battling with inadequate and expensive stands. After years of frustration we developed the Synergy Stand range. The result of a decade-plus collaboration with a specialist UK design and manufacturing team, producing the stands we knew the market needed, but nobody was making.
+          At Multiple Monitors we spent a long time battling with inadequate and expensive stands. After years of frustration we developed the Synergy Stand range. The result of a decade-plus collaboration with a specialist UK design and manufacturing team, producing the stands we knew the market needed, but nobody was making.
         </p>
         <p style="color:var(--slate); margin-top:14px; max-width:640px;">
           Every stand we ship is manufactured in the UK to our specifications and packaged in our workshop. Multiple generations of refinement, driven by real customer feedback, have gone into the system you buy today.
@@ -334,15 +334,12 @@ End Sub
       <div class="reveal">
         <h5>The modular system</h5>
         <h2>Start small. Scale up. <em>Don&rsquo;t buy twice.</em></h2>
-        <p>There&rsquo;s a voice in a lot of our customers&rsquo; heads saying <em>&lsquo;wouldn&rsquo;t it be easier if I just had one more screen&rsquo;</em>. We hear it a lot. The Synergy Stand is a system, not a fixed product &mdash; buy the base today, buy the extra arms when you need them.</p>
+        <p>We often hear from our customers things like <em>&lsquo;wouldn&rsquo;t it be easier if I just had one more screen&rsquo;</em>. We hear it a lot. The Synergy Stand is a modular system, not a fixed product, buy one today, buy the extra parts as you need them.</p>
         <p style="color:#C7D2DF; margin-top:14px;">Starting with two screens? The same base stand accepts additional arms. Scale up to four, five or six as your needs grow &mdash; no need to buy a whole new stand.</p>
         <div class="bundle-pills" style="margin-top:20px;">
           <span class="bundle-pill"><i class="fa fa-check"></i>One base, multiple configurations</span>
           <span class="bundle-pill"><i class="fa fa-check"></i>Add arms &amp; mounts later</span>
           <span class="bundle-pill"><i class="fa fa-check"></i>Same parts, always in stock</span>
-        </div>
-        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:20px;">
-          <a href="#range" class="btn btn-accent btn-lg">Pick a starting configuration <i class="fa fa-arrow-right"></i></a>
         </div>
       </div>
 
@@ -391,12 +388,12 @@ End Sub
       </div>
       <div class="reveal" style="transition-delay:.08s">
         <div class="eyebrow">Built for today&rsquo;s bigger screens</div>
-        <h2>Supports up to 28&Prime; screens &mdash; <span class="display-em">with room to curve</span>.</h2>
+        <h2>Supports up to 28&Prime; screens <span class="display-em">with room to curve</span>.</h2>
         <p class="lead">
-          Screens keep getting larger. 24&Prime; &amp; 27&Prime; widescreens are now our most popular sizes, and most customers now like to go bigger. We designed the Synergy Stand knowing that trend wasn&rsquo;t going away.
+          Screens keep getting larger. 24&Prime; &amp; 27&Prime; widescreens are now our most popular sizes, and many customers now like to go bigger. We designed the Synergy Stand knowing that trend wasn&rsquo;t going away.
         </p>
         <p style="color:var(--slate); margin-top:14px;">
-          Many competitor stands specify &lsquo;up to 24&Prime;&rsquo; &mdash; which leaves no room to angle the outer screens inward for a proper curved layout. Every Synergy Stand is designed to comfortably mount monitors up to and including 28&Prime; widescreens, and still achieve a gentle curve at full screen count.
+          Often competitor stands specify &lsquo;up to 24&Prime;&rsquo; which leaves no room to angle the outer screens inward for a proper curved layout. Every Synergy Stand is designed to comfortably mount monitors up to and including 28&Prime; widescreens, and still achieve a gentle curve at full screen count.
         </p>
         <div class="hero-mini" style="margin-top:20px;">
           <div class="item"><i class="fa fa-expand"></i><span>Up to 28&Prime; per screen</span></div>
@@ -416,7 +413,7 @@ End Sub
       <div>
         <h5>Designed for real-world use</h5>
         <h2>Six ways to get every screen <span class="display-em">exactly where you need it</span>.</h2>
-        <p style="max-width:760px; margin-top:12px;">Adjustability isn&rsquo;t a single thing &mdash; it&rsquo;s the difference between a stand you fight and a stand you forget about. Every Synergy Stand mount gives you six independent degrees of freedom, then locks solid once positioned.</p>
+        <p style="max-width:760px; margin-top:12px;">Adjustability isn&rsquo;t a single thing, it&rsquo;s the difference between a stand you fight and a stand you forget about. Every Synergy Stand gives you six independent degrees of freedom, then locks solid once positioned.</p>
       </div>
     </div>
 
@@ -473,7 +470,7 @@ End Sub
       <div>
         <h5>Shared specifications</h5>
         <h2>Built to the <span class="display-em">same standard</span>.</h2>
-        <p style="max-width:760px; margin-top:12px;">Whichever stand you pick, these specifications are the same. Every Synergy Stand shares the same core engineering &mdash; no variations in quality, no compromises as screen count scales up.</p>
+        <p style="max-width:760px; margin-top:12px;">Whichever stand you pick, these specifications are the same. Every Synergy Stand shares the same core engineering, no variations in quality, no compromises as screen count scales up.</p>
       </div>
     </div>
 
@@ -482,7 +479,7 @@ End Sub
         <div class="spec-card__icon"><i class="fa fa-crosshairs"></i></div>
         <div class="spec-card__label">Mounting standard</div>
         <div class="spec-card__value">VESA 75&times;75 &amp; 100&times;100</div>
-        <div class="spec-card__desc">Fits every monitor we sell &mdash; no adapters, no surprises.</div>
+        <div class="spec-card__desc">Fits every monitor we sell. No adapters, no surprises.</div>
       </div>
       <div class="spec-card reveal" style="transition-delay:.06s">
         <div class="spec-card__icon"><i class="fa fa-cubes"></i></div>
@@ -506,7 +503,7 @@ End Sub
         <div class="spec-card__icon"><i class="fa fa-wrench"></i></div>
         <div class="spec-card__label">Assembly</div>
         <div class="spec-card__value">20&ndash;60 min, no drilling</div>
-        <div class="spec-card__desc">All tools included. No wall fixings.</div>
+        <div class="spec-card__desc">All tools included. No wall fixings. No drilling through desks.</div>
       </div>
       <div class="spec-card reveal" style="transition-delay:.12s">
         <div class="spec-card__icon"><i class="fa fa-certificate"></i></div>
@@ -521,14 +518,13 @@ End Sub
         <div class="spec-box__icon"><i class="fa fa-archive"></i></div>
         <div>
           <div class="spec-box__label">In the box</div>
-          <div class="spec-box__title">Everything you need, one carton.</div>
+          <div class="spec-box__title">Everything you need, one delivery.</div>
         </div>
       </div>
       <div class="spec-chips">
-        <span class="spec-chip"><i class="fa fa-check"></i>Stand assembly</span>
+        <span class="spec-chip"><i class="fa fa-check"></i>Assembly guide</span>
         <span class="spec-chip"><i class="fa fa-check"></i>All mounting hardware</span>
-        <span class="spec-chip"><i class="fa fa-check"></i>VESA plates</span>
-        <span class="spec-chip"><i class="fa fa-check"></i>Fixings</span>
+        <span class="spec-chip"><i class="fa fa-check"></i>VESA plates &amp; screws</span>
         <span class="spec-chip"><i class="fa fa-check"></i>Cable management</span>
       </div>
     </div>
@@ -546,7 +542,7 @@ End Sub
       <div>
         <h5>The range</h5>
         <h2>12 Synergy Stands, <span class="display-em">pick your perfect layout</span>.</h2>
-        <p style="max-width:760px; margin-top:12px;">All stands in the range share the same core components &mdash; you can add arms mounts later to scale up.</p>
+        <p style="max-width:760px; margin-top:12px;">All stands in the range share the same core components, you can add arms &amp; mounts later to scale up.</p>
       </div>
     </div>
 
@@ -630,6 +626,80 @@ End Sub
 </section>
 
 <!-- ===================================================================
+     FAQ
+     =================================================================== -->
+<section class="s depth" id="faq">
+  <div class="container-narrow">
+    <div class="section-head reveal" style="display:block; margin-bottom:38px;">
+      <h5>Common questions</h5>
+      <h2>Your Synergy Stand questions <span class="display-em">answered</span>.</h2>
+      <p style="margin-top:12px;">If your question isn&rsquo;t listed, <a href="tel:03302236655" style="color:var(--brand); font-weight:500;">call us</a> on 0330 223 66 55 and we will help you out.</p>
+    </div>
+
+    <div class="faq-list reveal">
+
+      <details class="faq-item" open>
+        <summary>Which screens fit on the stands?</summary>
+        <div class="faq-body">
+          <p>There are two things to consider when deciding on screens for a Synergy Stand. First is the physical dimensions. For any stand which has arms then the maximum width that can be used is a 28&Prime; widescreen monitor. Anything bigger will not physically fit, anything smaller will fit perfectly.</p>
+          <p>The second requirement is the VESA mounting interface. This is basically the four screw holes on the back of the screen. This is how they attach to our mounts. Sometimes called a wall mount interface, you need either a VESA 75 or VESA 100 interface on the back.</p>
+          <p>If you meet these two requirements then there is no reason it shouldn't fit onto a Synergy Stand.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>I want to use Ultrawide screens, do you have a solution for them?</summary>
+        <div class="faq-body">
+          <p>The Dual Vertical Synergy Stand can handle ultrawide screens, we have customers using them to hold a stack (2 over 2) of 49&Prime; ultrawides with no problems what so ever.</p>
+          <p>The Synergy Stand can easily handle the weight due to the steel construction, the problem is the width, however using the Dual Vertical to hold a stack works perfectly well.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Do you offer a clamp solution instead of a free standing base?</summary>
+        <div class="faq-body">
+          <p>No, we are not a fan of desk clamp mounts, the only base option we have is a stable freestanding base.</p>
+          <p>Desk clamps can restrict where a stand can be placed on a desk, and we've seen a few instances of other clamp based stands failing, leaving monitors falling onto the desk or the floor.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How stable is it? Will it tip over? Do I need to drill into my desk?</summary>
+        <div class="faq-body">
+          <p>We designed the stand solution so the centre of weight is right over the middle of the base plate for maximum stability. In addition, due to all the components being made from steel, once you mount your screens on this will be a weighty setup.</p>
+          <p>If you tried to push it over on purpose you'd struggle to do it.</p>
+          <p>There is an option to secure it to a desk if you want to drill a hole through, the base plate has a hole to accomodate this however that is more for security / theft prevention rather than stability. For most customers there is no desk drilling required.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Do I need a special desk? What about sit / stand desks?</summary>
+        <div class="faq-body">
+          <p>You don't need a special desk, our freestanding system will sit on any sturdy desk. We recommend a desk with four legs, supported at each corner, rather than pedestal desks with one central column.</p>
+          <p>Standing desks are usually also fine. For mechanically operated ones just check that the lifting capacity is enough. The weight of each Synergy Stand configuration is detailed on each stand product page. Then just add the weight of your screens.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Do I need any screws to attach my screens?</summary>
+        <div class="faq-body">
+          <p>No, we provide the correct length VESA compatible screws for any screen which follows the VESA interface guidelines.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Do you sell screens to go with the stand?</summary>
+        <div class="faq-body">
+          <p>Yes, we have a range of 21.5&Prime; to 27&Prime; screens at either Full HD or Quad HD resolutions which are fully compatible with our stands. We sell stands and screens as Monitor Arrays and they come with free long length premium cabling and free UK mainland delivery. <a href="/display-systems/">You can build your perfect monitor array here</a>.</p>
+          <p>We also sell computer, stand and screen bundles, all perfectly matched and designed to work together. Bundles include your choice or PC, your preferred Synergy Stand, your monitor pick, free cabling, a couple of free computer upgrades, free UK mainland delivery, and a bundle discount. <a href="/bundles/">Build your perfect bundle here</a>.</p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
      DARREN CTA
      =================================================================== -->
 <section class="darren" id="darren">
@@ -640,11 +710,11 @@ End Sub
       </div>
       <div class="reveal" style="transition-delay:.08s">
         <h5>Still deciding on a stand?</h5>
-        <h2>Talk to <em>Darren</em> &mdash; the founder, not a call centre.</h2>
-        <p>Seventeen years of speccing these stands means most of our customers&rsquo; questions have pretty direct answers. &ldquo;Will my screens fit?&rdquo; &ldquo;Which configuration for my desk?&rdquo; &ldquo;Can I add screens later?&rdquo; Fifteen minutes on the phone is usually enough to figure out what you need.</p>
+        <h2>Talk to <em>Darren</em>, the founder, not a call centre.</h2>
+        <p>Eighteen years of selling multi-screen stands means we know what does and does not work. &ldquo;Will my screens fit?&rdquo; &ldquo;Which configuration for my desk?&rdquo; &ldquo;Can I add screens later?&rdquo; Five to ten minutes on the phone is usually enough to figure out what you need.</p>
         <div class="darren-ctas">
           <a href="tel:03302236655" class="btn btn-primary btn-lg"><i class="fa fa-phone"></i>0330 223 66 55</a>
-          <a href="#" class="btn btn-ghost btn-lg js-book-call"><i class="fa fa-calendar"></i>Book a 15-min call</a>
+          <a href="#" class="btn btn-ghost btn-lg js-book-call"><i class="fa fa-calendar"></i>Book a call</a>
         </div>
         <div class="darren-sig">&mdash; Darren Atkinson, founder, Multiple Monitors Ltd</div>
       </div>
@@ -652,6 +722,52 @@ End Sub
   </div>
 </section>
 
+<!-- ===================================================================
+     STICKY CTA — "Talk to Darren"
+     (Dynamic: Ultra + Extreme prices pulled from DB.)
+     =================================================================== -->
+<div class="sticky-cta" id="stickyCta">
+  <div class="txt">
+    <strong>View The Synergy Stand Range</strong>
+    <span>Choose from 2 - 8 screen layouts</span>
+  </div>
+  <a href="#range" class="btn btn-primary btn-sm">Pick a stand <i class="fa fa-arrow-right"></i></a>
+</div>
+
 </div><!-- /.mm-site -->
+
+<script>
+  // Sticky CTA — visible after scrolling past the hero, hidden near the footer.
+  // Wrapped in DOMContentLoaded because this <script> emits before
+  // footer_wrapper.asp renders the <footer>, so the element isn't in the
+  // DOM yet at parse time.
+  (function(){
+    function init(){
+      var sticky = document.getElementById('stickyCta');
+      if (!sticky) return;
+      var hero = document.querySelector('.hero');
+      var footer = document.querySelector('footer');
+      if (!hero || !footer) return;
+      function onScroll(){
+        var y = window.scrollY || window.pageYOffset;
+        var heroBottom = hero.getBoundingClientRect().bottom + y;
+        var footerTop = footer.getBoundingClientRect().top + y;
+        var viewportBottom = y + window.innerHeight;
+        if (y > heroBottom + 200 && viewportBottom < footerTop) {
+          sticky.classList.add('visible');
+        } else {
+          sticky.classList.remove('visible');
+        }
+      }
+      window.addEventListener('scroll', onScroll, { passive:true });
+      onScroll();
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
 
 <!--#include file="footer_wrapper.asp"-->

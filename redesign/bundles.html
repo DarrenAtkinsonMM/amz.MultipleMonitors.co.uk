@@ -201,8 +201,14 @@
           </div>
 
           <div class="mmb-info" id="mmb-info" style="display:none">
-            <i class="fa fa-info-circle" aria-hidden="true"></i>
-            <span>Computers can be customised after clicking the <strong>Configure PC &amp; Order Bundle</strong> button.</span>
+            <div class="mmb-info__msg">
+              <i class="fa fa-arrow-right" aria-hidden="true"></i>
+              <div class="mmb-info__copy">
+                <strong>Next: customise the PC (CPU, RAM, storage).</strong>
+                <span>Your stand, screens<span id="mmb-info-savings"></span> stay locked in.</span>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary mmb-info__cta is-disabled" id="mmb-info-cta">Pick a PC to continue <i class="fa fa-arrow-right"></i></button>
           </div>
         </div>
       </div>
@@ -258,7 +264,7 @@
             <p class="bsb-vat-note">All prices exclude VAT</p>
           </div>
           <button class="btn btn-primary btn-lg bsb-cta is-disabled" id="mmb-cta">Keep building <i class="fa fa-arrow-right"></i></button>
-          <div class="bsb-trust">
+          <div class="bsb-trust" id="mmb-trust">
             <i class="fa fa-shield"></i>
             <span>5-year PC cover &middot; Lifetime UK support &middot; 30-day money-back guarantee</span>
           </div>
@@ -843,6 +849,50 @@
       cta.classList.add('is-disabled');
       cta.innerHTML = 'Keep building <i class="fa fa-arrow-right"></i>';
     }
+
+    // Inline info-row CTA on the computer stage — mirrors the sidebar
+    // CTA's state so a user looking at PC cards has the next-step
+    // action right under the grid, not just in the right rail.
+    const infoCta = $('mmb-info-cta');
+    if (infoCta) {
+      if (isComplete()) {
+        infoCta.classList.remove('is-disabled');
+        infoCta.innerHTML = 'Configure PC &amp; Order Bundle <i class="fa fa-arrow-right"></i>';
+      } else {
+        infoCta.classList.add('is-disabled');
+        infoCta.innerHTML = 'Pick a PC to continue <i class="fa fa-arrow-right"></i>';
+      }
+    }
+
+    // Inline savings figure — only meaningful once a stand is picked
+    // (which is always true on the computer stage, but guarded for
+    // safety in case the banner is ever shown earlier).
+    const infoSavings = $('mmb-info-savings');
+    if (infoSavings) {
+      infoSavings.innerHTML = state.stand ? ' and ' + fmt(savings) + ' saving' : '';
+    }
+
+    // Sidebar trust line — on the stand and screens steps it's the
+    // generic warranty / support / returns reassurance. On the computer
+    // step it switches to two "what happens next" lines that prime the
+    // user for the bundle page (PC config) without losing the savings
+    // anchor. Green ticks deliberately echo the "Total savings" row.
+    const trust = $('mmb-trust');
+    if (trust) {
+      if (stage === 'computer' || stage === 'done') {
+        trust.classList.add('bsb-trust--next');
+        trust.innerHTML =
+          '<ul>' +
+            '<li><i class="fa fa-check-circle"></i><span>Now pick your CPU, RAM, &amp; other options</span></li>' +
+            '<li><i class="fa fa-check-circle"></i><span>Bundle savings of ' + fmt(savings) + ' stay locked in</span></li>' +
+          '</ul>';
+      } else {
+        trust.classList.remove('bsb-trust--next');
+        trust.innerHTML =
+          '<i class="fa fa-shield"></i>' +
+          '<span>5-year PC cover &middot; Lifetime UK support &middot; 30-day money-back guarantee</span>';
+      }
+    }
   }
 
   function render() {
@@ -857,6 +907,14 @@
     if (!goto) return;
     state.view = goto;
     render();
+  });
+
+  // Inline info-row CTA — forwards to the sidebar CTA so the click
+  // behaviour lives in one place. Once the live ASP wires the sidebar
+  // CTA to navigate to the bundle page, this just works.
+  document.getElementById('mmb-info-cta').addEventListener('click', function(){
+    if (this.classList.contains('is-disabled')) return;
+    document.getElementById('mmb-cta').click();
   });
 
   // Stepper click — jump back to an earlier stage to review or swap a
