@@ -644,7 +644,8 @@
     padding:20px 22px 18px;
   }
   .mm-site .cfg-impact--gpu.cfg-gpu-info::before {
-    display:none;
+    content:""; position:absolute; left:20px; top:0;
+    width:36px; height:2px; background:var(--accent); border-radius:2px;
   }
   .mm-site .cfg-impact--gpu.cfg-gpu-info .cfg-impact__head h5 {
     display:inline-flex; align-items:center; gap:9px;
@@ -676,7 +677,8 @@
     margin-top:18px; margin-bottom:0;
   }
   .mm-site .cfg-impact--cpu.cfg-cpu-info::before {
-    display:none;
+    content:""; position:absolute; left:20px; top:0;
+    width:36px; height:2px; background:var(--accent); border-radius:2px;
   }
   .mm-site .cfg-impact--cpu.cfg-cpu-info .cfg-impact__head h5 {
     display:inline-flex; align-items:center; gap:9px;

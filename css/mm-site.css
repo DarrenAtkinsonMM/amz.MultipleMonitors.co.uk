@@ -2598,15 +2598,39 @@ footer a:hover { color:var(--accent); }
   border-radius:var(--radius-lg); box-shadow:var(--shadow-sm);
   overflow:hidden;
 }
-.mm-site .cfg-row { padding:24px 26px; border-bottom:1px solid var(--line); }
+.mm-site .cfg-row {
+  padding:18px 26px; border-bottom:1px solid var(--line);
+  transition:background .15s ease;
+}
 .mm-site .cfg-row:last-child { border-bottom:none; }
+.mm-site .cfg-row.is-open { padding-block:24px; background:var(--brand-soft); }
+.mm-site .cfg-row:not(.is-open):hover { background:var(--sand); }
+
 .mm-site .cfg-row__head {
   display:flex; justify-content:space-between; align-items:baseline;
-  gap:16px; margin-bottom:12px;
+  gap:16px;
+  width:100%; background:none; border:0; padding:0; margin:0;
+  text-align:left; cursor:pointer; font:inherit; color:inherit;
 }
+.mm-site .cfg-row__head:focus-visible {
+  outline:2px solid var(--brand); outline-offset:6px; border-radius:4px;
+}
+.mm-site .cfg-row__head-main {
+  display:flex; flex:1 1 auto; min-width:0;
+  justify-content:space-between; align-items:baseline;
+  gap:16px;
+}
+.mm-site .cfg-row__chev {
+  flex:0 0 auto; margin-left:12px; color:var(--muted); font-size:13px;
+  transition:transform .25s ease, color .2s ease;
+}
+.mm-site .cfg-row.is-open .cfg-row__chev {
+  transform:rotate(180deg); color:var(--brand);
+}
+
 .mm-site .cfg-row__label {
-  font-family:'JetBrains Mono', monospace; font-size:11px;
-  letter-spacing:.18em; text-transform:uppercase; color:var(--muted);
+  font-family:'JetBrains Mono', monospace; font-size:12px;
+  letter-spacing:.22em; text-transform:uppercase; color:var(--brand);
   font-weight:500;
 }
 .mm-site .cfg-row__label .n {
@@ -2616,20 +2640,46 @@ footer a:hover { color:var(--accent); }
   font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:600;
   margin-right:10px; letter-spacing:0;
 }
+.mm-site .cfg-row.is-open .cfg-row__label .n {
+  background:var(--brand); color:#fff;
+}
 .mm-site .cfg-row__selected {
   font-family:'EB Garamond', 'Georgia', serif; font-size:17px;
   font-weight:500; color:var(--ink); letter-spacing:-.005em;
   text-align:right;
 }
+.mm-site .cfg-row.is-open .cfg-row__selected { color:var(--brand-deep); }
+
+/* Collapsible body (grid 0fr -> 1fr animates to natural height) */
+.mm-site .cfg-row__body {
+  display:grid; grid-template-rows:0fr;
+  transition:grid-template-rows .3s ease;
+}
+.mm-site .cfg-row__body-inner { overflow:hidden; }
+.mm-site .cfg-row.is-open .cfg-row__body { grid-template-rows:1fr; }
+.mm-site .cfg-row.is-open .cfg-row__body-inner { padding:14px 0 2px 2px; }
+
 .mm-site .cfg-row__help {
   font-size:13.5px; color:var(--slate); line-height:1.5;
-  max-width:640px; margin:2px 0 14px;
+  max-width:640px; margin:0 0 14px;
 }
 .mm-site .cfg-row__help a { color:var(--brand); font-weight:500; }
 
+/* Segmented options */
 .mm-site .cfg-options {
   display:flex; flex-wrap:wrap; gap:8px;
 }
+/* Sub-group heading inside an options row — forces a line break and
+   prints as a small mono caption, matching the .cfg-row__label aesthetic. */
+.mm-site .cfg-options > p {
+  flex:1 0 100%;
+  margin:8px 0 0;
+  font-family:'JetBrains Mono', monospace;
+  font-size:10.5px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--brand);
+  font-weight:500; line-height:1.2;
+}
+.mm-site .cfg-options > p:first-child { margin-top:0; }
 .mm-site .cfg-option {
   position:relative;
   display:inline-flex; flex-direction:column; gap:3px;
@@ -2637,18 +2687,17 @@ footer a:hover { color:var(--accent); }
   border-radius:var(--radius);
   padding:11px 16px; cursor:pointer; transition:all .18s ease;
   min-width:0;
-  text-align:left; font:inherit;
 }
 .mm-site .cfg-option:hover { border-color:var(--line-strong); box-shadow:var(--shadow-sm); }
 .mm-site .cfg-option.is-selected {
   border-color:var(--brand);
-  background:linear-gradient(180deg, #fff, var(--brand-soft));
+  background:#fff;
   box-shadow:0 0 0 1px var(--brand), var(--shadow-sm);
 }
 .mm-site .cfg-option.is-selected::after {
   content:"\f058"; font-family:'FontAwesome';
-  position:absolute; top:8px; right:10px;
-  color:var(--brand); font-size:12px;
+  position:absolute; top:1px; right:4px;
+  color:var(--brand); font-size:16px;
 }
 .mm-site .cfg-option .opt-name {
   font-size:13.5px; font-weight:500; color:var(--ink); line-height:1.2;

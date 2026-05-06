@@ -128,15 +128,29 @@ Sub mmRenderOptionGroup(ByVal ogId, ByVal ogDesc, ByVal ogIndex)
   firstDescrip = rows(6, 0) & ""
   firstId      = rows(0, 0)
 
-  Dim groupKey
+  Dim groupKey, openCls, ariaExpanded
   groupKey = "g" & ogIndex
+  If ogIndex = 1 Then
+    openCls = " is-open"
+    ariaExpanded = "true"
+  Else
+    openCls = ""
+    ariaExpanded = "false"
+  End If
 %>
-  <div class="cfg-row" data-group="<%= groupKey %>">
-    <div class="cfg-row__head">
-      <div class="cfg-row__label"><span class="n"><%= ogIndex %></span><%= Server.HTMLEncode(ogDesc) %></div>
-      <div class="cfg-row__selected" data-selected><%= Server.HTMLEncode(firstDescrip) %></div>
-    </div>
-    <div class="cfg-options" role="radiogroup">
+  <div class="cfg-row<%= openCls %>" data-group="<%= groupKey %>">
+    <button type="button" class="cfg-row__head"
+            aria-expanded="<%= ariaExpanded %>"
+            aria-controls="cfg-body-<%= groupKey %>">
+      <span class="cfg-row__head-main">
+        <span class="cfg-row__label"><span class="n"><%= ogIndex %></span><%= Server.HTMLEncode(ogDesc) %></span>
+        <span class="cfg-row__selected" data-selected><%= Server.HTMLEncode(firstDescrip) %></span>
+      </span>
+      <i class="fa fa-chevron-down cfg-row__chev" aria-hidden="true"></i>
+    </button>
+    <div class="cfg-row__body" id="cfg-body-<%= groupKey %>">
+      <div class="cfg-row__body-inner">
+        <div class="cfg-options" role="radiogroup">
 <%
   Dim j, thisIdOptGrp, thisPriceInc, thisDescrip, deltaInc, deltaEx
   For j = 0 To count - 1
@@ -160,18 +174,20 @@ Sub mmRenderOptionGroup(ByVal ogId, ByVal ogDesc, ByVal ogIndex)
       priceCls = "inc"
     End If
 %>
-      <button type="button" class="<%= cls %>"
-              data-name="<%= Server.HTMLEncode(thisDescrip) %>"
-              data-delta="<%= deltaEx %>"
-              data-idoptoptgrp="<%= thisIdOptGrp %>">
-        <span class="opt-name"><%= Server.HTMLEncode(thisDescrip) %></span>
-        <span class="opt-price <%= priceCls %>"><%= priceTxt %></span>
-      </button>
+          <button type="button" class="<%= cls %>"
+                  data-name="<%= Server.HTMLEncode(thisDescrip) %>"
+                  data-delta="<%= deltaEx %>"
+                  data-idoptoptgrp="<%= thisIdOptGrp %>">
+            <span class="opt-name"><%= Server.HTMLEncode(thisDescrip) %></span>
+            <span class="opt-price <%= priceCls %>"><%= priceTxt %></span>
+          </button>
 <%
   Next
 %>
+        </div>
+        <input type="hidden" name="idOption<%= ogIndex %>" value="<%= firstId %>">
+      </div>
     </div>
-    <input type="hidden" name="idOption<%= ogIndex %>" value="<%= firstId %>">
   </div>
 <%
 End Sub
@@ -728,25 +744,155 @@ Next
 <!-- ===================================================================
      PAGE-SPECIFIC JS — configurator, gallery, sticky CTA, impact stars
      =================================================================== -->
+
+<!-- Per-option metadata (friendly names, ratings, GPU/CPU specs).
+     Keyed by idoptoptgrp; loaded before the IIFE that reads it. -->
+<script src="/js/products/traderpc-v2.js"></script>
+
 <script>
 (function(){
   var BASE_EX  = <%= mmBasePriceEx %>;
   var VAT_RATE = 0.20;
 
+  // ------- Option metadata lookup -------
+  // Per-option overrides + ratings live in /js/products/traderpc-v2.js,
+  // keyed by idoptoptgrp. Missing ids return null and the page falls
+  // back to the DB description with default ratings.
+  function metaFor(id) {
+    var t = window.MM_OPTION_META;
+    return (t && id != null && t[id]) ? t[id] : null;
+  }
+
   // ------- State -------
   var rows = document.querySelectorAll('.cfg-row');
-  var state = {}; // group -> { name, delta, idoptoptgrp }
+  var state = {}; // group -> { name, delta, idoptoptgrp, meta }
 
   rows.forEach(function(row){
     var group = row.dataset.group;
     var sel   = row.querySelector('.cfg-option.is-selected') || row.querySelector('.cfg-option');
     if (sel) {
       state[group] = {
-        name:  sel.dataset.name,
-        delta: parseInt(sel.dataset.delta || '0', 10),
-        idoptoptgrp: sel.dataset.idoptoptgrp
+        name:        sel.dataset.name,
+        delta:       parseInt(sel.dataset.delta || '0', 10),
+        idoptoptgrp: sel.dataset.idoptoptgrp,
+        meta:        metaFor(sel.dataset.idoptoptgrp)
       };
     }
+  });
+
+  // ------- Hide options flagged with meta.hide -------
+  // Removes the option button from the DOM. If the hidden option
+  // was the group's default-selected one, promote the next
+  // remaining option, refresh state, and overwrite the hidden
+  // idOption input so the cart posts what the user actually sees.
+  rows.forEach(function(row){
+    var group = row.dataset.group;
+    var hiddenInput = row.querySelector('input[type="hidden"][name^="idOption"]');
+    var lostSelection = false;
+    row.querySelectorAll('.cfg-option').forEach(function(btn){
+      var m = metaFor(btn.dataset.idoptoptgrp);
+      if (!m || m.hide !== true) return;
+      if (btn.classList.contains('is-selected')) lostSelection = true;
+      btn.parentNode.removeChild(btn);
+    });
+    if (lostSelection) {
+      var next = row.querySelector('.cfg-option');
+      if (next) {
+        next.classList.add('is-selected');
+        state[group] = {
+          name:        next.dataset.name,
+          delta:       parseInt(next.dataset.delta || '0', 10),
+          idoptoptgrp: next.dataset.idoptoptgrp,
+          meta:        metaFor(next.dataset.idoptoptgrp)
+        };
+        if (hiddenInput) hiddenInput.value = next.dataset.idoptoptgrp;
+      }
+    }
+  });
+
+  // ------- Apply friendly names from metadata -------
+  // Override the option-button label and the row's selected caption
+  // when MM_OPTION_META supplies a `name`. DB description stays as
+  // the data-name fallback for any option without a meta entry.
+  document.querySelectorAll('.cfg-option').forEach(function(btn){
+    var m = metaFor(btn.dataset.idoptoptgrp);
+    if (!m || !m.name) return;
+    var nameEl = btn.querySelector('.opt-name');
+    if (nameEl) nameEl.textContent = m.name;
+  });
+  rows.forEach(function(row){
+    var s = state[row.dataset.group];
+    if (!s || !s.meta || !s.meta.name) return;
+    var selectedEl = row.querySelector('[data-selected]');
+    if (selectedEl) selectedEl.textContent = s.meta.name;
+  });
+
+  // ------- GPU group: sort & bucket by meta.screens -------
+  // Reorders the GPU group's option buttons ascending by
+  // meta.screens, then by data-delta (price) within each bucket.
+  // Inserts a "{N} Screen Options" caption before each new bucket.
+  // Options without a screens value fall into an "Other Options"
+  // bucket at the end. No-op if no GPU option has screens set.
+  (function rearrangeGpuByScreens(){
+    var gpuGroup = null;
+    for (var k in state) {
+      if (!state.hasOwnProperty(k)) continue;
+      var sm = state[k] && state[k].meta;
+      if (sm && sm.gpuPower !== undefined) { gpuGroup = k; break; }
+    }
+    if (!gpuGroup) return;
+
+    var row = document.querySelector('.cfg-row[data-group="' + gpuGroup + '"]');
+    if (!row) return;
+    var optsWrap = row.querySelector('.cfg-options');
+    if (!optsWrap) return;
+
+    var buttons = Array.prototype.slice.call(optsWrap.querySelectorAll('.cfg-option'));
+    var hasScreens = buttons.some(function(b){
+      var m = metaFor(b.dataset.idoptoptgrp);
+      return m && typeof m.screens === 'number';
+    });
+    if (!hasScreens) return;
+
+    buttons.sort(function(a, b){
+      var ma = metaFor(a.dataset.idoptoptgrp) || {};
+      var mb = metaFor(b.dataset.idoptoptgrp) || {};
+      var sa = (typeof ma.screens === 'number') ? ma.screens : Infinity;
+      var sb = (typeof mb.screens === 'number') ? mb.screens : Infinity;
+      if (sa !== sb) return sa - sb;
+      return parseInt(a.dataset.delta || '0', 10) - parseInt(b.dataset.delta || '0', 10);
+    });
+
+    optsWrap.innerHTML = '';
+    var lastBucket = undefined;
+    buttons.forEach(function(btn){
+      var m = metaFor(btn.dataset.idoptoptgrp) || {};
+      var thisBucket = (typeof m.screens === 'number') ? m.screens : null;
+      if (thisBucket !== lastBucket) {
+        var heading = document.createElement('p');
+        heading.textContent = (thisBucket !== null) ? (thisBucket + ' Screen Options') : 'Other Options';
+        optsWrap.appendChild(heading);
+        lastBucket = thisBucket;
+      }
+      optsWrap.appendChild(btn);
+    });
+  })();
+
+  // ------- Accordion (one row open at a time) -------
+  document.querySelectorAll('.cfg-row__head').forEach(function(head){
+    head.addEventListener('click', function(){
+      var row = head.closest('.cfg-row');
+      var willOpen = !row.classList.contains('is-open');
+      document.querySelectorAll('.cfg-row.is-open').forEach(function(r){
+        r.classList.remove('is-open');
+        var h = r.querySelector('.cfg-row__head');
+        if (h) h.setAttribute('aria-expanded', 'false');
+      });
+      if (willOpen) {
+        row.classList.add('is-open');
+        head.setAttribute('aria-expanded', 'true');
+      }
+    });
   });
 
   // ------- Formatting -------
@@ -760,50 +906,6 @@ Next
       .replace(/&lt;/g,    '<')
       .replace(/&gt;/g,    '>')
       .replace(/&quot;/g,  '"');
-  }
-
-  // ------- Live performance ratings (page-specific mapping) -------
-  // Match on stable substrings of the option description.
-  function getCpuRating(name) {
-    if (/14900KF/.test(name)) return { speed: 5, mtBase: 5 };
-    if (/14700KF/.test(name)) return { speed: 5, mtBase: 4 };
-    if (/14600KF/.test(name)) return { speed: 4, mtBase: 3 };
-    return { speed: 3, mtBase: 3 };          // i5 14400F (default)
-  }
-  function getRamBonus(name) {
-    if (/64\s?GB/i.test(name)) return 1;
-    if (/32\s?GB/i.test(name)) return 1;
-    return 0;                                 // 16 GB (default)
-  }
-  function getGpuRating(name) {
-    if (/RTX\s?5050/i.test(name)) {
-      return {
-        gfx: 5, ai: 5, label: 'RTX 5050 · 8 screens',
-        mons: [
-          { n: 8, res: '4K @ 120 Hz' },
-          { n: 8, res: '1440p @ 240 Hz' },
-          { n: 8, res: '1080p @ 360 Hz' }
-        ]
-      };
-    }
-    if (/Dual/i.test(name) && /A400/i.test(name)) {
-      return {
-        gfx: 3, ai: 2, label: 'Dual A400 · 8 screens',
-        mons: [
-          { n: 8, res: '4K @ 60 Hz' },
-          { n: 8, res: '1440p @ 144 Hz' },
-          { n: 8, res: '1080p @ 240 Hz' }
-        ]
-      };
-    }
-    return {
-      gfx: 3, ai: 2, label: 'RTX A400 · 4 screens',
-      mons: [
-        { n: 4, res: '4K @ 60 Hz' },
-        { n: 4, res: '1440p @ 144 Hz' },
-        { n: 4, res: '1080p @ 240 Hz' }
-      ]
-    };
   }
 
   function renderStars(el, n) {
@@ -822,65 +924,59 @@ Next
     }
   }
 
-  // Group keys coming from the DB are "g1", "g2"... — we identify the
-  // CPU/RAM/GPU groups by looking at the option descriptions in state.
-  function findGroupByDescrip(test) {
+  // Identify the CPU/RAM/GPU groups by which meta field the
+  // currently-selected option carries. If no option in any group has
+  // meta yet, the helper returns null and updateImpact uses defaults.
+  function findGroupByMetaField(field) {
     for (var k in state) {
-      if (state.hasOwnProperty(k) && test(state[k].name)) return k;
+      if (!state.hasOwnProperty(k)) continue;
+      var m = state[k] && state[k].meta;
+      if (m && m[field] !== undefined) return k;
     }
     return null;
   }
-  function cpuState() {
-    var k = findGroupByDescrip(function(n){ return /\bi[579]\b|Intel\s+(Core|i[3-9])/i.test(n); });
-    return k ? state[k] : null;
-  }
-  function ramState() {
-    var k = findGroupByDescrip(function(n){ return /\d+\s?GB\b/i.test(n) && /DDR/i.test(n); });
-    if (!k) k = findGroupByDescrip(function(n){ return /\b(16|32|64)\s?GB\b/i.test(n); });
-    return k ? state[k] : null;
-  }
-  function gpuState() {
-    var k = findGroupByDescrip(function(n){ return /(RTX|A400|GPU|screen|monitor)/i.test(n); });
-    return k ? state[k] : null;
-  }
+  function cpuState() { var k = findGroupByMetaField('cpuSpeed');   return k ? state[k] : null; }
+  function ramState() { var k = findGroupByMetaField('ramMtBonus'); return k ? state[k] : null; }
+  function gpuState() { var k = findGroupByMetaField('gpuPower');   return k ? state[k] : null; }
 
   function updateImpact() {
     var cpu = cpuState(), ram = ramState(), gpu = gpuState();
-    var cpuName = cpu ? cpu.name : '';
-    var ramName = ram ? ram.name : '';
-    var gpuName = gpu ? gpu.name : '';
+    var cpuMeta = cpu && cpu.meta;
+    var ramMeta = ram && ram.meta;
+    var gpuMeta = gpu && gpu.meta;
 
-    var cpuR = getCpuRating(decodeHtml(cpuName));
-    var ramB = getRamBonus(decodeHtml(ramName));
-    var speed = cpuR.speed;
-    var mt    = Math.min(5, cpuR.mtBase + ramB);
-    var gpuR  = getGpuRating(decodeHtml(gpuName));
+    var speed  = (cpuMeta && cpuMeta.cpuSpeed     != null) ? cpuMeta.cpuSpeed     : 3;
+    var mtBase = (cpuMeta && cpuMeta.cpuMultiTask != null) ? cpuMeta.cpuMultiTask : 3;
+    var ramBn  = (ramMeta && ramMeta.ramMtBonus   != null) ? ramMeta.ramMtBonus   : 0;
+    var mt     = Math.min(5, mtBase + ramBn);
+    var gfx    = (gpuMeta && gpuMeta.gpuPower     != null) ? gpuMeta.gpuPower     : 3;
+    var ai     = (gpuMeta && gpuMeta.gpuAi        != null) ? gpuMeta.gpuAi        : 2;
 
     renderStars(document.querySelector('[data-rating="speed"]'), speed);
     renderStars(document.querySelector('[data-rating="mt"]'),    mt);
-    renderStars(document.querySelector('[data-rating="gfx"]'),   gpuR.gfx);
-    renderStars(document.querySelector('[data-rating="ai"]'),    gpuR.ai);
+    renderStars(document.querySelector('[data-rating="gfx"]'),   gfx);
+    renderStars(document.querySelector('[data-rating="ai"]'),    ai);
 
     var cpuCtx = document.querySelector('[data-ctx-cpu]');
     var gpuCtx = document.querySelector('[data-ctx-gpu]');
-    if (cpuCtx) cpuCtx.textContent = shortLabel(cpuName) + (ramName ? ' · ' + shortLabel(ramName) : '');
-    if (gpuCtx) gpuCtx.textContent = gpuR.label;
+    if (cpuCtx) {
+      var parts = [];
+      if (cpuMeta && cpuMeta.name) parts.push(cpuMeta.name.replace(/^Intel\s+/, ''));
+      if (ramMeta && ramMeta.name) parts.push(ramMeta.name);
+      cpuCtx.textContent = parts.join(' · ');
+    }
+    if (gpuCtx) {
+      gpuCtx.textContent = (gpuMeta && (gpuMeta.gpuLabel || gpuMeta.name)) || '';
+    }
 
     var monsEl = document.querySelector('[data-mons]');
     if (monsEl) {
-      monsEl.innerHTML = gpuR.mons.map(function(m){
-        return '<li><b>' + m.n + '×</b><span class="res">' + m.res + '</span></li>';
+      var mons = (gpuMeta && gpuMeta.monitors) || [];
+      monsEl.innerHTML = mons.map(function(m){
+        return '<li><b>' + m.count + '×</b><span class="res">' + m.res + '</span></li>';
       }).join('');
     }
   }
-  function shortLabel(name) {
-    var s = decodeHtml(name);
-    var dot = s.indexOf('·');
-    if (dot > -1) s = s.slice(0, dot).trim();
-    s = s.replace(/^Intel\s+/, '').replace(/\s+DDR[345]\s*\d*$/, '').trim();
-    return s.length > 28 ? s.slice(0, 26) + '…' : s;
-  }
-
   // ------- Summary list -------
   function renderSummary() {
     var listEl = document.querySelector('[data-summary-list]');
@@ -893,9 +989,10 @@ Next
       var s = state[group] || { name: '', delta: 0 };
       var priCls  = s.delta > 0 ? 'pri inc' : 'pri';
       var priText = s.delta > 0 ? '+ £' + fmt0(s.delta) : 'Std';
+      var displayedName = (s.meta && s.meta.name) ? s.meta.name : decodeHtml(s.name);
       html += '<li>' +
                 '<span class="lbl">' + labelText + '</span>' +
-                '<span class="val">' + decodeHtml(s.name) + '</span>' +
+                '<span class="val">' + displayedName + '</span>' +
                 '<span class="' + priCls + '">' + priText + '</span>' +
               '</li>';
     });
@@ -926,13 +1023,15 @@ Next
       var group = row.dataset.group;
       row.querySelectorAll('.cfg-option').forEach(function(b){ b.classList.remove('is-selected'); });
       btn.classList.add('is-selected');
+      var meta = metaFor(btn.dataset.idoptoptgrp);
       state[group] = {
-        name:  btn.dataset.name,
-        delta: parseInt(btn.dataset.delta || '0', 10),
-        idoptoptgrp: btn.dataset.idoptoptgrp
+        name:        btn.dataset.name,
+        delta:       parseInt(btn.dataset.delta || '0', 10),
+        idoptoptgrp: btn.dataset.idoptoptgrp,
+        meta:        meta
       };
       var selectedEl = row.querySelector('[data-selected]');
-      if (selectedEl) selectedEl.innerHTML = btn.dataset.name;
+      if (selectedEl) selectedEl.textContent = (meta && meta.name) ? meta.name : btn.dataset.name;
       var hidden = row.querySelector('input[type="hidden"][name^="idOption"]');
       if (hidden) hidden.value = btn.dataset.idoptoptgrp;
       recalc();
