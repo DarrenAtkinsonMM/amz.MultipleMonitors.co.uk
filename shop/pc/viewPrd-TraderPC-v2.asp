@@ -97,7 +97,7 @@ Dim mmMachineName : mmMachineName = mmName
 '    pcs_makeOptionBox logic in viewPrdCode.asp:2855).
 '    Also emits the hidden idOption<N> input the cart needs.
 ' ------------------------------------------------------------
-Sub mmRenderOptionGroup(ByVal ogId, ByVal ogDesc, ByVal ogIndex)
+Sub mmRenderOptionGroup(ByVal ogId, ByVal ogDesc, ByVal ogShort, ByVal ogIndex)
   Dim sql, rs, rows, count
   count = 0
   sql = "SELECT oog.idoptoptgrp, oog.price, oog.Wprice, oog.sortOrder, " & _
@@ -138,7 +138,7 @@ Sub mmRenderOptionGroup(ByVal ogId, ByVal ogDesc, ByVal ogIndex)
     ariaExpanded = "false"
   End If
 %>
-  <div class="cfg-row<%= openCls %>" data-group="<%= groupKey %>">
+  <div class="cfg-row<%= openCls %>" data-group="<%= groupKey %>" data-short-label="<%= Server.HTMLEncode(ogShort) %>">
     <button type="button" class="cfg-row__head"
             aria-expanded="<%= ariaExpanded %>"
             aria-controls="cfg-body-<%= groupKey %>">
@@ -198,6 +198,43 @@ Function mmFormatMoney(ByVal v)
 End Function
 Function mmFormatMoney0(ByVal v)
   mmFormatMoney0 = FormatNumber(v, 0, -1, 0, -1)
+End Function
+
+' Friendly display names for option groups — DB stays unchanged.
+' mmFriendlyOgName     -> long form, used in the accordion heading.
+' mmFriendlyOgShortName-> short form, used in the right-side summary
+'                         list. Falls back to the original DB desc
+'                         when no override is set.
+' Match is case-insensitive against optionsGroups.OptionGroupDesc.
+Function mmFriendlyOgName(ByVal ogDesc)
+  Dim k : k = LCase(Trim(ogDesc & ""))
+  Select Case k
+    Case "os"             : mmFriendlyOgName = "Operating System"
+    Case "boot hard drive": mmFriendlyOgName = "Hard Drive"
+    Case "2nd hard drive": mmFriendlyOgName = "Second Hard Drive"
+    Case "keyb. / mouse" : mmFriendlyOgName = "Keyboard & Mouse"
+    Case "graphics cards" : mmFriendlyOgName = "Graphics Setup"
+    Case "ms office" : mmFriendlyOgName = "Microsoft Office"
+    Case "bluetooth" : mmFriendlyOgName = "Bluetooth Adapter"
+    Case Else             : mmFriendlyOgName = ogDesc
+  End Select
+End Function
+
+Function mmFriendlyOgShortName(ByVal ogDesc)
+  Dim k : k = LCase(Trim(ogDesc & ""))
+  Select Case k
+    Case "os" : mmFriendlyOgShortName = "OS" 
+    Case "warranty cover" : mmFriendlyOgShortName = "warranty"
+    Case "wireless card" : mmFriendlyOgShortName = "WiFi"  
+    Case "boot hard drive" : mmFriendlyOgShortName = "SSD Drive"
+     Case "2nd hard drive" : mmFriendlyOgShortName = "2nd Drive"
+    Case "optical drive" : mmFriendlyOgShortName = "Optical"
+    Case "backup system" : mmFriendlyOgShortName = "Backup"
+    Case "keyb. / mouse" : mmFriendlyOgShortName = "Inputs"
+    Case "graphics cards" : mmFriendlyOgShortName = "GPU"
+    Case "bluetooth" : mmFriendlyOgShortName = "BT"
+    Case Else             : mmFriendlyOgShortName = ogDesc
+  End Select
 End Function
 
 Dim mmBasePriceExDisp, mmBasePriceIncDisp
@@ -428,11 +465,13 @@ End If
         <!-- Options column -->
         <div class="cfg-options-wrap reveal">
 <%
-Dim mmI, mmOgId, mmOgDesc
+Dim mmI, mmOgId, mmOgDesc, mmOgShort, mmOgRaw
 For mmI = 0 To mmOgCount - 1
-  mmOgId   = mmOgRows(0, mmI)
-  mmOgDesc = mmOgRows(1, mmI) & ""
-  Call mmRenderOptionGroup(mmOgId, mmOgDesc, mmI + 1)
+  mmOgId    = mmOgRows(0, mmI)
+  mmOgRaw   = mmOgRows(1, mmI) & ""
+  mmOgDesc  = mmFriendlyOgName(mmOgRaw)
+  mmOgShort = mmFriendlyOgShortName(mmOgRaw)
+  Call mmRenderOptionGroup(mmOgId, mmOgDesc, mmOgShort, mmI + 1)
 Next
 %>
         </div>
@@ -506,6 +545,72 @@ Next
 
       </div><!-- /cfg-grid -->
     </form>
+  </div>
+</section>
+
+<!-- ===================================================================
+     FULL SPECIFICATION — live-updating, echoes configurator state.
+     Rows with data-spec are populated by renderFullSpec() in the IIFE
+     below; rows without are static / always-included components.
+     =================================================================== -->
+<section class="full-spec" id="full-spec">
+  <div class="container">
+
+    <div class="section-head-narrow reveal">
+      <h5>Full specification</h5>
+      <h2>Everything in <span class="display-em">your <%= Server.HTMLEncode(mmName) %></span>.</h2>
+      <p>Every component &mdash; the ones you just picked, and the ones we include as standard. When you choose a CPU that needs a bigger board, quieter cooler or more power, the affected parts auto-upgrade with it.</p>
+    </div>
+
+    <div class="spec-full reveal">
+      <div class="spec-full__grid">
+        <div class="spec-row"><span class="spec-row__lbl">Processor</span><span class="spec-row__val" data-spec="cpu">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Motherboard</span><span class="spec-row__val" data-spec="mobo">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Memory</span><span class="spec-row__val" data-spec="ram">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Graphics</span><span class="spec-row__val" data-spec="gpu">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Primary storage</span><span class="spec-row__val" data-spec="storage">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">CPU cooler</span><span class="spec-row__val" data-spec="cooler">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Case</span><span class="spec-row__val">Fractal Design Core 1100 &middot; sound-dampened</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Power supply</span><span class="spec-row__val" data-spec="psu">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Audio</span><span class="spec-row__val">8-channel HD audio &middot; on-board (Realtek ALC897)</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Network</span><span class="spec-row__val">Gigabit Ethernet LAN &middot; wired</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Wireless internet</span><span class="spec-row__val" data-spec="wifi">&mdash;</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Bluetooth</span><span class="spec-row__val" data-spec="bluetooth">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">USB ports</span><span class="spec-row__val">3&times; USB 3.2 &middot; 3&times; USB 2.0 &middot; 1&times; USB-C</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Operating system</span><span class="spec-row__val" data-spec="os">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Included software</span><span class="spec-row__val">DisplayFusion multi-monitor &middot; installed &amp; licensed</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Microsoft Office</span><span class="spec-row__val" data-spec="office">&mdash;</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Backup system</span><span class="spec-row__val" data-spec="backup">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Warranty</span><span class="spec-row__val" data-spec="warranty">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Support</span><span class="spec-row__val">Lifetime phone &amp; remote support &middot; no clock</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Extras</span><span class="spec-row__val" data-spec="extras">&mdash;</span></div>
+      </div>
+    </div>
+
+    <div class="build-summary reveal">
+      <div class="build-summary__label">Your build</div>
+      <div class="build-summary__line" data-build-line>&mdash;</div>
+      <div class="build-summary__price">
+        <span class="price-main"><span class="sym">&pound;</span><span data-build-ex><%= mmBasePriceExDisp %></span></span>
+        <span class="price-vat">+ VAT &middot; inc &pound;<span data-build-inc><%= mmBasePriceIncDisp %></span></span>
+      </div>
+    </div>
+
+    <div class="build-cta reveal">
+      <button type="button" class="btn btn-primary btn-lg" data-build-submit>
+        <i class="fa fa-shopping-basket"></i>Add to basket
+      </button>
+      <a href="#configure" class="btn btn-ghost">
+        <i class="fa fa-arrow-up"></i>Change configuration
+      </a>
+    </div>
+
+    <div class="build-micro reveal">
+      <span><i class="fa fa-truck"></i>UK next-day delivery if ordered by 14:30</span>
+      <span><i class="fa fa-shield"></i>5-year hardware cover included</span>
+      <span><i class="fa fa-life-ring"></i>Lifetime phone &amp; remote support</span>
+    </div>
+
   </div>
 </section>
 
@@ -984,12 +1089,16 @@ Next
     var html = '';
     rows.forEach(function(row){
       var group = row.dataset.group;
-      var lbl   = row.querySelector('.cfg-row__label');
-      var labelText = lbl ? lbl.textContent.replace(/^\d+/, '').trim() : group;
+      var labelText = row.dataset.shortLabel;
+      if (!labelText) {
+        var lbl = row.querySelector('.cfg-row__label');
+        labelText = lbl ? lbl.textContent.replace(/^\d+/, '').trim() : group;
+      }
       var s = state[group] || { name: '', delta: 0 };
       var priCls  = s.delta > 0 ? 'pri inc' : 'pri';
-      var priText = s.delta > 0 ? '+ £' + fmt0(s.delta) : 'Std';
+      var priText = s.delta > 0 ? '+ £' + fmt0(s.delta) : 'Inc.';
       var displayedName = (s.meta && s.meta.name) ? s.meta.name : decodeHtml(s.name);
+      if (displayedName && displayedName.trim().toLowerCase() === 'none') return;
       html += '<li>' +
                 '<span class="lbl">' + labelText + '</span>' +
                 '<span class="val">' + displayedName + '</span>' +
@@ -997,6 +1106,85 @@ Next
               '</li>';
     });
     listEl.innerHTML = html;
+  }
+
+  // ------- Full specification (live-updating spec table) -------
+  // Reads each option's meta.specKey / specText to populate the
+  // matching [data-spec="<key>"] cell. CPU and GPU options can also
+  // carry derived-component fields (cooler/mobo/fans on CPU, psu on
+  // GPU) which fill the auto-upgrade rows. The "Your build" line and
+  // build-summary prices are updated alongside.
+  function setSpecVal(key, value, isUpgraded, hideRow) {
+    var el = document.querySelector('[data-spec="' + key + '"]');
+    if (!el) return;
+    var row = el.closest('.spec-row');
+    if (hideRow) {
+      if (row) row.hidden = true;
+      return;
+    }
+    if (row) row.hidden = false;
+    el.textContent = value;
+    el.classList.toggle('is-upgraded', !!isUpgraded);
+  }
+  function renderFullSpec(total) {
+    // Optional rows (wifi/bluetooth/office/backup/extras) start each
+    // render hidden — they're only re-shown when a non-skip option is
+    // currently selected for that key.
+    document.querySelectorAll('.spec-row[data-spec-optional]').forEach(function(r){ r.hidden = true; });
+
+    Object.keys(state).forEach(function(g){
+      var s = state[g], m = s && s.meta;
+      if (!m) return;
+      // specRows: { key: text, ... } for one option that drives multiple
+      // spec rows (e.g. a "Wifi 6 with Bluetooth" combo card).
+      if (m.specRows) {
+        Object.keys(m.specRows).forEach(function(k){
+          if (m.specSkip) setSpecVal(k, '', false, true);
+          else            setSpecVal(k, m.specRows[k], false, false);
+        });
+        return;
+      }
+      if (!m.specKey) return;
+      if (m.specSkip) { setSpecVal(m.specKey, '', false, true); return; }
+      var text = m.specText || m.name || decodeHtml(s.name);
+      setSpecVal(m.specKey, text, false, false);
+    });
+
+    var cpu = cpuState() && cpuState().meta;
+    if (cpu) {
+      if (cpu.cooler) setSpecVal('cooler', cpu.cooler, !!cpu.coolerUpgraded);
+      if (cpu.mobo)   setSpecVal('mobo',   cpu.mobo,   !!cpu.moboUpgraded);
+    }
+    var gpu = gpuState() && gpuState().meta;
+    if (gpu && gpu.psu) setSpecVal('psu', gpu.psu, !!gpu.psuUpgraded);
+
+    var ram = ramState() && ramState().meta;
+    var storage = (function(){
+      for (var k in state) {
+        if (state.hasOwnProperty(k) && state[k].meta && state[k].meta.specKey === 'storage') return state[k].meta;
+      }
+      return null;
+    })();
+    var os = (function(){
+      for (var k in state) {
+        if (state.hasOwnProperty(k) && state[k].meta && state[k].meta.specKey === 'os') return state[k].meta;
+      }
+      return null;
+    })();
+
+    var lineParts = [];
+    if (cpu) lineParts.push((cpu.name || '').replace(/^Intel\s+/, ''));
+    if (ram && (ram.ramShort || ram.name)) lineParts.push(ram.ramShort || ram.name);
+    if (storage && (storage.storageShort || storage.name)) lineParts.push(storage.storageShort || storage.name);
+    if (gpu && gpu.screens) lineParts.push(gpu.screens + ' screens');
+    if (os && os.name) lineParts.push(os.name);
+    var lineEl = document.querySelector('[data-build-line]');
+    if (lineEl) lineEl.textContent = lineParts.filter(Boolean).join(' · ');
+
+    var exEl  = document.querySelector('[data-build-ex]');
+    var incEl = document.querySelector('[data-build-inc]');
+    if (exEl)  exEl.textContent  = fmt0(total);
+    if (incEl) incEl.textContent = fmt2(total * (1 + VAT_RATE));
   }
 
   // ------- Recalc + totals -------
@@ -1013,6 +1201,7 @@ Next
 
     renderSummary();
     updateImpact();
+    renderFullSpec(total);
   }
 
   // ------- Wire up clicks on option buttons -------
@@ -1040,6 +1229,13 @@ Next
 
   // Initial paint
   recalc();
+
+  // ------- Spec-panel "Add to basket" submits the configurator form -------
+  var buildSubmit = document.querySelector('[data-build-submit]');
+  var cfgForm     = document.getElementById('cfgForm');
+  if (buildSubmit && cfgForm) {
+    buildSubmit.addEventListener('click', function(){ cfgForm.submit(); });
+  }
 
   // ------- Gallery thumbs -> main image -------
   var thumbs = document.querySelectorAll('.pd-thumb[data-img]');
