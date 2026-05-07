@@ -1,704 +1,1385 @@
 <%
-'This file is part of ProductCart, an ecommerce application developed and sold by Early Impact, LLC.
-'ProductCart, its source code, the ProductCart name and logo are property of Early Impact, LLC.
-'Copyright 2001-2007. All rights reserved. You are not allowed to use, alter,
-'distribute and/or resell any parts of ProductCart's source code without the written consent of 
-'Early Impact. To contact Early Impact, please visit www.earlyimpact.com.
+' ============================================================
+' viewPrd-TraderPC-v2.asp
+' 2026 redesign — Trader PC product page (idProduct 333).
+' Rewritten to pull live option pricing from the DB while
+' keeping ProductCart's cart submission contract (POST to
+' instPrd.asp with idOption1..idOptionN).
+' See /computer-pages-redesign-plan.md for the approach.
+' ============================================================
 %>
+<% Response.Buffer = True %>
+<!--#include file="../includes/common.asp"-->
 <%
-if not request.querystring("sid") = "" then
+Dim pcStrPageName
+pcStrPageName = "viewPrd-TraderPC-v2.asp"
 %>
-<!--#include file="bundle-breadcrumb.asp"-->
+<!--#include file="pcStartSession.asp"-->
+<!--#include file="prv_getSettings.asp"-->
 <%
-strPTPadding = " paddingtop-0"
-else
-strPTPadding = ""
-end if
+' ------------------------------------------------------------
+' 1. Product base row
+' ------------------------------------------------------------
+Const MM_PRODUCT_ID = 333
+Const MM_VAT_RATE   = 1.2
+
+Dim mmName, mmSku, mmBasePriceInc, mmImageUrl, mmSmallImageUrl
+mmName = "Trader PC" : mmSku = "" : mmBasePriceInc = 0 : mmImageUrl = "" : mmSmallImageUrl = ""
+
+Dim mmPrdSql, mmPrdRs
+mmPrdSql = "SELECT description, sku, price, imageUrl, smallImageUrl " & _
+           "FROM products " & _
+           "WHERE idProduct = " & MM_PRODUCT_ID & _
+           "  AND active = -1 AND removed = 0"
+Set mmPrdRs = Server.CreateObject("ADODB.Recordset")
+On Error Resume Next
+mmPrdRs.Open mmPrdSql, connTemp, adOpenStatic, adLockReadOnly, adCmdText
+If err.number <> 0 Then
+  On Error Goto 0
+  call LogErrorToDatabase()
+  Set mmPrdRs = Nothing
+  call closeDB()
+  Response.Redirect "techErr.asp?err=" & pcStrCustRefID
+End If
+On Error Goto 0
+
+If Not mmPrdRs.EOF Then
+  mmName          = mmPrdRs("description") & ""
+  mmSku           = mmPrdRs("sku") & ""
+  mmBasePriceInc  = CDbl(mmPrdRs("price"))
+  mmImageUrl      = mmPrdRs("imageUrl") & ""
+  mmSmallImageUrl = mmPrdRs("smallImageUrl") & ""
+End If
+mmPrdRs.Close : Set mmPrdRs = Nothing
+
+Dim mmBasePriceEx
+mmBasePriceEx = mmBasePriceInc / MM_VAT_RATE
+
+' ------------------------------------------------------------
+' 2. Option groups assigned to this product
+' ------------------------------------------------------------
+Dim mmOgSql, mmOgRs, mmOgRows, mmOgCount
+mmOgCount = 0
+
+mmOgSql = "SELECT DISTINCT og.idOptionGroup, og.OptionGroupDesc, " & _
+          "       po.pcProdOpt_Required, po.pcProdOpt_Order " & _
+          "FROM pcProductsOptions po " & _
+          "INNER JOIN optionsGroups og ON og.idOptionGroup = po.idOptionGroup " & _
+          "INNER JOIN options_optionsGroups oog ON oog.idOptionGroup = og.idOptionGroup " & _
+          "                                   AND oog.idProduct = po.idProduct " & _
+          "WHERE po.idProduct = " & MM_PRODUCT_ID & " " & _
+          "ORDER BY po.pcProdOpt_Order, og.OptionGroupDesc"
+
+Set mmOgRs = Server.CreateObject("ADODB.Recordset")
+On Error Resume Next
+mmOgRs.Open mmOgSql, connTemp, adOpenStatic, adLockReadOnly, adCmdText
+If err.number <> 0 Then
+  On Error Goto 0
+  call LogErrorToDatabase()
+  Set mmOgRs = Nothing
+  call closeDB()
+  Response.Redirect "techErr.asp?err=" & pcStrCustRefID
+End If
+On Error Goto 0
+
+If Not mmOgRs.EOF Then
+  mmOgRows = mmOgRs.GetRows()
+  mmOgCount = UBound(mmOgRows, 2) + 1
+End If
+mmOgRs.Close : Set mmOgRs = Nothing
+
+' Machine name exposed to the Darren CTA include
+Dim mmMachineName : mmMachineName = mmName
+
+' ------------------------------------------------------------
+' 3. Sub: render one option-group row + its option buttons.
+'    Queries options_optionsGroups for live prices (mirrors
+'    pcs_makeOptionBox logic in viewPrdCode.asp:2855).
+'    Also emits the hidden idOption<N> input the cart needs.
+' ------------------------------------------------------------
+Sub mmRenderOptionGroup(ByVal ogId, ByVal ogDesc, ByVal ogShort, ByVal ogIndex, ByVal ogKind, ByVal ogHelpHtml)
+  Dim sql, rs, rows, count
+  count = 0
+  sql = "SELECT oog.idoptoptgrp, oog.price, oog.Wprice, oog.sortOrder, " & _
+        "       oog.InActive, o.idOption, o.optionDescrip " & _
+        "FROM options_optionsGroups oog " & _
+        "INNER JOIN options o ON oog.idOption = o.idOption " & _
+        "WHERE oog.idOptionGroup = " & ogId & " " & _
+        "  AND oog.idProduct = " & MM_PRODUCT_ID & " " & _
+        "  AND (oog.InActive = 0 OR oog.InActive IS NULL) " & _
+        "ORDER BY oog.sortOrder, oog.price, o.optionDescrip"
+
+  Set rs = Server.CreateObject("ADODB.Recordset")
+  rs.Open sql, connTemp, adOpenStatic, adLockReadOnly, adCmdText
+  If Not rs.EOF Then
+    rows = rs.GetRows()
+    count = UBound(rows, 2) + 1
+  End If
+  rs.Close : Set rs = Nothing
+  If count = 0 Then Exit Sub
+
+  Dim priceCol
+  If Session("customerType") = 1 Then priceCol = 2 Else priceCol = 1
+
+  Dim firstPriceInc
+  firstPriceInc = CDbl(rows(priceCol, 0))
+
+  Dim firstDescrip, firstId
+  firstDescrip = rows(6, 0) & ""
+  firstId      = rows(0, 0)
+
+  Dim groupKey, openCls, ariaExpanded
+  groupKey = "g" & ogIndex
+  If ogIndex = 1 Then
+    openCls = " is-open"
+    ariaExpanded = "true"
+  Else
+    openCls = ""
+    ariaExpanded = "false"
+  End If
 %>
-	<!-- Header: pagetitle -->
-    <header id="pagetitle" class="pagetitle">
-		<div class="pt-content<%=strPTPadding%>">
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-8 pagetitle">
-						<div class="wow fadeInDown" data-wow-offset="0" data-wow-delay="0.1s">
-            <%
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            ' START:  Show product name 
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            pcs_ProductTitle
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            ' END:  Show product name 
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            %>
-						</div>
-					</div>
-					<div class="col-sm-4 pt-extras text-right">
-						<div class="wow fadeInRight" data-wow-offset="0" data-wow-delay="0.1s">
-							<div class="title-declaration text-left">
-								<p class="t-declaration-head">UK Assembly &amp; Supply</p>
-								<p class="t-declaration-text">If you order from a US or EU supplier <br />you will be liable for VAT &amp; shipping.</p>
-							</div>
-						</div>
-					</div>					
-				</div>		
-			</div>		
-		</div>	
-    </header>
-	<!--#include file="banner.asp"-->
-	<!-- /Header: pagetitle -->
-	<!-- Section: product-detail -->
-    <section id="product-detail" class="paddingtop-60 paddingbot-40 ">
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-12 col-md-4">
-					<div class="wow fadeInUp product-view" data-wow-delay="0">
-						<div class="productimage-box">
-							<div id="product-zoom">
-								<div class="pi-box">
-									<div id="productbig-image" class="pi-boxfix">
-            <% 
-            '*****************************************************************************************************
-            ' 4) PRODUCT IMAGES
-            '*****************************************************************************************************
-            
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            ' START:  Show Product Image (If there is one)
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
-            pcs_ProductImage
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            ' END:  Show Product Image (If there is one)
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            %>
-									</div>
-								</div>
-								<div id="product-thumbs"> 
-            <%
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            ' START:  Show Additional Product Images (If there are any)
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
-            pcs_AdditionalImages
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            ' END:  Show Additional Product Images (If there are any)
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			
-			'EDIT TO FULLY CLOSE PRODUCT IMAGE WRAPPER DIV
-			
-            '*****************************************************************************************************
-            ' END PRODUCT IMAGES
-            '*****************************************************************************************************	
-            
-            
-            '*****************************************************************************************************
-            ' 15) QUANTITY DISCOUNTS ZONE
-            '*****************************************************************************************************
-            
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            ' START:  Show quantity discounts
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            'pcs_QtyDiscounts
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            ' END:  Show quantity discounts
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            
-            '*****************************************************************************************************
-            ' END QUANTITY DISCOUNTS ZONE
-            '*****************************************************************************************************
-            %>
-								</div>
-								<p class="text-center pz-info"><dfn>(Click to see larger image and other views)<dfn></p>
-							</div>
-						</div>
-						<div class="further-info">
-							<p class="medium rubric marginbot-10">Further Information:</p>
-							<a href="#tech" class="text-underline">Full Computer Spec &amp; Customisation Options</a>
-							<a href="#learn" class="text-underline">Learn More About This Computer</a>
-						</div>
-					</div>
-				</div>
-        <% ' START RIGHT COLUMN %>
-                        <%
-                        '*****************************************************************************************************
-                        ' 2) GENERAL INFORMATION
-                        '*****************************************************************************************************
-                        %>
-				<div class="col-sm-12 col-md-8">
-					<div class="wow fadeInUp" data-wow-delay="0">
-						<div class="product-details">
-							<p class="rubric bold marginbot-10">Description:</p>
-							<div class="product-details-txt">
-                        <%
-                        pcs_ShowDetailsTop
-						%>
-							<p><a href="#learn" class="text-underline">Learn More About The Trader PC</a></p>
-                            </div>
-							<div class="product-price">
-		                        <label class="media-middle">Price:</label> <h3 class="price-info disp-inline h-semi color media-middle"><% pcs_ProductPricesNoVat %> + VAT</h3><span class="media-middle vat-info">(<% pcs_ProductPrices %> inc. VAT)</span>
-							</div>
-							<div class="delivery-details bg-smog">
-								<p class="rubric bold marginbot-10">Delivery Details</p>
-                                <%
-								'Work out Delivery string
-								if daFunDelDateBlockTest(1,0) then
-									daDelEstimate = "Due to a short workshop closure, orders will now be delivered on <strong class=""color"">" & daFunDelDateReturn(1,0) & "</strong>."
-								' daDelEstimate = "Due to the Christmas and New Year holidays, deliveries will now be made after <strong class=""color"">" & daFunDelDateReturn(1,0) & "</strong>."
-								Else
-									daDelEstimate = "Order before <strong class=""color"">" & daFunDelCutOff() & "</strong> for delivery on <strong class=""color"">" & daFunDelDateReturn(1,0) & "</strong>"
-								end if
-								%>
-                        		<p class="dcategory"><label class="rubric semi space-right10">UK :</label> <strong class="color">&pound;10</strong> | <%=daDelEstimate%></p>
-                        		<p class="dcategory"><label class="rubric semi space-right10">International :</label> International shipping from just &pound;20 - <a data-toggle="lightbox" data-title="International Delivery" class="text-underline" href="/pop-pages/int-del-pop.asp?ProdID=<%=pidProduct%>">View Costs / Timescales</a></p>
-								<p class="dcategory"><em>(UK buyers: Saturday delivery is available in the checkout. You can also email us after placing an order to request a specific delivery date, any date after the above estimate is possible.)</em></p>
-							</div>
-							<a class="btn btn-skin btn-wc semi order-btn margintop-30" href="#tech">Customise &amp; Order Your New PC <i class="fa fa-angle-right"></i></a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+  <div class="cfg-row<%= openCls %>" data-group="<%= groupKey %>" data-short-label="<%= Server.HTMLEncode(ogShort) %>">
+    <button type="button" class="cfg-row__head"
+            aria-expanded="<%= ariaExpanded %>"
+            aria-controls="cfg-body-<%= groupKey %>">
+      <span class="cfg-row__head-main">
+        <span class="cfg-row__label"><span class="n"><%= ogIndex %></span><%= Server.HTMLEncode(ogDesc) %></span>
+        <span class="cfg-row__selected" data-selected><%= Server.HTMLEncode(firstDescrip) %></span>
+      </span>
+      <i class="fa fa-chevron-down cfg-row__chev" aria-hidden="true"></i>
+    </button>
+    <div class="cfg-row__body" id="cfg-body-<%= groupKey %>">
+      <div class="cfg-row__body-inner">
+<% If Len(ogHelpHtml) > 0 Then %>
+        <p class="cfg-row__help"><%= ogHelpHtml %></p>
+<% End If %>
+        <div class="cfg-options" role="radiogroup">
+<%
+  Dim j, thisIdOptGrp, thisPriceInc, thisDescrip, deltaInc, deltaEx
+  For j = 0 To count - 1
+    thisIdOptGrp = rows(0, j)
+    thisPriceInc = CDbl(rows(priceCol, j))
+    thisDescrip  = rows(6, j) & ""
+    deltaInc = thisPriceInc - firstPriceInc
+    deltaEx  = CLng(Round(deltaInc / MM_VAT_RATE, 0))
 
-	</section>
-	<!-- /Section: Welcome -->
-
-	<section id="callaction" class="callact-row">	
-           <div class="container">
-				<div class="row">
-					<div class="col-md-12">
-						<div class="callaction">
-							<div class="row">
-								<div class="col-lg-6 cta-gqrow">
-									<div class="wow fadeInUp" data-wow-delay="0.1s">
-										<div class="row">
-											<div class="col-lg-8 col-sm-7 cta-gqcolumn">
-												<div class="cta-text double-linetext gq-headings">
-													<h2 class="h-bold font-light disp-inline cta-txtline">Got a Question</h2>
-													<h5 class="font-light disp-inline cta-txtline">About This Trading PC?</h5>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="col-lg-6">
-									<div class="wow fadeInRight" data-wow-delay="0.1s">
-										<div class="row">
-											<div class="col-lg-5 col-sm-6 cta-email cta-2line cta-gqcolumn">
-												<i class="fa fa-envelope-o cta-icon"></i><a href="javascript:;" class="twoline-link linkpre-mail">Send us an <strong>Email enquiry</strong></a>
-											</div><a name="learn" id="learn"></a>
-											<div class="col-lg-7 col-sm-6 cta-2phone">
-												<div class="cta-text double-linetext cta-2line cta-gqcolumn">
-													<i class="fa fa-phone cta-icon"></i><label class="text-white">Call us on</label>
-													<h2 class="h-bold font-light"><a class="hlink-contact hlink-phone text-white" href="tel:03302236655"> 0330 223 66 55</a></h2>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-            </div>
-	</section>	
-
-	<!-- Section: custom-order -->
-    <section id="fortrader" class="viewfor-traders bg-smog paddingbot-70">
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-12 lr-detail-wrap">
-					<div class="row lr-titleRow paddingbot-60 wow fadeInUp" data-wow-delay="0">
-						<div class="lr-col-title col-xs-12">
-							<h2 class="h-semi color-med">Perfect for Traders, <span class="color disp-inline">Here's why</span></h2>
-							<p class="bigtxt-para text-justify"><i class="fa fa-line-chart lr-titleicon color"></i>The Trader PC is a fantastic choice for traders who are looking for the absolute best in class performance levels for their trading platforms. Read on to see how the Trader PC can handle anything you throw at it:</p>
-						</div>
-					</div>
-					<div class="row lr-detailRow lr-odd wow fadeInUp" data-wow-delay="0">
-						<div class="lr-mage-col text-center col-md-6 pright-md">
-							<div class="lr-mage displ-inline fstrow-img">
-								<img src="/images/trader-pc/intel-core.jpg" alt="" />
-							</div>
-						</div>
-						<div class="lr-details-col col-md-6 paddingtop-0">
-							<h3 class="h-bold color-med">Fast Processors & RAM</h3>
-							<h3 class="color-med lr-subtytl">Choose Responsive Intel Chips</h3>
-							<p>When it comes to running trading platforms our benchmark tests show that the biggest impact in how responsive they are is the processor.</p>
-                            <p>Having an ultra-fast CPU in your trading computer ensures the absolute best performance possible.</p>
-							<p>With the Trader PC you get the Intel 14th generation chips, these run trading software faster than all older Intel and AMD chips.</p>
-                            <p>For power users going for processors with more CPU cores will offer you fantastic multi-tasking and multi-threaded performance. </p>
-                            <p>Combining a fast processor with the 16GB or 32GB of DDR4 RAM makes for an great combination for pretty much any trading workload.</p>
-						</div>
-					</div> <!-- lr-detailRow -->
-					<div class="row lr-detailRow lr-even wow fadeInUp" data-wow-delay="0">
-						<div class="lr-mage-col text-center col-md-6">
-							<div class="lr-mage displ-inline">
-								<img src="/images/trader-pc/nvidia.jpg" alt="" />
-							</div>
-						</div>
-						<div class="lr-details-col col-md-6">
-							<h3 class="h-bold color-med">Responsive &amp; Easy To Setup</h3>
-							<h3 class="color-med lr-subtytl">Multi-Screen Support</h3>
-							<p>For traders seeing the right information at the right time can be the difference between success and failure. With a multi-screen trading computer you can position your charts and programs at any point on any screen.</p>
-							<p>We take all the hassle out of achieving a multi-screen system, simply select how many screens you want to run using the options below and we do the rest. </p>
-							<p>Your Trader PC will be delivered pre-configured to connect to your selected number of screens right out of the box, connect standard resolution FHD screens, or go for higher resolution QHD, 4K, or even 5K monitors.</p>
-						</div>
-					</div> <!-- lr-detailRow -->
-					<div class="row lr-detailRow lr-odd wow fadeInUp" data-wow-delay="0">
-						<div class="lr-mage-col text-center col-md-6 pright-md">
-							<div class="lr-mage displ-inline">
-								<img src="/images/trader-pc/displayfusion.jpg" alt="" />
-							</div>
-						</div>
-						<div class="lr-details-col col-md-6">
-							<h3 class="h-bold color-med">Display Fusion</h3>
-							<h3 class="color-med lr-subtytl">Multi-Monitor Software</h3>
-							<p>Something that can be a problem for anyone running a multi-screen computer system, especially traders, is getting the right info in the right screens quickly.</p>
-							<p>Our exclusive version of DisplayFusion, solves this and many other multi-screen problems with ease.</p>
-                            <p>You can control exactly where programs and charts open and automatically jump windows to pretty much anywhere you want. This ability, combined with extended taskbars, and screen partitions will make a massive difference to your experience of using a multi-screen trading PC.</p>
-                            <p>It comes pre-installed and ready to use with your new Trader PC.</p>
-						</div>
-					</div> <!-- lr-detailRow -->
-					<div class="row lr-detailRow lr-even wow fadeInUp" data-wow-delay="0">
-						<div class="lr-mage-col text-center col-md-6">
-							<div class="lr-mage displ-inline">
-								<img src="/images/trader-pc/silent-pc.jpg" alt="" />
-							</div>
-						</div>
-						<div class="lr-details-col col-md-6">
-							<h3 class="h-bold color-med">Silence As Standard</h3>
-							<h3 class="color-med lr-subtytl">On All Trader PC's</h3>
-							<p>Traders can often find themselves sat in front of a PC for long periods of time and a noisy PC setup can quickly become both annoying and frustrating, it's one of the things many traders ask us about.</p>
-                            <p>Some try to reduce noise by using noise insulation materials however this often increases internal system temperatures which is not a good idea.</p>
-							<p>We eliminate noise by building all our computers using ultra-low noise components, quiet cooling fans, passively cooled graphics cards and silent SSD hard drives, this guarantees you will hardly hear a thing from your new Trader PC.</p>
-                            <p class="detail-callout">Many companies charge up to &pound;50 extra for a quiet PC build, we include this at no cost to you.</p>
-						</div>
-					</div> <!-- lr-detailRow -->
-					<div class="row lr-detailRow lr-odd wow fadeInUp" data-wow-delay="0">
-						<div class="lr-mage-col text-center col-md-6 pright-md">
-							<div class="lr-mage displ-inline">
-								<img src="/images/trader-pc/free-kit.jpg" alt="" />
-							</div>
-						</div>
-						<div class="lr-details-col col-md-6">
-							<h3 class="h-bold color-med">All The Extra Kit</h3>
-							<h3 class="color-med lr-subtytl">You Need Available</h3>
-							<p>Every 'Trader PC' comes with options for all the kit you need to get up and running instantly, straight out of the box.</p>
-							<p>You can select a Logitech Wired or Wireless mouse and keyboard set, some traders prefer a wired set to avoid any potential battery or connection issues.</p>
-							<p>We can also provide graphics adapters to let you easily connect your machine up to your choice of monitors so you don't have to worry about screen compatibility.</p>
-                            <p>Everything can be supplied with your Trader PC in one simple purchase.</p>
-                            <p class="detail-callout">Most companies charge between &pound;80 - &pound;120 extra for this equipment, we supply it all at cost pricing.</p>
-						</div>
-					</div> <!-- lr-detailRow -->
-					<div class="row lr-detailRow lr-even wow fadeInUp" data-wow-delay="0">
-						<div class="lr-mage-col text-center col-md-6">
-							<div class="lr-mage displ-inline">
-								<img src="/images/trader-pc/windows-11.jpg" alt="" />
-							</div>
-						</div>
-						<div class="lr-details-col col-md-6">
-							<h3 class="h-bold color-med">Choose Windows 11</h3>
-							<h3 class="color-med lr-subtytl">Tuned for Performance</h3>
-							<p>You could have the fastest processor available, lots of RAM, and an ultra-fast hard drive, but if the software which runs on your PC is mis-configured or runs slowly then it's all completely pointless.</p>
-							<p>The main piece of software on any computer is the operating system, Windows 11 for the Trader PC, ensuring that it runs quickly can make a real impact on how your computer feels in day to day use.</p>
-							<p>We take steps to tune Windows performance for each Trader PC to so that it runs as fast as it can, taking full advantage of your computer's hardware. </p>
-                            <p class="detail-callout">Some companies charge up to &pound;40 extra for Windows optimisation, we do this for you free of charge.</p>
-						</div>
-					</div> <!-- lr-detailRow -->
-					<div class="row lr-detailRow lr-odd wow fadeInUp" data-wow-delay="0">
-						<div class="lr-mage-col text-center col-md-6 pright-md">
-							<div class="lr-mage displ-inline">
-								<img src="/images/trader-pc/build-delivery.jpg" alt="" />
-							</div>
-						</div>
-						<div class="lr-details-col col-md-6">
-							<h3 class="h-bold color-med">Fast Build &amp; Test</h3>
-							<h3 class="color-med lr-subtytl">Begin Trading Faster</h3>
-							<p>Once you have configured your new Trader PC to meet your specific needs, the order is passed across to our workshop where your new machine will be custom built just for you.</p>
-							<p>The build process includes physically assembling your computer and then installing and configuring Windows and Display Fusion so that it works right out of the box. The final step is a 32 hour stress test to make sure everything is in full working order.</p>
-							<p>This custom computer build and test routine takes 4 - 5 working days, with delivery made on the next working day.</p>
-                            <p class="detail-callout">Many companies will charge from &pound;70 right up to &pound;300 for a 4 - 5 day build, we do this as standard at no extra cost.</p>
-						</div>
-					</div> <!-- lr-detailRow -->
-					<div class="row lr-detailRow lr-even wow fadeInUp" data-wow-delay="0">
-						<div class="lr-mage-col text-center col-md-6">
-							<div class="lr-mage displ-inline">
-								<img src="/images/trader-pc/onsite-support.jpg" alt="" />
-							</div>
-						</div>
-						<div class="lr-details-col col-md-6">
-							<h3 class="h-bold color-med">5 Year Hardware Cover</h3>
-							<h3 class="color-med lr-subtytl reducefont-sub">&amp; Unlimited Remote Support As Standard</h3>
-							<p>Computers are great, until they stop working properly, and with the best will in the world nobody can guarantee that any PC will keep working indefinitely. If you rely on your trading computer to make your money then it's wise to have great support in place.</p>
-							<p>Our team of technicians will support you and your machine remotely via email, telephone and remote access sessions for the lifetime of your PC.</p>
-							<p>If the worst happens and a part fails in your computer then our unique OnSite / Replacement / Collect service means that we can get you back up and running without the need for you to send the PC back to us in most cases.</p>
-						</div>
-					</div>
-                    <div class="row lr-detailRow lr-odd wow fadeInUp" data-wow-delay="0">
-						<div class="lr-mage-col text-center col-md-6 pright-md">
-							<div class="lr-mage displ-inline">
-								<img src="/images/trader-pc/trading-customers.jpg" alt="" />
-							</div>
-						</div>
-						<div class="lr-details-col col-md-6">
-							<h3 class="h-bold color-med">You're In Great Company</h3>
-							<h3 class="color-med lr-subtytl">Traders Trust Us</h3>
-							<p>We have worked with a lot of traders over the past 13+ years and have supplied equipment to customers of all sizes.</p>
-                            <p>Here are a small sample of our trading customers who actively trade on Multiple Monitors trading computers every single day.</p>
-                            <p>We are capable of supporting the individual trader working from a home office, right through to hedge funds with multi-millions under management with an in-house team of traders.</p>
-                            <p class="detail-callout">We have customers running everything from MT4, IG Index, Pro-Realtime, CMC Markets, NinjaTrader, TradeStation, Bloomberg and anything in-between, if you want to run it we have probably supported it at some point in time.</p>
-						</div>
-					</div> <!-- lr-detailRow -->
- <!-- lr-detailRow --><a name="tech"></a><a name="custom-order"></a>	
-				</div>		
-			</div>		
-		</div>
-	</section>
-	<!-- /Section:  -->
-
-<input type="hidden" id="productid" name="idproduct1" value="333">
-<input type="hidden" id="productqty" name="QtyM333" value="1">
-<%=formBundleOptions%>
-
-
-<input type="hidden" name="OptionGroupCount" value="16">
-<!-- Section: custom-order -->
-    <section id="traderOptions" class="traderOptions paddingtop-30 paddingbot-40">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-8 traderOptions-wrap">
-					<div class="row wow fadeInUp" data-wow-delay="0">
-						<div class="lr-col-title col-xs-12">
-							<h3 class="h-semi color-med">Choose Your Options</span></h3>
-							<p class="bigtxt-para text-justify">We have a selection of upgrades available to add functionality and further improve the performance of your Trader PC:</p>
-						</div>
-					</div>
-					<div class="row wow fadeInUp optiontrade-row" data-wow-delay="0">
-						<div class="row-traderOptions col-xs-12">
-							<h5 class="h-semi color-med">CPU / Processor</span></h5>
-							<p class="text-justify">The number one difference to how fast your computer will perform, CPU's impact speed and multi-tasking performance levels.</p>
-							<div class="get-traderOptions">
-								<label class="color">CPU / Processor:</label>
-								<select id="idOption1" name="idOption1" class="spec-dd" onchange="reCalc();flashCPU();">
-									<option value="title" class="spec-dd-dis" disabled="">Intel 14th Generation CPUs:</option>
-									<option value="18464" id="3" title="0">Intel i5 14400F // 2.5 - 4.7GHz // 10C - 16T </option>
-									<option value="18479" id="3" title="65">Intel i5 14600KF // 3.5 - 5.3GHz // 14C - 20T + &pound;65.00</option>
-                                    <option value="18480" id="4" title="145">Intel i7 14700KF // 3.4 - 5.6GHz // 20C - 28T + &pound;145.00</option>
-									<option value="18496" id="5" title="265">Intel i9 14900KF // 3.2 - 6.0GHz // 24C - 32T + &pound;265.00</option>
-								</select>
-							</div>
-						</div>
-					</div><!-- optiontrade-row -->
-                    <div class="row wow fadeInUp optiontrade-row" data-wow-delay="0">
-						<div class="row-traderOptions col-xs-12">
-							<h5 class="h-semi color-med">RAM / Memory</span></h5>
-							<p class="text-justify">Your memory or RAM dictates how many programs and charts your trading computer can hold open without slowing down your PC.</p>
-							<div class="get-traderOptions">
-								<label class="color">RAM / Memory:</label>
-								<select id="idOption2" name="idOption2" class="spec-dd" onchange="reCalc();flashRAM();">
-									<option value="17950" id="0" selected title="0">16GB DDR4 3,200MHz</option>							
-									<option value="17951" id="1" title="125">32GB DDR4 3,200MHz + &pound;125.00</option>
-                                    <option value="18064" id="2" title="325">64GB DDR4 3,200MHz + &pound;325.00</option>
-								</select>
-							</div>
-						</div>
-					</div><!-- optiontrade-row -->
-					<div class="row wow fadeInUp optiontrade-row" data-wow-delay="0">
-						<div class="row-traderOptions col-xs-12">
-							<h5 class="h-semi color-med">Number Of Screens Supported</span></h5>
-							<p class="text-justify">Your new Trader PC can power up to four 4K screens, to run more screens simply change the option here. The Monitor &amp; Resolution panel shows supported resolutions and ports.</p>
-							<div class="get-traderOptions">
-								<label class="color">Monitor Connections:</label>
-								<select id="idOption4" name="idOption4" class="spec-dd" onchange="reCalc();flashGPU();">
-									<option value="title" class="spec-dd-dis" disabled>Up To 4 Monitor Capable:</option>
-									<option value="18518" id="1" title="0">Up to 4 screens - nVidia RTX A400 (4GB)</option>
-									<option value="18510" id="5" title="125">Up to 4 screens - nVidia RTX 5050 (8GB) + &pound;125</option>
-                                    <option value="title" class="spec-dd-dis" disabled>Up To 8 Monitor Capable:</option>
-									<option value="18519" id="3" title="165">Up to 8 screens - nVidia RTX A400 (4GB) x2 + &pound;165</option>
-									<option value="18511" id="6" title="395">Up to 8 screens - nVidia RTX 5050 (8GB) x2 + &pound;395</option>
-								</select>
-							</div>
-						</div>
-					</div><!-- optiontrade-row -->
-					<div class="row wow fadeInUp optiontrade-row" data-wow-delay="0">
-						<div class="row-traderOptions col-xs-12">
-							<h5 class="h-semi color-med">Hard Drive Capacity</span></h5>
-							<p class="text-justify">Used to store your installed programs and files, 500GB is a decent amount for most. Increase if you want more room to store data files and folders.</p>
-							<div class="get-traderOptions">
-								<label class="color">Hard Drive:</label>
-								<select id="idOption3" name="idOption3" class="spec-dd" onchange="reCalc();flashSSD();">
-									<option value="18393" id="1" selected title="0">500GB Kingston NVMe M.2 SSD – (3500MBs/2300MBs)</option>
-                                    <option value="18390" id="2" title="65">1TB Kingston NVMe M.2 SSD – (6000MBs/4000MBs) + &pound;65.00</option>
-                                   <option value="18392" id="3" title="125">2TB WD NVMe M.2 SSD – (6000MBs/5000MBs) + &pound;125.00</option>
-									<option value="18465" id="4" title="375">4TB Kingston NVMe M.2 SSD –  (3500MBs/2800MBs) + &pound;375.00</option>
-								</select>
-							</div>
-						</div>
-					</div><!-- optiontrade-row -->
-					<div class="row wow fadeInUp optiontrade-row" data-wow-delay="0">
-						<div class="row-traderOptions col-xs-12">
-							<h5 class="h-semi color-med">Second Hard Drive</span></h5>
-							<p class="text-justify">Add in a second hard drive if you have larger file storage needs. </p>
-							<div class="get-traderOptions">
-								<label class="color">Second Hard Drive:</label>
-								<select id="idOption14" name="idOption14" class="spec-dd" onchange="reCalc();flashHDD2();">
-									<option value="18229" id="0" title="0">Not Required</option>
-									<option value="title" class="spec-dd-dis" disabled="">Fast &amp; Silent SSDs:</option>
-									<option value="18235" id="7" title="125">1TB Kingston M.2 NVMe SSD (3500MBs/3000MBs) + &pound;125.00</option>
-									<option value="18236" id="8" title="185">2TB WD M.2 NVMe SSD (3500MBs/3000MBs) + &pound;185.00</option>
-									<option value="18315" id="9" title="445">4TB Kingston M.2 NVMe SSD (3500MBs/2800MBs) + &pound;445.00</option>
-									<option value="title" class="spec-dd-dis" disabled="">Traditional Hard Drives:</option>
-									<option value="18237" id="4" title="105">4TB Traditional Hard Drive + &pound;105.00</option>
-									<option value="18233" id="5" title="140">6TB Traditional Hard Drive + &pound;140.00</option>
-									<option value="18484" id="6" title="160">8TB Traditional Hard Drive + &pound;160.00</option>
-								</select>
-							</div>
-						</div>
-					</div><!-- optiontrade-row -->
-					<div class="row wow fadeInUp optiontrade-row" data-wow-delay="0">
-						<div class="row-traderOptions col-xs-12">
-							<h5 class="h-semi color-med">Bootable Backup Drive</span></h5>
-							<p class="text-justify">For quick and easy recovery from a number of Windows issues you can choose to add a separate internal backup drive.</p>
-							<div class="get-traderOptions">
-								<label class="color">Backup Drive:</label>
-								<select id="idOption11" name="idOption11" class="spec-dd" onchange="reCalc();flashBBD();">
-									<option value="18040" id="0" title="0">Not Required</option>
-									<option value="18039" id="1" title="145">Bootable Backup Drive Solution + &pound;145.00</option>
-								</select>
-							</div>
-						</div>
-					</div><!-- optiontrade-row -->
-					<div class="row wow fadeInUp optiontrade-row" data-wow-delay="0">
-						<div class="row-traderOptions col-xs-12">
-							<h5 class="h-semi color-med">Optical / DVD Drive</span></h5>
-							<p class="text-justify">Add a DVD ReWriter drive if you need one. </p>
-							<div class="get-traderOptions">
-								<label class="color">DVD Drive:</label>
-								<select id="idOption15" name="idOption15" class="spec-dd" onchange="reCalc();flashDVD();">
-									<option value="18245" id="0" title="0">Not Required</option>
-									<option value="17915" id="1" title="60">DVD ReWriter Drive + &pound;60.00</option>
-								</select>
-							</div>
-						</div>
-					</div><!-- optiontrade-row -->
-                    <div class="row wow fadeInUp optiontrade-row" data-wow-delay="0">
-						<div class="row-traderOptions col-xs-12">
-							<h5 class="h-semi color-med">Mouse &amp; Keyboard Set </span></h5>
-							<p class="text-justify">Choose between a high quality wireless or wired mouse and keyboard set with your Trader PC, or you can supply your own, any PC compatible set should work fine.</p>
-							<div class="get-traderOptions">
-								<label class="color">Inputs:</label>
-								<select id="idOption9" name="idOption9" class="spec-dd" onchange="reCalc();flashKYB();">
-									<option value="18113" id="0" title="0">Not Required</option>
-                                    <option value="18114" id="1" title="20">Wired Mouse / Keyboard Set + &pound;20.00</option>
-                                    <option value="17894" id="2" title="25">Wireless Mouse / Keyboard Set + &pound;25.00</option>
-								</select>
-							</div>
-						</div>
-					</div><!-- optiontrade-row -->
-					<div class="row wow fadeInUp optiontrade-row" data-wow-delay="0">
-						<div class="row-traderOptions col-xs-12">
-							<h5 class="h-semi color-med">Speakers</span></h5>
-							<p class="text-justify">Desktop computers do not generally have built in speakers, select whether you would like some suppling with your Charter PC.</p>
-							<div class="get-traderOptions">
-								<label class="color">Speakers:</label>
-								<select id="idOption6" name="idOption6" class="spec-dd" onchange="reCalc();flashSPK();">
-                                	<% 
-									if request.querystring("sid") <> "" Then
-									%>
-									<option value="18132" id="1" title="0">Free Desktop Speakers (Worth &pound;20)</option>
-                                    <%
-									else
-									%>
-                                    <option value="18111" id="0" title="0">Not Required</option>
-                                    <option value="17897" id="1" title="20">Desktop Speaker Set + &pound;20.00</option>
-                                    <%
-									end if
-									%>                                  
-								</select>
-							</div>
-						</div>
-					</div><!-- optiontrade-row -->
-                    <div class="row wow fadeInUp optiontrade-row" data-wow-delay="0">
-						<div class="row-traderOptions col-xs-12">
-							<h5 class="h-semi color-med">Wireless Network Card</span></h5>
-							<p class="text-justify">All computers come with a wired network port, if you need a WiFi connection selection your option here. Select the AC card for faster fibre optic connections.</p>
-							<div class="get-traderOptions">
-								<label class="color">WiFi Card:</label>
-								<select id="idOption8" name="idOption8" class="spec-dd" onchange="reCalc();flashWIFI();">
-                                	<% 
-									if request.querystring("sid") <> "" Then
-									%>
-                                    <option value="18133" id="1" title="0">Free Wireless AX - 3,000Mbps inc. Bluetooth (Worth &pound;40)</option>
-                                    <%
-									else
-									%>
-									<option value="18112" id="0" title="0">Not Required</option>
-                                    <option value="17966" id="1" title="40">Wireless AX - 3,000Mbps inc. Bluetooth + &pound;40</option>
-                                    <%
-									end if
-									%>
-								</select>
-							</div>
-						</div>
-					</div><!-- optiontrade-row -->
-
-					<div class="row wow fadeInUp optiontrade-row" data-wow-delay="0">
-						<div class="row-traderOptions col-xs-12">
-							<h5 class="h-semi color-med">Bluetooth Functionality</span></h5>
-							<p class="text-justify">If you need Bluetooth capability for a wireless headset or keyboard / mouse then add it here. </p>
-							<div class="get-traderOptions">
-								<label class="color">Bluetooth:</label>
-								<select id="idOption16" name="idOption16" class="spec-dd" onchange="reCalc();flashBT();">
-									<option value="18246" id="0" title="0">Not Required</option>
-									<option value="18247" id="1" title="10">USB Bluetooth Adapter + &pound;10.00</option>
-								</select>
-							</div>
-						</div>
-					</div><!-- optiontrade-row -->
-					<div class="row wow fadeInUp optiontrade-row" data-wow-delay="0">
-						<div class="row-traderOptions col-xs-12">
-							<h5 class="h-semi color-med">Operating System</span></h5>
-							<p class="text-justify">Choose between Windows 11 Home or Professional Edition.</p>
-							<div class="get-traderOptions">
-								<label class="color">Operating System:</label>
-								<select id="idOption10" name="idOption10" class="spec-dd" onchange="reCalc();flashWIN();">
-                                    <option value="18443" id="1" title="0">Windows 11 Home</option>
-									<option value="18280" id="4" title="45">Windows 11 Professional + &pound;45.00</option>
-								</select>
-							</div>
-						</div>
-					</div><!-- optiontrade-row -->
-					<div class="row wow fadeInUp optiontrade-row" data-wow-delay="0">
-						<div class="row-traderOptions col-xs-12">
-							<h5 class="h-semi color-med">Microsoft Office</span></h5>
-							<p class="text-justify">Microsoft Office Home gives you Word, Excel, PowerPoint & OneNote, if you require Outlook go for the Business Edition. This is a 1 PC, lifetime license.</p>
-							<div class="get-traderOptions">
-								<label class="color">Microsoft Office:</label>
-								<select id="idOption12" name="idOption12" class="spec-dd" onchange="reCalc();flashMSO();">
-									<option value="17906" id="4" title="0">Not Required</option>
-                                    <option value="18063" id="6" title="105">Home Edition 2024 + &pound;105.00</option>
-                                    <option value="18062" id="8" title="195">Home & Business Edition 2024 + &pound;195.00</option>
-								</select>
-							</div>
-						</div>
-					</div><!-- optiontrade-row -->
-					<div class="row wow fadeInUp optiontrade-row otLast-row" data-wow-delay="0">
-						<div class="row-traderOptions col-xs-12">
-							<h5 class="h-semi color-med">Hardware Support Warranty</span></h5>
-							<p class="text-justify">All Trader PC's come with 5 year hardware cover as standard. The first year is an Onsite / Replacement / Collect service, for extra peace of mind this can be extended for 2 or 3 years.</p>
-							<div class="get-traderOptions">
-								<label class="color">Hardware Support:</label>
-								<select id="idOption13" name="idOption13" class="spec-dd" onchange="reCalc();flashWAR();">
-									<option value="17992" id="7" title="0">5 Year (1 Year OnSite / Replacement / Collect)</option>
-									<option value="17903" id="8" title="75">5 Year (2 Year OnSite / Replacement / Collect) + &pound;75.00</option>
-                                    <option value="17905" id="9" title="150">5 Year (3 Year OnSite / Replacement / Collect) + &pound;150.00</option>
-								</select>
-							</div>
-						</div>
-					</div><!-- optiontrade-row -->
-				</div>	
-				<div class="col-lg-4 col-sm-12 spec-box-wrap">
-
-               						<div id="cust-monitors" class="spec-box spec-box2 wow fadeInRight" data-wow-delay="0.1s"><!-- spec-box2 -->
-										<div class="spec-custom">
-											<h5 class="specbox-heading">Trading Performance Levels</h5>
-											<div class="spec-content">
-												<table width="100%" cellpadding="0" cellspacing="0" class="star-ratings marginbot-10">
-													<tbody>
-														<tr>
-									 						<td><strong>CPU Speed: </strong><span class="star-desc">The raw CPU speed, a big factor in trading software performance levels.</span></td>
-														</tr>
-                                                        <tr>
-                                                        	<td class="paddingtop-0"><span id="stars-speed"></span></td>
-                                                        </tr>
-														<tr>
-															<td><strong>Multi-Tasking: </strong><span class="star-desc">Ability to run multiple trading platforms and software simultaneously without slowing down system performance.</span></td>
-														</tr>
-                                                        <tr>
-                                                        	<td class="paddingtop-0"><span id="stars-multi"></span></td>
-                                                        </tr>
-                                                        <tr>
-															<td><strong>Multi-Threading: </strong><span class="star-desc">Important for back-testing and some of the more intensive platforms.</span></td>
-														</tr>
-                                                        <tr>
-                                                        	<td class="paddingtop-0"><span id="stars-mulThr"></span></td>
-                                                        </tr>
-														<tr>
-														<td><strong>Graphics Power: </strong><span class="star-desc">How well it copes with more graphically demanding programs and apps.</span></td>
-														</tr>
-                                                        <tr>
-                                                        	<td class="paddingtop-0"><span id="stars-GPU"></span></td>
-                                                        </tr>
-														<tr>
-															<td class="paddingbot-10"><strong>AI Performance: </strong><span class="star-desc">The TOPS score for this graphics card (higher is better) is:&nbsp;&nbsp;<span class="spec-tops"><span id="stars-gputops">43</span></span></td>
-														</tr>
-														<tr>
-															<td><strong>Quietness: </strong><span class="star-desc">Noise levels in standard use. <br />10 stars = faint hum, 1 star = jet engine.</span></td>
-														</tr>
-                                                        <tr>
-                                                        	<td class="paddingtop-0"><span id="stars-quiet"></span></td>
-                                                        </tr>
-													</tbody>
-												</table>
-												<a data-toggle="lightbox" data-title="Computer Ratings Explained" class="specbox-link" href="/pop-pages/custpc-tradingstars.htm">Learn More About These Ratings</a>
-											</div>
-											
-										</div>
-									</div><!-- spec-box2 end -->
-					<div id="cust-monitors" class="spec-box spec-box2 wow fadeInRight" data-wow-delay="0.1s"><!-- spec-box1 -->
-										<div class="spec-custom">
-											<h5 class="specbox-heading"><span id="optScreensTitle">Monitors &amp; Resolutions Supported</span></h5>
-											<div class="spec-content">
-												<p><strong>Supported Screen Resolutions:</strong></p>
-												<ul class="specbox-list">
-													<span id="optRes"></span>
-												</ul>
-												<p><strong>Available Monitor Ports:</strong></p>
-												<span style="font-weight:bold;" id="optScreens"></span>
-												<ul class="specbox-list">
-													<span id="optPorts"></span>
-												</ul>
-												<span id="optSpecificPorts"></span>
-												<small class="spec-infotxt">*Use the 'Graphics Card Setup' to change this.</small>
-											</div>
-											
-										</div>
-									</div><!-- spec-box2 end -->
-					<div id="traderspec" class="spec-box spec-box2 wow fadeInRight" data-wow-delay="0.1s">
-						<div class="trader-spec-box spec-box-ts">
-							<h5 class="color">Full Trader PC Specifications</h5>
-							<div class="spec-content">
-								<p><span id="txtCPU"></span></p>
-								<p><span id="txtRAM"></span></p>
-								<p><span id="txtMB"></span></p>
-								<p><span id="txtGPU"></span></p>
-								<p><span id="txtSSD"></span></p>
-								<span id="txtHDD2"></span>
-								<span id="txtBBD"></span>
-								<p>Fractal Design Case</p>
-								<p>BeQuiet Premium 500W Quiet Power Supply</p>
-								<span id="txtDVD"></span>
-								<span id="txtWIFI"></span>
-								<p>Gigabit Ethernet LAN Adapter</p>
-								<p>8 Channel High Definition Audio Sound Card</p>
-								<p>3 x USB 3, 3 x USB 2 &amp; 1 x USB Type-C Ports</p>
-								<p><span id="txtCPUCool"></span></p>
-								<p id="pKYB"><span id="txtKYB"></span></p>
-                                <span id="txtSPK"></span>
-                                <span id="txtBT"></span>
-								<p><span id="txtWIN"></span></p>
-								<span id="txtMSO"></span>
-								<p><span id="txtWAR"></span></p>
-								<p class="uppricefont"><strong class="">Trader PC Price:</strong> <strong class="color">&pound;<span id="pcPrice"></span></strong> <strong class="pri1">+ VAT</strong></p>
-                                <span id="txtBunPrice"></span>
-								  <p>(&pound;<span id="vatPrice"></span> inc. VAT)</p><br>
-								  <div align="center">
-                                  <input type="submit" value="ORDER YOUR TRADER PC NOW" class="btn btn-skin btn-sm text-uppercase" />
-							</div>
-
-						</div>
-					</div>
-				</div>	
-			</div>		
-		</div>
+    Dim cls, priceTxt, priceCls
+    If j = 0 Then
+      cls = "cfg-option is-selected"
+    Else
+      cls = "cfg-option"
+    End If
+    If deltaEx <= 0 Then
+      priceTxt = "Included"
+      priceCls = "std"
+    Else
+      priceTxt = "+ &pound;" & deltaEx
+      priceCls = "inc"
+    End If
+%>
+          <button type="button" class="<%= cls %>"
+                  data-name="<%= Server.HTMLEncode(thisDescrip) %>"
+                  data-delta="<%= deltaEx %>"
+                  data-idoptoptgrp="<%= thisIdOptGrp %>">
+            <span class="opt-name"><%= Server.HTMLEncode(thisDescrip) %></span>
+            <span class="opt-price <%= priceCls %>"><%= priceTxt %></span>
+          </button>
+<%
+  Next
+%>
         </div>
-	</section>
-	<!-- /Section:  -->
-    <div id="footer-appear">&nbsp;</div>
+        <input type="hidden" name="idOption<%= ogIndex %>" value="<%= firstId %>">
+<%
+  If ogKind = "cpu" Then
+%>
+        <div class="cfg-impact cfg-impact--cpu cfg-cpu-info" aria-live="polite">
+          <div class="cfg-impact__head">
+            <h5>Processor Impact</h5>
+            <span class="cfg-impact__ctx" data-cpu-stat="ctx"></span>
+          </div>
+          <div class="cfg-impact__row">
+            <span class="cfg-impact__lbl">CPU Speed</span>
+            <span class="cfg-impact__stars" data-cpu-stat="speed"></span>
+          </div>
+          <div class="cfg-impact__row">
+            <span class="cfg-impact__lbl">Multi-Tasking</span>
+            <span class="cfg-impact__stars" data-cpu-stat="mt"></span>
+          </div>
+          <div class="cfg-impact__row">
+            <span class="cfg-impact__lbl">Multi-Threaded</span>
+            <span class="cfg-impact__stars" data-cpu-stat="mthread"></span>
+          </div>
+          <div class="cfg-impact__row cfg-impact__row--text">
+            <span class="cfg-impact__lbl">Cores, Threads  &amp; GHz</span>
+            <span class="cfg-impact__val" data-cpu-stat="cores"></span>
+          </div>
+        </div>
+<%
+  ElseIf ogKind = "gpu" Then
+%>
+        <div class="cfg-impact cfg-impact--gpu cfg-gpu-info" aria-live="polite">
+          <div class="cfg-impact__head">
+            <h5>Graphics Impact</h5>
+            <span class="cfg-impact__ctx" data-gpu-stat="ctx"></span>
+          </div>
+          <div class="cfg-impact__row">
+            <span class="cfg-impact__lbl">Graphics Power</span>
+            <span class="cfg-impact__stars" data-gpu-stat="gfx"></span>
+          </div>
+          <div class="cfg-impact__row">
+            <span class="cfg-impact__lbl">AI Performance TOPS Score (Higher is better)</span>
+            <span class="cfg-impact__val" data-gpu-stat="ai"></span>
+          </div>
+          <div class="cfg-impact__row cfg-impact__row--text">
+            <span class="cfg-impact__lbl">Video memory</span>
+            <span class="cfg-impact__val" data-gpu-stat="vram"></span>
+          </div>
+          <div class="cfg-impact__row cfg-impact__row--text">
+            <span class="cfg-impact__lbl">Monitor Ports</span>
+            <span class="cfg-impact__val" data-gpu-stat="ports"></span>
+          </div>
+          <div class="cfg-impact__row cfg-impact__row--text">
+            <span class="cfg-impact__lbl">Resolutions Supported</span>
+            <span class="cfg-impact__val" data-gpu-stat="res"></span>
+          </div>
+        </div>
+<%
+  End If
+%>
+      </div>
+    </div>
+  </div>
+<%
+End Sub
+
+' Helpers for page display
+Function mmFormatMoney(ByVal v)
+  mmFormatMoney = FormatNumber(v, 2, -1, 0, -1)
+End Function
+Function mmFormatMoney0(ByVal v)
+  mmFormatMoney0 = FormatNumber(v, 0, -1, 0, -1)
+End Function
+
+' Friendly display names for option groups — DB stays unchanged.
+' mmFriendlyOgName     -> long form, used in the accordion heading.
+' mmFriendlyOgShortName-> short form, used in the right-side summary
+'                         list. Falls back to the original DB desc
+'                         when no override is set.
+' Match is case-insensitive against optionsGroups.OptionGroupDesc.
+Function mmFriendlyOgName(ByVal ogDesc)
+  Dim k : k = LCase(Trim(ogDesc & ""))
+  Select Case k
+    Case "os"             : mmFriendlyOgName = "Operating System"
+    Case "boot hard drive": mmFriendlyOgName = "Hard Drive"
+    Case "2nd hard drive": mmFriendlyOgName = "Second Hard Drive"
+    Case "keyb. / mouse" : mmFriendlyOgName = "Keyboard & Mouse"
+    Case "graphics cards" : mmFriendlyOgName = "Graphics Setup"
+    Case "ms office" : mmFriendlyOgName = "Microsoft Office"
+    Case "bluetooth" : mmFriendlyOgName = "Bluetooth Adapter"
+    Case Else             : mmFriendlyOgName = ogDesc
+  End Select
+End Function
+
+' Per-accordion descriptive paragraph rendered above the option
+' buttons. Keyed off the raw DB description so it survives any
+' display-name changes in mmFriendlyOgName. Returns inline HTML so
+' the text can include links and entities (&mdash;, &nbsp;, etc.).
+' Returns "" for unmapped groups, in which case the renderer skips
+' the <p class="cfg-row__help"> element entirely.
+Function mmOgHelp(ByVal ogRaw)
+  Dim k : k = LCase(Trim(ogRaw & ""))
+  Select Case k
+    Case "cpu"
+      mmOgHelp = "The CPU is the biggest factor in how fast your computer feels in daily use. " & _
+                 "For charting generally a faster speed will help things feel snappy, multi-tasking " & _
+                 "is important if you run lots of screens, charts, or multiple platforms. Multi-threaded performance " & _
+                 "is important for things like backtesting and data intensive applications."
+    Case "ram"
+      mmOgHelp = "RAM is important for multi-tasking, running out of RAM makes a PC run very slowly. " & _
+                 "16&nbsp;GB is plenty for MT4/TradingView setups across up to 4 screens. Upgrade if you want to keep more charts &amp; " & _ 
+                 "tabs open or run more intensive platforms like Ninja Trader, Bloomberg, etc..."
+    Case "graphics cards"
+      mmOgHelp = "Graphics cards power your screens &amp; provide monitor outputs which each connected screen needs. " & _
+                 "More graphics power can help run higher resolution screens smoothly and they also help support more graphical workloads. " & _ 
+                 "The AI TOPS score dicates how well locally installed AI models will perform."
+    Case "boot hard drive"
+      mmOgHelp = "This will be your 'C drive', it is where Windows and your programs are installed. 500Gb is usually  " & _
+                 "enough for most traders. Upgrade if you want extra storage space for files and folders."
+    Case "2nd hard drive"
+      mmOgHelp = "This is a second physical hard drive in your PC. Only add if you specifically want or need a second hard drive." & _ 
+                "NVMe SSD's are fast and silent, traditional drives have larger capacities but are slower and can give off " & _ 
+                "a faint humming noise and clicks."
+    Case "os"
+      mmOgHelp = "Both editions come pre-installed, activated and tuned for trading. Home edition is fine for most, " & _
+                 "Pro edition is mainly for corporate networks or if you need enhanced remote desktop connectivity."
+    Case "ms office"
+      mmOgHelp = "Supplied as a lifetime license key that can be used on 1 PC only, no subscription required. Home edition gets you " & _
+                 "Word, Excel, PowerPoint &amp; OneNote, the Business edition also includes Outlook."
+    Case "wireless card"
+      mmOgHelp = "This adds wireless Internet connection capabilities to your PC, select if you use wifi to connect at home or in the " & _
+                 "office. It also includes Bluetooth functionality as well."
+    Case "keyb. / mouse"
+      mmOgHelp = "Add a Logitech wired or wireless mouse and keyboard set to your new PC. " 
+    Case "speakers"
+      mmOgHelp = "Add a USB powered set of Logitech speakers to your new PC. " 
+    Case "optical drive"
+      mmOgHelp = "Add a DVD ReWriter drive to your PC. This may require a different case however the price for the drive includes any case swap fee. " 
+    Case "bluetooth"
+      mmOgHelp = "Add Bluetooth connection functionality to your new PC. Not required if you have selected the Wifi card as this already includes Bluetooth. " 
+    Case "backup system"
+      mmOgHelp = "This is an extra physical hard drive inside your PC along with software that clones your C drive to it on a regular schedule. In the event . " & _ 
+                "of a Windows corruption, virus, or drive failure you can get back instantly up and running with all your programs and files still installed."
+    Case "warranty cover"
+      mmOgHelp = "Every Trader PC gets 5-year hardware cover by default including 1 year of a on-site enhanced package. Extend the on-site length if you " & _
+                 "for 2 or 3 years for extra peace of mind."
+    Case Else
+      mmOgHelp = ""
+  End Select
+End Function
+
+' Classifies an option group by its raw DB description so the
+' accordion renderer knows when to inject the inline CPU/GPU
+' "impact" cards beneath the option buttons.
+Function mmOgKind(ByVal ogRaw)
+  Dim k : k = LCase(Trim(ogRaw & ""))
+  If k = "cpu" Or InStr(k, "processor") > 0 Then
+    mmOgKind = "cpu"
+  ElseIf k = "graphics cards" Or InStr(k, "graphics") > 0 Then
+    mmOgKind = "gpu"
+  Else
+    mmOgKind = ""
+  End If
+End Function
+
+Function mmFriendlyOgShortName(ByVal ogDesc)
+  Dim k : k = LCase(Trim(ogDesc & ""))
+  Select Case k
+    Case "os" : mmFriendlyOgShortName = "OS" 
+    Case "warranty cover" : mmFriendlyOgShortName = "warranty"
+    Case "wireless card" : mmFriendlyOgShortName = "WiFi"  
+    Case "boot hard drive" : mmFriendlyOgShortName = "SSD Drive"
+     Case "2nd hard drive" : mmFriendlyOgShortName = "2nd Drive"
+    Case "optical drive" : mmFriendlyOgShortName = "Optical"
+    Case "backup system" : mmFriendlyOgShortName = "Backup"
+    Case "keyb. / mouse" : mmFriendlyOgShortName = "Inputs"
+    Case "graphics cards" : mmFriendlyOgShortName = "GPU"
+    Case "bluetooth" : mmFriendlyOgShortName = "BT"
+    Case Else             : mmFriendlyOgShortName = ogDesc
+  End Select
+End Function
+
+Dim mmBasePriceExDisp, mmBasePriceIncDisp
+mmBasePriceExDisp  = mmFormatMoney0(mmBasePriceEx)
+mmBasePriceIncDisp = mmFormatMoney(mmBasePriceInc)
+
+Dim mmMainImgSrc
+If mmImageUrl <> "" Then
+  mmMainImgSrc = "/shop/pc/catalog/" & mmImageUrl
+ElseIf mmSmallImageUrl <> "" Then
+  mmMainImgSrc = "/shop/pc/catalog/" & mmSmallImageUrl
+Else
+  mmMainImgSrc = "/shop/pc/catalog/no_image.gif"
+End If
+%>
+<!--#include file="header_wrapper.asp"-->
+
+<div class="mm-site">
+
+<!-- ===================================================================
+     BREADCRUMB
+     =================================================================== -->
+<nav class="breadcrumb">
+  <div class="container inner">
+    <a href="/">Home</a>
+    <span class="sep">/</span>
+    <a href="/trading-computers/">Trading Computers</a>
+    <span class="sep">/</span>
+    <span class="current"><%= Server.HTMLEncode(mmName) %></span>
+  </div>
+</nav>
+
+<!-- ===================================================================
+     PRODUCT HERO (gallery + buy-box)
+     =================================================================== -->
+<section class="pd-hero">
+  <div class="container">
+    <div class="pd-hero-grid">
+
+      <!-- Gallery column -->
+      <div class="pd-gallery reveal">
+        <div class="pd-gallery__main">
+          <span class="pd-gallery__chip">
+            <span class="dot"></span><span class="acc">5YR</span>HARDWARE&nbsp;COVER
+          </span>
+          <img id="pdMainImg" src="<%= mmMainImgSrc %>" alt="<%= Server.HTMLEncode(mmName) %>" />
+          <% If mmSku <> "" Then %>
+          <span class="pd-gallery__sku">SKU &middot; <%= Server.HTMLEncode(mmSku) %></span>
+          <% End If %>
+        </div>
+        <div class="pd-gallery__thumbs">
+          <div class="pd-thumb is-active" data-img="<%= mmMainImgSrc %>">
+            <img src="<%= mmMainImgSrc %>" alt="<%= Server.HTMLEncode(mmName) %>" />
+          </div>
+          <div class="pd-thumb" data-img="/shop/pc/catalog/antecp7_detail.jpg">
+            <img src="/shop/pc/catalog/antecp7_detail.jpg" alt="Case detail" />
+          </div>
+          <div class="pd-thumb" data-img="/shop/pc/catalog/intel12cpu_general.jpg">
+            <img src="/shop/pc/catalog/intel12cpu_general.jpg" alt="Intel CPU" />
+          </div>
+          <div class="pd-thumb" data-img="/shop/pc/catalog/nvidiaT600_general.jpg">
+            <img src="/shop/pc/catalog/nvidiaT600_general.jpg" alt="nVidia RTX GPU" />
+          </div>
+          <div class="pd-thumb placeholder">
+            <i class="fa fa-play-circle-o"></i>
+            <span>60-sec<br>walkthrough</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buy-box column -->
+      <aside class="pd-buybox reveal" style="transition-delay:.08s">
+        <div class="eyebrow">2026 Refresh &middot; Designed for Traders</div>
+        <h1>Trader <em>PC</em></h1>
+        <p class="pitch">
+          The trader&rsquo;s entry point. Built in the UK around the Intel i5 14400F,
+          spec&rsquo;d for MT4, TradingView, TradeStation and NinjaTrader up to four screens.
+          Silent, tested, shipped with everything you need.
+        </p>
+
+        <div class="pd-tp">
+          <span class="tp-stars"><span></span><span></span><span></span><span></span><span></span></span>
+          <b>4.9</b>
+          <small>&middot; 90+ reviews</small>
+          <a href="#reviews">Read reviews <i class="fa fa-arrow-down" style="font-size:10px;"></i></a>
+        </div>
+
+        <div class="pd-price">
+          <div>
+            <div class="pd-price__from">From</div>
+            <div class="pd-price__num"><span class="sym">&pound;</span><span data-base-ex><%= mmBasePriceExDisp %></span></div>
+          </div>
+          <div class="pd-price__vat">
+            <b>&pound;<span data-base-inc><%= mmBasePriceIncDisp %></span></b> inc VAT<br>
+            <span style="text-transform:none; font-family:'Geist', sans-serif; letter-spacing:0; color:var(--slate);">+ UK delivery &pound;10 &middot; international by quote</span>
+          </div>
+        </div>
+
+        <div class="pd-incl">
+          <div class="item">
+            <i class="fa fa-flag"></i>
+            <div><b>UK&ndash;built</b><small>Since 2008</small></div>
+          </div>
+          <div class="item">
+            <i class="fa fa-shield"></i>
+            <div><b>5-year cover</b><small>1yr OnSite</small></div>
+          </div>
+          <div class="item">
+            <i class="fa fa-life-ring"></i>
+            <div><b>Lifetime support</b><small>Phone &amp; remote</small></div>
+          </div>
+        </div>
+
+        <div class="pd-cta">
+          <a href="#configure" class="btn btn-primary btn-lg">
+            Configure &amp; order <i class="fa fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="pd-foot">
+          <span><i class="fa fa-wrench"></i>Customise to your needs</span>
+          <span><i class="fa fa-check"></i>32 hour stress-tested before delivery</span>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     TRUST STRIP (shared include)
+     =================================================================== -->
+<!--#include file="inc_trustStripTrader.asp"-->
+
+<!-- ===================================================================
+     KEY SPECS GRID (base configuration — per-machine copy)
+     =================================================================== -->
+<section class="s specs">
+  <div class="container">
+    <div class="section-head-narrow reveal">
+      <h5 style="margin-bottom:14px;">Base configuration</h5>
+      <h2>Perfect for Traders <span class="display-em">here&rsquo;s why</span>.</h2>
+      <p>The Trader PC is a fantastic choice for traders running platforms like Trading View, MT4/5, broker platforms like CMC, IG, or Interactive Brokers.</p>
+    </div>
+
+    <div class="spec-grid">
+      <div class="spec-card reveal">
+        <div class="spec-card__icon"><i class="fa fa-microchip"></i></div>
+        <div class="spec-card__label">Processors</div>
+        <div class="spec-card__value">Intel 14th Generation</div>
+        <div class="spec-card__desc">Our benchmark tests show these CPUs are perfectly suited to running trading and charting platforms really well. Pick from i5's, i7's or even the i9.</div>
+      </div>
+      <div class="spec-card reveal" style="transition-delay:.06s">
+        <div class="spec-card__icon"><i class="fa fa-database"></i></div>
+        <div class="spec-card__label">Memory</div>
+        <div class="spec-card__value">16&nbsp;GB - 64&nbsp;GB DDR4</div>
+        <div class="spec-card__desc">RAM is working memory for your computer. The more RAM you have, the more programs, charts and files you can have open at the same time.</div>
+      </div>
+      <div class="spec-card reveal" style="transition-delay:.12s">
+        <div class="spec-card__icon"><i class="fa fa-hdd-o"></i></div>
+        <div class="spec-card__label">Storage</div>
+        <div class="spec-card__value">500&nbsp;GB - 4&nbsp;TB NVMe SSD</div>
+        <div class="spec-card__desc">Your SSD drive is where you store your files and folders, and where Windows is installed. For most traders a 500&nbsp;GB drive is more than enough.</div>
+      </div>
+      <div class="spec-card reveal">
+        <div class="spec-card__icon"><i class="fa fa-desktop"></i></div>
+        <div class="spec-card__label">Graphics</div>
+        <div class="spec-card__value">nVidia Multi-Screen Cards</div>
+        <div class="spec-card__desc">The default nVidia RTX card can support up to 4 monitors. You can change to a setup that can run 8 screens, or add more graphics power if you want.</div>
+      </div>
+      <div class="spec-card reveal" style="transition-delay:.06s">
+        <div class="spec-card__icon"><i class="fa fa-windows"></i></div>
+        <div class="spec-card__label">Software</div>
+        <div class="spec-card__value">Windows 11</div>
+        <div class="spec-card__desc">Pre-installed, activated, tuned for trading workloads. We also supply a fully licensed multi-monitor software suite called DisplayFusion.</div>
+      </div>
+      <div class="spec-card reveal" style="transition-delay:.12s">
+        <div class="spec-card__icon"><i class="fa fa-shield"></i></div>
+        <div class="spec-card__label">Warranty</div>
+        <div class="spec-card__value">5-year hardware cover</div>
+        <div class="spec-card__desc">1st year OnSite / collection. Extend to 2 or 3 years for extra piece of mind. Plus <strong>lifetime</strong> remote support for the life of the machine.</div>
+      </div>
+    </div>
+
+    <div class="spec-box reveal" style="transition-delay:.18s">
+      <div class="spec-box__lead">
+        <div class="spec-box__icon"><i class="fa fa-archive"></i></div>
+        <div>
+          <div class="spec-box__label">In the box</div>
+          <div class="spec-box__title">Everything you need to trade.</div>
+        </div>
+      </div>
+      <div class="spec-chips">
+        <span class="spec-chip"><i class="fa fa-check"></i>Fractal Design case</span>
+        <span class="spec-chip"><i class="fa fa-check"></i>BeQuiet 500&thinsp;W PSU</span>
+        <span class="spec-chip"><i class="fa fa-check"></i>UK power lead</span>
+        <span class="spec-chip"><i class="fa fa-check"></i>DisplayFusion licence</span>
+        <span class="spec-chip"><i class="fa fa-check"></i>Recovery drive</span>
+        <span class="spec-chip"><i class="fa fa-check"></i>Setup guide</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     CONFIGURATOR — DB-driven option rows inside one cart form.
+     Posts to /shop/pc/instPrd.asp with idOption1..idOptionN whose
+     values are valid idoptoptgrp IDs; instPrd.asp re-queries live
+     prices on submit, so the on-page prices are display-only.
+     =================================================================== -->
+<section class="configurator" id="configure">
+  <div class="container">
+    <div class="cfg-head reveal">
+      <div>
+        <h5>Build your <%= Server.HTMLEncode(mmName) %></h5>
+        <h2>Configure it the way you&rsquo;ll <em>actually use it</em>.</h2>
+      </div>
+      <a href="tel:03302236655" class="talk-link"><i class="fa fa-phone"></i>Or call &mdash; 0330 223 66 55</a>
+    </div>
+
+    <form method="post" action="/shop/pc/instPrd.asp" id="cfgForm">
+      <input type="hidden" name="idproduct"        value="<%= MM_PRODUCT_ID %>">
+      <input type="hidden" name="quantity"         value="1">
+      <input type="hidden" name="OptionGroupCount" value="<%= mmOgCount %>">
+
+      <div class="cfg-grid">
+
+        <!-- Options column -->
+        <div class="cfg-options-wrap reveal">
+<%
+Dim mmI, mmOgId, mmOgDesc, mmOgShort, mmOgRaw, mmOgKindStr, mmOgHelpHtml
+For mmI = 0 To mmOgCount - 1
+  mmOgId       = mmOgRows(0, mmI)
+  mmOgRaw      = mmOgRows(1, mmI) & ""
+  mmOgDesc     = mmFriendlyOgName(mmOgRaw)
+  mmOgShort    = mmFriendlyOgShortName(mmOgRaw)
+  mmOgKindStr  = mmOgKind(mmOgRaw)
+  mmOgHelpHtml = mmOgHelp(mmOgRaw)
+  Call mmRenderOptionGroup(mmOgId, mmOgDesc, mmOgShort, mmI + 1, mmOgKindStr, mmOgHelpHtml)
+Next
+%>
+        </div>
+
+        <!-- Sticky summary sidebar -->
+        <aside class="cfg-summary reveal" style="transition-delay:.08s">
+
+          <div class="cfg-impact cfg-impact--system">
+            <div class="cfg-impact__head">
+              <h5>System Performance</h5>
+            </div>
+            <div class="cfg-impact__row">
+              <span class="cfg-impact__lbl">CPU Speed</span>
+              <span class="cfg-impact__stars" data-rating="speed"></span>
+            </div>
+            <div class="cfg-impact__row">
+              <span class="cfg-impact__lbl">Multi-Tasking</span>
+              <span class="cfg-impact__stars" data-rating="mt"></span>
+            </div>
+            <div class="cfg-impact__row">
+              <span class="cfg-impact__lbl">Graphics Power</span>
+              <span class="cfg-impact__stars" data-rating="gfx"></span>
+            </div>
+            <div class="cfg-impact__row">
+              <span class="cfg-impact__lbl">Monitors Supported</span>
+              <span class="cfg-impact__val" data-rating="screens"></span>
+            </div>
+          </div>
+
+          <div class="cfg-summary__card">
+            <div class="cfg-summary__head">
+              <h5>Your <%= Server.HTMLEncode(mmName) %></h5>
+              <span class="tick"><i class="fa fa-check" style="margin-right:4px;"></i>Live</span>
+            </div>
+
+            <ul class="cfg-summary__list" data-summary-list></ul>
+
+            <div class="cfg-total">
+              <span class="lbl">Your price</span>
+              <span class="amt"><span class="sym">&pound;</span><span data-total-ex><%= mmBasePriceExDisp %></span></span>
+            </div>
+            <div class="cfg-vat">
+              <b>&pound;<span data-total-inc><%= mmBasePriceIncDisp %></span></b> inc VAT
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg cfg-summary__cta">
+              <i class="fa fa-shopping-basket"></i>Add to basket
+            </button>
+
+            <div class="cfg-summary__trust">
+              <i class="fa fa-truck"></i>
+              <div>
+                <strong>Free UK delivery on trader bundles.</strong>
+                Single PCs from &pound;10. Built to order, typically ships in 3&ndash;5 working days.
+              </div>
+            </div>
+
+            <a href="#full-spec" class="cfg-summary__speclink">
+              <i class="fa fa-list"></i>View full specification
+              <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </a>
+          </div>
+        </aside>
+
+      </div><!-- /cfg-grid -->
+    </form>
+  </div>
+</section>
+
+<!-- ===================================================================
+     FULL SPECIFICATION — live-updating, echoes configurator state.
+     Rows with data-spec are populated by renderFullSpec() in the IIFE
+     below; rows without are static / always-included components.
+     =================================================================== -->
+<section class="full-spec" id="full-spec">
+  <div class="container">
+
+    <div class="section-head-narrow reveal">
+      <h5>Full specification</h5>
+      <h2>Everything in <span class="display-em">your <%= Server.HTMLEncode(mmName) %></span>.</h2>
+      <p>Every component &mdash; the ones you just picked, and the ones we include as standard. When you choose a CPU that needs a bigger board, quieter cooler or more power, the affected parts auto-upgrade with it.</p>
+    </div>
+
+    <div class="spec-full reveal">
+      <div class="spec-full__grid">
+        <div class="spec-row"><span class="spec-row__lbl">Processor</span><span class="spec-row__val" data-spec="cpu">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Motherboard</span><span class="spec-row__val" data-spec="mobo">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Memory</span><span class="spec-row__val" data-spec="ram">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Graphics</span><span class="spec-row__val" data-spec="gpu">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Primary storage</span><span class="spec-row__val" data-spec="storage">&mdash;</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Secondary Storage</span><span class="spec-row__val" data-spec="2nddrive">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">CPU cooler</span><span class="spec-row__val" data-spec="cooler">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Case</span><span class="spec-row__val">Fractal Design Core 1100 &middot; sound-dampened</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Power supply</span><span class="spec-row__val" data-spec="psu">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Audio</span><span class="spec-row__val">8-channel HD audio &middot; on-board</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Network</span><span class="spec-row__val">Gigabit Ethernet LAN &middot; wired</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Wireless internet</span><span class="spec-row__val" data-spec="wifi">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">USB ports</span><span class="spec-row__val">3&times; USB 3.2 &middot; 3&times; USB 2.0 &middot; 1&times; USB-C</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Operating system</span><span class="spec-row__val" data-spec="os">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Included software</span><span class="spec-row__val">DisplayFusion multi-monitor &middot; installed &amp; licensed</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Microsoft Office</span><span class="spec-row__val" data-spec="office">&mdash;</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Input Devices</span><span class="spec-row__val" data-spec="inputs">&mdash;</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Optical Drive</span><span class="spec-row__val" data-spec="optical">&mdash;</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Speakers</span><span class="spec-row__val" data-spec="speakers">&mdash;</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">BlueTooth</span><span class="spec-row__val" data-spec="bluetooth">&mdash;</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Backup system</span><span class="spec-row__val" data-spec="backup">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Warranty</span><span class="spec-row__val" data-spec="warranty">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Support</span><span class="spec-row__val">Lifetime phone &amp; remote support &middot; no clock</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Extras</span><span class="spec-row__val" data-spec="extras">&mdash;</span></div>
+      </div>
+    </div>
+
+    <div class="build-summary reveal">
+      <div class="build-summary__label">Your build</div>
+      <div class="build-summary__line" data-build-line>&mdash;</div>
+      <div class="build-summary__price">
+        <span class="price-main"><span class="sym">&pound;</span><span data-build-ex><%= mmBasePriceExDisp %></span></span>
+        <span class="price-vat">+ VAT &middot; inc &pound;<span data-build-inc><%= mmBasePriceIncDisp %></span></span>
+      </div>
+    </div>
+
+    <div class="build-cta reveal">
+      <button type="button" class="btn btn-primary btn-lg" data-build-submit>
+        <i class="fa fa-shopping-basket"></i>Add to basket
+      </button>
+      <a href="#configure" class="btn btn-ghost">
+        <i class="fa fa-arrow-up"></i>Change configuration
+      </a>
+    </div>
+
+    <div class="build-micro reveal">
+      <span><i class="fa fa-shield"></i>5-year hardware cover included</span>
+      <span><i class="fa fa-life-ring"></i>Lifetime phone &amp; remote support</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================================================================
+     FIRMS STRIP (shared include)
+     =================================================================== -->
+<!--#include file="inc_firmsStrip.asp"-->
+
+
+<!-- ===================================================================
+     CROSS-LINK BAND — upsell to next-tier
+     =================================================================== -->
+<section class="xlink">
+  <div class="container">
+    <div class="xlink-grid">
+
+      <a href="/shop/pc/viewprod.asp?idproduct=343" class="xlink-card reveal">
+        <h5>Considering Trader Pro instead?</h5>
+        <h3>Step up to <em>Trader Pro</em></h3>
+        <p>If you&rsquo;re running NinjaTrader strategy analysers overnight, using Bloomberg, or going past 6 screens, the extra cores of the Trader Pro earn their price. Core Ultra CPUs &middot; DDR5 &middot; same 5-year cover.</p>
+        <div class="xlink-card__foot">
+          <span class="from">From<b>&pound;1,345</b></span>
+          <span class="arr">See Trader Pro <i class="fa fa-arrow-right"></i></span>
+        </div>
+      </a>
+
+      <a href="/trading-computers/" class="xlink-card reveal" style="transition-delay:.06s">
+        <h5>Not sure which is right?</h5>
+        <h3>Compare <em>side-by-side</em></h3>
+        <p>Our comparison table rates both machines on the platforms you actually run &mdash; MT4, TradingView, NinjaTrader, TradeStation, Bloomberg, backtesting &mdash; using live benchmark data. Pick the right one in 60 seconds.</p>
+        <div class="xlink-card__foot">
+          <span class="from">Takes<b>60 sec</b></span>
+          <span class="arr">Compare both <i class="fa fa-arrow-right"></i></span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ===================================================================
+     REVIEWS (per-machine — hardcode real ones here)
+     =================================================================== -->
+<section class="s reviews" id="reviews">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <h5>Trader reviews</h5>
+        <h2>Traders who picked the <span class="display-em">Trader PC</span>.</h2>
+        <p>All reviews are voluntary &mdash; we don&rsquo;t ask for them.</p>
+      </div>
+      <div class="tp-summary">
+        <span class="tp-stars"><span></span><span></span><span></span><span></span><span></span></span>
+        <span><b>4.9</b> <small>&middot; based on 90+ reviews</small></span>
+        <a href="#" class="link" style="margin-left:10px;">See all on Trustpilot <i class="fa fa-external-link"></i></a>
+      </div>
+    </div>
+
+    <div class="reviews-grid">
+      <div class="review reveal">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <span class="platform">MT4 / MT5 &middot; 4-screen</span>
+        <h4>Perfect spec for a part-time FX trader</h4>
+        <p>Wanted a proper machine without going mad on spec. Trader PC with the i5 14600KF and 32&nbsp;GB RAM runs four MT5 instances, TradingView and a browser with 20+ tabs without breaking a sweat. Arrived silent &mdash; I honestly thought it was off for the first ten minutes.</p>
+        <div class="meta">
+          <div class="ava">MD</div>
+          <div class="who">Michael D., Manchester</div>
+          <div class="when">03&thinsp;/&thinsp;2026</div>
+        </div>
+      </div>
+      <div class="review reveal" style="transition-delay:.08s">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <span class="platform">TradingView &middot; 4-screen</span>
+        <h4>Darren talked me <em>down</em> from the Pro</h4>
+        <p>Originally asked for a Trader Pro. Darren asked what I actually do &mdash; TradingView, IG, maybe 15 charts &mdash; and told me the Trader PC would do it with money to spare. Saved me about &pound;400 I would have spent chasing specs I&rsquo;d never use. Four months in, zero regrets.</p>
+        <div class="meta">
+          <div class="ava">RL</div>
+          <div class="who">Rachel L., Bristol</div>
+          <div class="when">02&thinsp;/&thinsp;2026</div>
+        </div>
+      </div>
+      <div class="review reveal" style="transition-delay:.16s">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <span class="platform">NinjaTrader &middot; 6-screen upgrade</span>
+        <h4>Upgraded from 4 to 6 screens &mdash; painless</h4>
+        <p>Bought a Trader PC last year running 4 screens. This month I added the 8-screen GPU upgrade &mdash; Multiple Monitors posted the card, I installed it with a ten-minute phone call walking me through it. Try getting that level of support from Scan or Amazon.</p>
+        <div class="meta">
+          <div class="ava">JP</div>
+          <div class="who">Jon P., Edinburgh</div>
+          <div class="when">01&thinsp;/&thinsp;2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     FAQ (per-machine — hardcoded)
+     =================================================================== -->
+<section class="s depth" id="faq">
+  <div class="container-narrow">
+    <div class="section-head reveal" style="display:block; margin-bottom:38px;">
+      <h5>Trader PC questions</h5>
+      <h2>The six questions we get <span class="display-em">most often</span>.</h2>
+      <p style="margin-top:12px;">Specific to this machine &mdash; not generic PC-shop answers. Got a question not listed? <a href="tel:03302236655" style="color:var(--brand); font-weight:500;">Call us on 0330 223 66 55</a>.</p>
+    </div>
+
+    <div class="faq-list reveal">
+      <details class="faq-item" open>
+        <summary>Can I upgrade the CPU, RAM or storage later?</summary>
+        <div class="faq-body">
+          <p><strong>Yes &mdash; every Trader PC is designed for upgrades.</strong> The motherboard supports every 14th-gen Intel CPU option we sell (up to the i9 14900KF), so you can start with the i5 14400F now and upgrade later without changing the board.</p>
+          <p>RAM is straightforward &mdash; two DIMM slots, up to 64&nbsp;GB DDR4 3200. Storage adds the same way: a second M.2 slot and 4 SATA ports for extra SSDs or HDDs. We&rsquo;ll walk you through any upgrade on the phone &mdash; usually a 15-minute job.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Does Windows come pre-installed and activated?</summary>
+        <div class="faq-body">
+          <p>Yes. Every machine ships with Windows 11 Home fully installed, activated, and tuned for trading workloads &mdash; Windows Defender exclusions for your platforms, telemetry minimised, power plan set to high-performance, scheduled updates set for out-of-hours. DisplayFusion is also pre-installed and licensed.</p>
+          <p>Windows 11 Pro is available at +&pound;45 if you need BitLocker, Remote Desktop host, or domain join.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>What&rsquo;s included in the box?</summary>
+        <div class="faq-body">
+          <p>The PC itself, a UK power lead, a printed setup guide, and a recovery USB drive for Windows reinstalls. Anything you add in the configurator (keyboard, speakers, Wi-Fi card, etc.) arrives in the same carton, bench-tested with the machine.</p>
+          <p>What&rsquo;s <em>not</em> in the box: monitors and cables. If you need those, a <a href="/bundles/" style="color:var(--brand); font-weight:500;">trader bundle</a> is typically &pound;100&ndash;&pound;200 cheaper than buying separately.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How do I connect my existing monitors?</summary>
+        <div class="faq-body">
+          <p>The standard nVidia RTX A400 has four mini-DisplayPort outputs and ships with four mini-DP to DisplayPort adapters. If your monitors have HDMI only, we can throw in DP-to-HDMI cables at cost &mdash; just call and ask.</p>
+          <p>If you&rsquo;re running more than four screens or monitors with unusual inputs, tell us what you have when you order and we&rsquo;ll ship with the right cables in the box.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>What happens if a part fails under warranty?</summary>
+        <div class="faq-body">
+          <p>In year one, we come to you (OnSite) or collect and repair &mdash; at our discretion, usually depending on what&rsquo;s failed. Years two to five are collection or return-to-base. You can extend OnSite to year two (+&pound;75) or year three (+&pound;150) at checkout.</p>
+          <p>In practice: if a trader&rsquo;s machine goes down during market hours, we&rsquo;ll often courier a replacement part the same day and recover yours at leisure. Not a written policy &mdash; just what we do because we&rsquo;d want someone to do it for us.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How do I move my trading software and data across from my old PC?</summary>
+        <div class="faq-body">
+          <p>We do this for free as part of lifetime support. Phone or email us the day your new machine arrives &mdash; we&rsquo;ll remote-connect (TeamViewer or similar), help you install MT4/MT5/NinjaTrader/TradingView, migrate your templates, indicators, EAs and chart layouts, and get your broker connections back up. Usually takes 45&ndash;90 minutes depending on how much you&rsquo;re moving.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="darren-inline reveal">
+      <div class="avatar"><i class="fa fa-user"></i></div>
+      <div>
+        <h4>Question not on the list?</h4>
+        <p>Seventeen years of pre-sale conversations means we&rsquo;ve heard most things. Phone or email Darren &mdash; he&rsquo;ll give you a straight answer, or tell you honestly if the Trader PC isn&rsquo;t the right machine for you.</p>
+      </div>
+      <div>
+        <a href="tel:03302236655" class="btn btn-primary"><i class="fa fa-phone"></i>0330 223 66 55</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     DARREN CTA (shared include — uses mmMachineName)
+     =================================================================== -->
+<!--#include file="inc_darrenCTA.asp"-->
+
+<!-- ===================================================================
+     STICKY CONFIGURE CTA (inline — per-page text)
+     =================================================================== -->
+<div class="sticky-cta" id="stickyCta">
+  <div class="txt">
+    <strong><%= Server.HTMLEncode(mmName) %> &middot; &pound;<span data-sticky-price><%= mmBasePriceExDisp %></span> + VAT</strong>
+    <span>Order today &middot; typically ships in 3&ndash;5 working days</span>
+  </div>
+  <a href="#configure" class="btn btn-primary btn-sm">Configure <i class="fa fa-arrow-right"></i></a>
+</div>
+
+</div><!-- /.mm-site -->
+
+<!-- ===================================================================
+     PAGE-SPECIFIC JS — configurator, gallery, sticky CTA, impact stars
+     =================================================================== -->
+
+<!-- Per-option metadata (friendly names, ratings, GPU/CPU specs).
+     Keyed by idoptoptgrp; loaded before the IIFE that reads it. -->
+<script src="/js/products/traderpc.js"></script>
+
+<script>
+(function(){
+  var BASE_EX  = <%= mmBasePriceEx %>;
+  var VAT_RATE = 0.20;
+
+  // ------- Option metadata lookup -------
+  // Per-option overrides + ratings live in /js/products/traderpc-v2.js,
+  // keyed by idoptoptgrp. Missing ids return null and the page falls
+  // back to the DB description with default ratings.
+  function metaFor(id) {
+    var t = window.MM_OPTION_META;
+    return (t && id != null && t[id]) ? t[id] : null;
+  }
+
+  // ------- State -------
+  var rows = document.querySelectorAll('.cfg-row');
+  var state = {}; // group -> { name, delta, idoptoptgrp, meta }
+
+  rows.forEach(function(row){
+    var group = row.dataset.group;
+    var sel   = row.querySelector('.cfg-option.is-selected') || row.querySelector('.cfg-option');
+    if (sel) {
+      state[group] = {
+        name:        sel.dataset.name,
+        delta:       parseInt(sel.dataset.delta || '0', 10),
+        idoptoptgrp: sel.dataset.idoptoptgrp,
+        meta:        metaFor(sel.dataset.idoptoptgrp)
+      };
+    }
+  });
+
+  // ------- Hide options flagged with meta.hide -------
+  // Removes the option button from the DOM. If the hidden option
+  // was the group's default-selected one, promote the next
+  // remaining option, refresh state, and overwrite the hidden
+  // idOption input so the cart posts what the user actually sees.
+  rows.forEach(function(row){
+    var group = row.dataset.group;
+    var hiddenInput = row.querySelector('input[type="hidden"][name^="idOption"]');
+    var lostSelection = false;
+    row.querySelectorAll('.cfg-option').forEach(function(btn){
+      var m = metaFor(btn.dataset.idoptoptgrp);
+      if (!m || m.hide !== true) return;
+      if (btn.classList.contains('is-selected')) lostSelection = true;
+      btn.parentNode.removeChild(btn);
+    });
+    if (lostSelection) {
+      var next = row.querySelector('.cfg-option');
+      if (next) {
+        next.classList.add('is-selected');
+        state[group] = {
+          name:        next.dataset.name,
+          delta:       parseInt(next.dataset.delta || '0', 10),
+          idoptoptgrp: next.dataset.idoptoptgrp,
+          meta:        metaFor(next.dataset.idoptoptgrp)
+        };
+        if (hiddenInput) hiddenInput.value = next.dataset.idoptoptgrp;
+      }
+    }
+  });
+
+  // ------- Apply friendly names from metadata -------
+  // Override the option-button label and the row's selected caption
+  // when MM_OPTION_META supplies a `name`. DB description stays as
+  // the data-name fallback for any option without a meta entry.
+  document.querySelectorAll('.cfg-option').forEach(function(btn){
+    var m = metaFor(btn.dataset.idoptoptgrp);
+    if (!m || !m.name) return;
+    var nameEl = btn.querySelector('.opt-name');
+    if (nameEl) nameEl.textContent = m.name;
+  });
+  rows.forEach(function(row){
+    var s = state[row.dataset.group];
+    if (!s || !s.meta || !s.meta.name) return;
+    var selectedEl = row.querySelector('[data-selected]');
+    if (selectedEl) selectedEl.textContent = s.meta.name;
+  });
+
+  // ------- GPU group: sort & bucket by meta.screens -------
+  // Reorders the GPU group's option buttons ascending by
+  // meta.screens, then by data-delta (price) within each bucket.
+  // Inserts a "{N} Screen Options" caption before each new bucket.
+  // Options without a screens value fall into an "Other Options"
+  // bucket at the end. No-op if no GPU option has screens set.
+  (function rearrangeGpuByScreens(){
+    var gpuGroup = null;
+    for (var k in state) {
+      if (!state.hasOwnProperty(k)) continue;
+      var sm = state[k] && state[k].meta;
+      if (sm && sm.gpuPower !== undefined) { gpuGroup = k; break; }
+    }
+    if (!gpuGroup) return;
+
+    var row = document.querySelector('.cfg-row[data-group="' + gpuGroup + '"]');
+    if (!row) return;
+    var optsWrap = row.querySelector('.cfg-options');
+    if (!optsWrap) return;
+
+    var buttons = Array.prototype.slice.call(optsWrap.querySelectorAll('.cfg-option'));
+    var hasScreens = buttons.some(function(b){
+      var m = metaFor(b.dataset.idoptoptgrp);
+      return m && typeof m.screens === 'number';
+    });
+    if (!hasScreens) return;
+
+    buttons.sort(function(a, b){
+      var ma = metaFor(a.dataset.idoptoptgrp) || {};
+      var mb = metaFor(b.dataset.idoptoptgrp) || {};
+      var sa = (typeof ma.screens === 'number') ? ma.screens : Infinity;
+      var sb = (typeof mb.screens === 'number') ? mb.screens : Infinity;
+      if (sa !== sb) return sa - sb;
+      return parseInt(a.dataset.delta || '0', 10) - parseInt(b.dataset.delta || '0', 10);
+    });
+
+    optsWrap.innerHTML = '';
+    var lastBucket = undefined;
+    buttons.forEach(function(btn){
+      var m = metaFor(btn.dataset.idoptoptgrp) || {};
+      var thisBucket = (typeof m.screens === 'number') ? m.screens : null;
+      if (thisBucket !== lastBucket) {
+        var heading = document.createElement('p');
+        heading.textContent = (thisBucket !== null) ? (thisBucket + ' Screen Options') : 'Other Options';
+        optsWrap.appendChild(heading);
+        lastBucket = thisBucket;
+      }
+      optsWrap.appendChild(btn);
+    });
+  })();
+
+  // ------- Accordion (one row open at a time) -------
+  document.querySelectorAll('.cfg-row__head').forEach(function(head){
+    head.addEventListener('click', function(){
+      var row = head.closest('.cfg-row');
+      var willOpen = !row.classList.contains('is-open');
+      document.querySelectorAll('.cfg-row.is-open').forEach(function(r){
+        r.classList.remove('is-open');
+        var h = r.querySelector('.cfg-row__head');
+        if (h) h.setAttribute('aria-expanded', 'false');
+      });
+      if (willOpen) {
+        row.classList.add('is-open');
+        head.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  // ------- Formatting -------
+  function fmt0(n)  { return n.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
+  function fmt2(n)  { return n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function decodeHtml(s) {
+    return String(s || '')
+      .replace(/&middot;/g, '·')
+      .replace(/&nbsp;/g,  ' ')
+      .replace(/&amp;/g,   '&')
+      .replace(/&lt;/g,    '<')
+      .replace(/&gt;/g,    '>')
+      .replace(/&quot;/g,  '"');
+  }
+
+  function renderStars(el, n) {
+    if (!el) return;
+    // Clamp to 0..10 then snap to nearest half so 6.4 and 6.6 both
+    // resolve cleanly to 6.5 / 6 respectively.
+    var clamped = Math.max(0, Math.min(10, Number(n) || 0));
+    var snapped = Math.round(clamped * 2) / 2;
+    var full    = Math.floor(snapped);
+    var half    = (snapped - full) === 0.5;
+    var html    = '';
+    for (var i = 1; i <= 10; i++) {
+      if (i <= full)                    html += '<span class="star">★</span>';
+      else if (i === full + 1 && half)  html += '<span class="star half">★</span>';
+      else                              html += '<span class="star faint">★</span>';
+    }
+    var changed = el.dataset.prev !== String(snapped);
+    el.innerHTML = html;
+    if (changed) {
+      el.classList.remove('is-changed');
+      void el.offsetWidth;                   // force reflow so animation retriggers
+      el.classList.add('is-changed');
+      el.dataset.prev = String(snapped);
+    }
+  }
+
+  function renderNumber(el, n) {
+    if (!el) return;
+    var val = (n == null || isNaN(Number(n))) ? '' : String(Number(n));
+    var changed = el.dataset.prev !== val;
+    el.textContent = val;
+    if (changed) {
+      el.classList.remove('is-changed');
+      void el.offsetWidth;                   // force reflow so animation retriggers
+      el.classList.add('is-changed');
+      el.dataset.prev = val;
+    }
+  }
+
+  // Identify the CPU/RAM/GPU groups by which meta field the
+  // currently-selected option carries. If no option in any group has
+  // meta yet, the helper returns null and updateImpact uses defaults.
+  function findGroupByMetaField(field) {
+    for (var k in state) {
+      if (!state.hasOwnProperty(k)) continue;
+      var m = state[k] && state[k].meta;
+      if (m && m[field] !== undefined) return k;
+    }
+    return null;
+  }
+  function cpuState() { var k = findGroupByMetaField('cpuSpeed');   return k ? state[k] : null; }
+  function ramState() { var k = findGroupByMetaField('ramMtBonus'); return k ? state[k] : null; }
+  function gpuState() { var k = findGroupByMetaField('gpuPower');   return k ? state[k] : null; }
+
+  function updateImpact() {
+    var cpu = cpuState(), ram = ramState(), gpu = gpuState();
+    var cpuMeta = cpu && cpu.meta;
+    var ramMeta = ram && ram.meta;
+    var gpuMeta = gpu && gpu.meta;
+
+    var speed  = (cpuMeta && cpuMeta.cpuSpeed     != null) ? cpuMeta.cpuSpeed     : 5;
+    var mtBase = (cpuMeta && cpuMeta.cpuMultiTask != null) ? cpuMeta.cpuMultiTask : 5;
+    var ramBn  = (ramMeta && ramMeta.ramMtBonus   != null) ? ramMeta.ramMtBonus   : 0;
+    var mt     = Math.min(10, mtBase + ramBn);
+    var gfx    = (gpuMeta && gpuMeta.gpuPower     != null) ? gpuMeta.gpuPower     : 5;
+    var ai     = (gpuMeta && gpuMeta.gpuAi        != null) ? gpuMeta.gpuAi        : 4;
+    var screens = (gpuMeta && gpuMeta.screens     != null) ? gpuMeta.screens      : '';
+
+    renderStars(document.querySelector('[data-rating="speed"]'), speed);
+    renderStars(document.querySelector('[data-rating="mt"]'),    mt);
+    renderStars(document.querySelector('[data-rating="gfx"]'),   gfx);
+    renderNumber(document.querySelector('[data-rating="screens"]'), screens);
+
+    // Inline CPU info card (inside CPU accordion body) — extends the
+    // sidebar's CPU Speed / Multi-Tasking with a Multi-Threaded star
+    // row and the "Cores & threads" text row.
+    var mthread = (cpuMeta && cpuMeta.cpuMultiThread != null) ? cpuMeta.cpuMultiThread : 5;
+    renderStars(document.querySelector('[data-cpu-stat="speed"]'),   speed);
+    renderStars(document.querySelector('[data-cpu-stat="mt"]'),      mt);
+    renderStars(document.querySelector('[data-cpu-stat="mthread"]'), mthread);
+    var ctxCpuEl = document.querySelector('[data-cpu-stat="ctx"]');
+    var coresEl  = document.querySelector('[data-cpu-stat="cores"]');
+    if (ctxCpuEl) ctxCpuEl.textContent = (cpuMeta && (cpuMeta.specText || cpuMeta.name)) || '';
+    if (coresEl)  coresEl.textContent  = (cpuMeta && cpuMeta.coresLabel) || '';
+
+    // Inline GPU info card (inside GPU accordion body) — same star
+    // ratings as the sidebar panel plus Video memory, monitor ports and resolutions supported.
+    renderStars(document.querySelector('[data-gpu-stat="gfx"]'), gfx);
+    renderNumber(document.querySelector('[data-gpu-stat="ai"]'), ai);
+    var ctxGpuEl = document.querySelector('[data-gpu-stat="ctx"]');
+    var vramEl   = document.querySelector('[data-gpu-stat="vram"]');
+    var portsEl  = document.querySelector('[data-gpu-stat="ports"]');
+    var resEl  = document.querySelector('[data-gpu-stat="res"]');
+    if (ctxGpuEl) ctxGpuEl.textContent = (gpuMeta && (gpuMeta.gpuLabel || gpuMeta.name)) || '';
+    if (vramEl)   vramEl.textContent   = (gpuMeta && gpuMeta.vram) || '';
+    if (portsEl)  portsEl.textContent  = (gpuMeta && gpuMeta.outputs) || '';
+    if (resEl)  resEl.textContent  = (gpuMeta && gpuMeta.resolutions) || '';
+  }
+  // ------- Summary list -------
+  function renderSummary() {
+    var listEl = document.querySelector('[data-summary-list]');
+    if (!listEl) return;
+    var html = '';
+    rows.forEach(function(row){
+      var group = row.dataset.group;
+      var labelText = row.dataset.shortLabel;
+      if (!labelText) {
+        var lbl = row.querySelector('.cfg-row__label');
+        labelText = lbl ? lbl.textContent.replace(/^\d+/, '').trim() : group;
+      }
+      var s = state[group] || { name: '', delta: 0 };
+      var priCls  = s.delta > 0 ? 'pri inc' : 'pri';
+      var priText = s.delta > 0 ? '+ £' + fmt0(s.delta) : 'Inc.';
+      var displayedName = (s.meta && s.meta.name) ? s.meta.name : decodeHtml(s.name);
+      if (displayedName && displayedName.trim().toLowerCase() === 'none') return;
+      html += '<li>' +
+                '<span class="lbl">' + labelText + '</span>' +
+                '<span class="val">' + displayedName + '</span>' +
+                '<span class="' + priCls + '">' + priText + '</span>' +
+              '</li>';
+    });
+    listEl.innerHTML = html;
+  }
+
+  // ------- Full specification (live-updating spec table) -------
+  // Reads each option's meta.specKey / specText to populate the
+  // matching [data-spec="<key>"] cell. CPU and GPU options can also
+  // carry derived-component fields (cooler/mobo/fans on CPU, psu on
+  // GPU) which fill the auto-upgrade rows. The "Your build" line and
+  // build-summary prices are updated alongside.
+  function setSpecVal(key, value, isUpgraded, hideRow) {
+    var el = document.querySelector('[data-spec="' + key + '"]');
+    if (!el) return;
+    var row = el.closest('.spec-row');
+    if (hideRow) {
+      if (row) row.hidden = true;
+      return;
+    }
+    if (row) row.hidden = false;
+    el.textContent = value;
+    el.classList.toggle('is-upgraded', !!isUpgraded);
+  }
+  function renderFullSpec(total) {
+    // Optional rows (wifi/bluetooth/office/backup/extras) start each
+    // render hidden — they're only re-shown when a non-skip option is
+    // currently selected for that key.
+    document.querySelectorAll('.spec-row[data-spec-optional]').forEach(function(r){ r.hidden = true; });
+
+    Object.keys(state).forEach(function(g){
+      var s = state[g], m = s && s.meta;
+      if (!m) return;
+      // specRows: { key: text, ... } for one option that drives multiple
+      // spec rows (e.g. a "Wifi 6 with Bluetooth" combo card).
+      if (m.specRows) {
+        Object.keys(m.specRows).forEach(function(k){
+          if (m.specSkip) setSpecVal(k, '', false, true);
+          else            setSpecVal(k, m.specRows[k], false, false);
+        });
+        return;
+      }
+      if (!m.specKey) return;
+      if (m.specSkip) { setSpecVal(m.specKey, '', false, true); return; }
+      var text = m.specText || m.name || decodeHtml(s.name);
+      setSpecVal(m.specKey, text, false, false);
+    });
+
+    var cpu = cpuState() && cpuState().meta;
+    if (cpu) {
+      if (cpu.cooler) setSpecVal('cooler', cpu.cooler, !!cpu.coolerUpgraded);
+      if (cpu.mobo)   setSpecVal('mobo',   cpu.mobo,   !!cpu.moboUpgraded);
+    }
+    var gpu = gpuState() && gpuState().meta;
+    if (gpu) {
+      if (gpu.psu) setSpecVal('psu', gpu.psu, !!gpu.psuUpgraded);
+      if (gpu.mobo)   setSpecVal('mobo',   gpu.mobo,   !!gpu.moboUpgraded);
+    }
+
+    var ram = ramState() && ramState().meta;
+    var storage = (function(){
+      for (var k in state) {
+        if (state.hasOwnProperty(k) && state[k].meta && state[k].meta.specKey === 'storage') return state[k].meta;
+      }
+      return null;
+    })();
+    var os = (function(){
+      for (var k in state) {
+        if (state.hasOwnProperty(k) && state[k].meta && state[k].meta.specKey === 'os') return state[k].meta;
+      }
+      return null;
+    })();
+
+    var lineParts = [];
+    if (cpu) lineParts.push((cpu.name || '').replace(/^Intel\s+/, ''));
+    if (ram && (ram.ramShort || ram.name)) lineParts.push(ram.ramShort || ram.name);
+    if (storage && (storage.storageShort || storage.name)) lineParts.push(storage.storageShort || storage.name);
+    if (gpu && gpu.screens) lineParts.push(gpu.screens + ' screens');
+    if (os && os.name) lineParts.push(os.name);
+    var lineEl = document.querySelector('[data-build-line]');
+    if (lineEl) lineEl.textContent = lineParts.filter(Boolean).join(' · ');
+
+    var exEl  = document.querySelector('[data-build-ex]');
+    var incEl = document.querySelector('[data-build-inc]');
+    if (exEl)  exEl.textContent  = fmt0(total);
+    if (incEl) incEl.textContent = fmt2(total * (1 + VAT_RATE));
+  }
+
+  // ------- Recalc + totals -------
+  function recalc() {
+    var total = BASE_EX;
+    Object.keys(state).forEach(function(g){ total += state[g].delta || 0; });
+
+    var totalExEl  = document.querySelector('[data-total-ex]');
+    var totalIncEl = document.querySelector('[data-total-inc]');
+    var stickyEl   = document.querySelector('[data-sticky-price]');
+    if (totalExEl)  totalExEl.textContent  = fmt0(total);
+    if (totalIncEl) totalIncEl.textContent = fmt2(total * (1 + VAT_RATE));
+    if (stickyEl)   stickyEl.textContent   = fmt0(total);
+
+    renderSummary();
+    updateImpact();
+    renderFullSpec(total);
+  }
+
+  // ------- Wire up clicks on option buttons -------
+  document.querySelectorAll('.cfg-row .cfg-option').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var row   = btn.closest('.cfg-row');
+      if (!row) return;
+      var group = row.dataset.group;
+      row.querySelectorAll('.cfg-option').forEach(function(b){ b.classList.remove('is-selected'); });
+      btn.classList.add('is-selected');
+      var meta = metaFor(btn.dataset.idoptoptgrp);
+      state[group] = {
+        name:        btn.dataset.name,
+        delta:       parseInt(btn.dataset.delta || '0', 10),
+        idoptoptgrp: btn.dataset.idoptoptgrp,
+        meta:        meta
+      };
+      var selectedEl = row.querySelector('[data-selected]');
+      if (selectedEl) selectedEl.textContent = (meta && meta.name) ? meta.name : btn.dataset.name;
+      var hidden = row.querySelector('input[type="hidden"][name^="idOption"]');
+      if (hidden) hidden.value = btn.dataset.idoptoptgrp;
+      recalc();
+    });
+  });
+
+  // Initial paint
+  recalc();
+
+  // ------- Spec-panel "Add to basket" submits the configurator form -------
+  var buildSubmit = document.querySelector('[data-build-submit]');
+  var cfgForm     = document.getElementById('cfgForm');
+  if (buildSubmit && cfgForm) {
+    buildSubmit.addEventListener('click', function(){ cfgForm.submit(); });
+  }
+
+  // ------- Gallery thumbs -> main image -------
+  var thumbs = document.querySelectorAll('.pd-thumb[data-img]');
+  var main   = document.getElementById('pdMainImg');
+  if (main) {
+    thumbs.forEach(function(t){
+      t.addEventListener('click', function(){
+        document.querySelectorAll('.pd-thumb.is-active').forEach(function(x){ x.classList.remove('is-active'); });
+        t.classList.add('is-active');
+        main.src = t.dataset.img;
+      });
+    });
+  }
+
+  // ------- Sticky CTA visibility -------
+  var sticky    = document.getElementById('stickyCta');
+  var hero      = document.querySelector('.pd-hero');
+  var footerEl  = document.querySelector('footer');
+  if (sticky && hero && footerEl) {
+    function onScroll(){
+      var y = window.scrollY || window.pageYOffset;
+      var heroBottom     = hero.getBoundingClientRect().bottom + y;
+      var footerTop      = footerEl.getBoundingClientRect().top + y;
+      var viewportBottom = y + window.innerHeight;
+      if (y > heroBottom + 120 && viewportBottom < footerTop) sticky.classList.add('visible');
+      else                                                    sticky.classList.remove('visible');
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+})();
+</script>
+
+<!--#include file="footer_wrapper.asp"-->

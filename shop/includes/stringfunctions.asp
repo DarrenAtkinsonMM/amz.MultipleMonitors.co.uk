@@ -1,13 +1,27 @@
 <%
 '// Get Domain from URL
-Function getDomainFromURL(url) 
-    If instr(url, "//") > 0 Then 
-        urlParts = split(url,"/") 
-        getDomainFromURL = urlParts(2) 
-    Else 
-        getDomainFromURL = Request.ServerVariables("HTTP_HOST") 
-    End If  
-End Function 
+Function getDomainFromURL(url)
+    If instr(url, "//") > 0 Then
+        urlParts = split(url,"/")
+        getDomainFromURL = urlParts(2)
+    Else
+        getDomainFromURL = Request.ServerVariables("HTTP_HOST")
+    End If
+End Function
+
+'// 2026 redesign â€” friendly-URL slug validator. Allowed: a-z A-Z 0-9 - _
+Function mmSlugIsSafe(s)
+    Dim i, c
+    mmSlugIsSafe = True
+    If Len(s) = 0 Then mmSlugIsSafe = False : Exit Function
+    For i = 1 To Len(s)
+        c = Mid(s, i, 1)
+        If Not ((c >= "a" And c <= "z") Or (c >= "A" And c <= "Z") _
+             Or (c >= "0" And c <= "9") Or c = "-" Or c = "_") Then
+            mmSlugIsSafe = False : Exit Function
+        End If
+    Next
+End Function
 
 
 '// START: NEW FILTER MODULE
@@ -164,7 +178,7 @@ end function
 
 '[ClearHTMLTags2]
 
-'Coded by Jóhann Haukur Gunnarsson
+'Coded by Jï¿½hann Haukur Gunnarsson
 'joi@innn.is
 
 '	Purpose: This function clears all HTML tags from a string using Regular Expressions.
@@ -199,9 +213,9 @@ function ClearHTMLTags2(strHTML2, intWorkFlow2)
 		strTagLess2=replace(strTagLess2,"</P>"," ")
 		strTagLess2=replace(strTagLess2,vbcrlf," ")
 		strTagLess2=replace(strTagLess2,"&nbsp;"," ")
-		strTagLess2=replace(strTagLess2,"™","&trade;")
-		strTagLess2=replace(strTagLess2,"©","&copy;")
-		strTagLess2=replace(strTagLess2,"®","&reg;")
+		strTagLess2=replace(strTagLess2,"ï¿½","&trade;")
+		strTagLess2=replace(strTagLess2,"ï¿½","&copy;")
+		strTagLess2=replace(strTagLess2,"ï¿½","&reg;")
 		strTagLess2=trim(strTagLess2)
 		do while instr(strTagLess2,"  ")>0
 			strTagLess2=replace(strTagLess2,"  "," ")
@@ -640,9 +654,9 @@ Function pcf_RestoreCharacters(UserInput)
 	Dim tempStr
 	tempStr=UserInput
 	If tempStr<>"" AND NOT isNULL(tempStr) Then
-		tempStr=replace(tempStr,"&trade;","™")
-		tempStr=replace(tempStr,"&copy;","©")
-		tempStr=replace(tempStr,"&reg;","®")
+		tempStr=replace(tempStr,"&trade;","ï¿½")
+		tempStr=replace(tempStr,"&copy;","ï¿½")
+		tempStr=replace(tempStr,"&reg;","ï¿½")
 		pcf_RestoreCharacters=tempStr
 	Else
 		pcf_RestoreCharacters=tempStr
@@ -653,9 +667,9 @@ End Function
 Public Function pcf_SaveHTMLField(UserInput)
 	UserInput=replace(UserInput, "'", "''") 
 	If UserInput<>"" And Not isNull(UserInput) Then		
-		UserInput=replace(UserInput,"™","&trade;")
-		UserInput=replace(UserInput,"©","&copy;")
-		UserInput=replace(UserInput,"®","&reg;")
+		UserInput=replace(UserInput,"ï¿½","&trade;")
+		UserInput=replace(UserInput,"ï¿½","&copy;")
+		UserInput=replace(UserInput,"ï¿½","&reg;")
 	End If   
     pcf_SaveHTMLField=UserInput
 End Function
@@ -668,9 +682,9 @@ Function pcf_ReplaceCharacters(UserInput)
 	Dim tempStr
 	tempStr=removeReplaceSQ(UserInput) '// Sanitize UserInput
 	If tempStr<>"" And Not isNull(tempStr) Then		
-		tempStr=replace(tempStr,"™","&trade;")
-		tempStr=replace(tempStr,"©","&copy;")
-		tempStr=replace(tempStr,"®","&reg;")
+		tempStr=replace(tempStr,"ï¿½","&trade;")
+		tempStr=replace(tempStr,"ï¿½","&copy;")
+		tempStr=replace(tempStr,"ï¿½","&reg;")
 		pcf_ReplaceCharacters=tempStr
 	Else
 		pcf_ReplaceCharacters=tempStr

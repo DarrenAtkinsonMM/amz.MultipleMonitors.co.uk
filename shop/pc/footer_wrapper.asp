@@ -84,7 +84,6 @@
 <%
 call closeDB()
 %>
-<a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
 	<!-- Core JavaScript Files -->
 <%
 'if not pcStrPageName = "OnePageCheckout.asp" then]
@@ -104,7 +103,7 @@ else
 	<script src="/js/wow.min.js"></script>
 	<script src="/js/jquery.scrollTo.js"></script>
 	<script src="/js/ekko-lightbox.min.js"></script>
-    <script src="/js/custom.js"></script>
+    
 <%
 end if
 %>

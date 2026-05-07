@@ -106,7 +106,7 @@
 <file name="facebookLO.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="130959110040000000" remote="130959110040000000" Dst="2" />
 <file name="FedExWebServices.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="131932041060000000" remote="131932041060000000" Dst="2" />
 <file name="FedExWebServicesSaturday.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="131058567320000000" remote="131058567320000000" Dst="2" />
-<file name="footer_wrapper.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134214288683868762" remote="134214289790000000" Dst="2" />
+<file name="footer_wrapper.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134225539307642852" remote="134225539060000000" Dst="2" />
 <file name="getFooter.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="130959110040000000" remote="130959110040000000" Dst="2" />
 <file name="getHeader.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="130959110040000000" remote="130959110040000000" Dst="2" />
 <file name="ggg_addEPtocart.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="131097905940000000" remote="131097905940000000" Dst="2" />
@@ -513,7 +513,7 @@
 <file name="viewPrd-Computers.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134123676420000000" remote="134123676420000000" Dst="2" />
 <file name="viewPrd-Monitors.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="132055863000000000" remote="132055863000000000" Dst="2" />
 <file name="viewPrd-Stands.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="133740732540000000" remote="133740732540000000" Dst="2" />
-<file name="viewPrd-TraderPC.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134183936830000000" remote="134183936830000000" Dst="2" />
+<file name="viewPrd-TraderPC.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134226300571798499" remote="134226300760000000" Dst="2" />
 <file name="viewPrd-TraderProPC.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134183941300000000" remote="134183941300000000" Dst="2" />
 <file name="viewPrd.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="132875200420000000" remote="132875200420000000" Dst="2" />
 <file name="viewPrdC.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="131818395000000000" remote="131818395000000000" Dst="2" />
@@ -533,11 +533,13 @@
 <file name="inc_darrenCTA.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134213372797979956" remote="134213378430000000" Dst="2" />
 <file name="inc_firmsStrip.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134213372670907887" remote="134213378430000000" Dst="2" />
 <file name="inc_trustStripTrader.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134213372576750334" remote="134213378430000000" Dst="2" />
-<file name="viewPrd-TraderPC-v2.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134225473020840951" remote="134225474280000000" Dst="2" />
 <file name="inc_bundleContext.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134213409776499293" remote="134213424370000000" Dst="2" />
-<file name="viewPrd-TraderPC-bundle-v2.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134213412907691977" remote="134213424530000000" Dst="2" />
 <file name="bundlebuilder.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134215181119596515" remote="134215180970000000" Dst="2" />
 <file name="inc_callModal.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134214408607335513" remote="134214409740000000" Dst="2" />
 <file name="callback_submit.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134214324986478275" remote="134214325030000000" Dst="2" />
 <file name="CUSTOMCAT-tradingcomputers-old.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134214994091640004" remote="134215012360000000" Dst="2" />
+<file name="viewPrd-TraderPC-bundle.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134226315761246914" remote="134226319180000000" Dst="2" />
+<file name="viewPrdRouter.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134226414065390343" remote="134226415870000000" Dst="2" />
+<file name="viewprd-stand-v2.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134226415541697019" remote="134226415870000000" Dst="2" />
+<file name="viewprd-monitor-v2.asp" server="18.130.132.39//C:/inetpub/wwwroot/amz.multiplemonitors.co.uk/" local="134226433863144165" remote="134226433610000000" Dst="2" />
 </dwsync>
