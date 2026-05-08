@@ -59,7 +59,8 @@
       "Bash(Get-ChildItem -Path \"c:\\\\Private\\\\Sites\\\\amz.MultipleMonitors.co.uk\\\\shop\\\\pc\" -Filter \"inc_*.asp\")",
       "Bash(Select-Object Name)",
       "Bash(Get-ChildItem -Path 'c:\\\\Private\\\\Sites\\\\amz.MultipleMonitors.co.uk\\\\js\\\\products\\\\' -Filter '*traderpc*')",
-      "PowerShell(\\(Get-Content 'c:\\\\Private\\\\Sites\\\\amz.MultipleMonitors.co.uk\\\\js\\\\products\\\\traderpc-v2.js' | Measure-Object -Line\\).Lines)"
+      "PowerShell(\\(Get-Content 'c:\\\\Private\\\\Sites\\\\amz.MultipleMonitors.co.uk\\\\js\\\\products\\\\traderpc-v2.js' | Measure-Object -Line\\).Lines)",
+      "Bash(Select-String \"pcProductsImages|pcProdImage_Url|pcProdImage_LargeUrl\" -List)"
     ]
   }
 }

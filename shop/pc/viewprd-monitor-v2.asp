@@ -22,14 +22,16 @@
 ' concurrent tab overwriting the session var cannot corrupt
 ' this page.
 '
-' Phase 1 scope — see /we-need-to-build-misty-hopper.md:
+' Per-monitor copy split:
 '   * Name, SKU, price, main image and short description come
 '     from the products table.
-'   * Per-monitor variant copy (h1, gallery thumbs, spec
-'     tables) is hardcoded for the 27" Iiyama for now. Other
-'     monitors will load dynamic header data but use this copy
-'     until follow-up work pulls per-monitor specs from custom
-'     fields or a new pcMonitorSpecs table.
+'   * Eyebrow line, inclusion-strip warranty/dispatch text and
+'     the two spec tables come from shop/includes/monitorSpecs.asp,
+'     keyed by SKU. Page falls back to hardcoded Iiyama defaults
+'     when a SKU isn't registered there.
+'   * Gallery thumbs come from pcProductsImages (row 0 = main
+'     product image, rows 1+ ordered by pcProdImage_Order).
+'     Click swaps hero to pcProdImage_LargeUrl.
 ' ============================================================
 %>
 <% Response.Buffer = True %>
@@ -40,19 +42,20 @@ pcStrPageName = "viewprd-monitor-v2.asp"
 %>
 <!--#include file="pcStartSession.asp"-->
 <!--#include file="prv_getSettings.asp"-->
+<!--#include file="../includes/monitorSpecs.asp"-->
 <%
 Const MM_VAT_RATE = 1.2
 
 ' ------------------------------------------------------------
 ' 1. Product base row — slug-first, single indexed SELECT
 ' ------------------------------------------------------------
-Dim mmIdProduct, mmName, mmTopDesc, mmSku, mmBasePriceInc, mmImageUrl, mmSmallImageUrl
+Dim mmIdProduct, mmName, mmTopDesc, mmSku, mmBasePriceInc, mmImageUrl, mmSmallImageUrl, mmLargeImageUrl
 Dim mmSDesc, mmPcUrl, mmAdditionalImages, mmAltTagText, mmStock
 mmIdProduct = 0
 mmName = ""              : mmSku = ""              : mmBasePriceInc = 0
-mmImageUrl = ""          : mmSmallImageUrl = ""    : mmSDesc = ""
-mmPcUrl = ""             : mmAdditionalImages = "" : mmAltTagText = ""
-mmStock = 0              : mmTopDesc = ""
+mmImageUrl = ""          : mmSmallImageUrl = ""    : mmLargeImageUrl = ""
+mmSDesc = ""             : mmPcUrl = ""            : mmAdditionalImages = ""
+mmAltTagText = ""        : mmStock = 0             : mmTopDesc = ""
 
 Dim mmSlug, mmQsIdProduct, mmWhere
 mmSlug        = Trim(Request.QueryString("slug") & "")
@@ -67,7 +70,7 @@ Else
 End If
 
 Dim mmPrdSql, mmPrdRs
-mmPrdSql = "SELECT idProduct, description, detailstop, sku, price, imageUrl, smallImageUrl, " & _
+mmPrdSql = "SELECT idProduct, description, detailstop, sku, price, imageUrl, smallImageUrl, largeImageURL, " & _
            "       sDesc, pcUrl, pcProd_AdditionalImages, " & _
            "       pcProd_AltTagText, stock " & _
            "FROM products " & _
@@ -96,6 +99,7 @@ mmSku              = mmPrdRs("sku") & ""
 mmBasePriceInc     = CDbl(mmPrdRs("price"))
 mmImageUrl         = mmPrdRs("imageUrl") & ""
 mmSmallImageUrl    = mmPrdRs("smallImageUrl") & ""
+mmLargeImageUrl    = mmPrdRs("largeImageURL") & ""
 mmSDesc            = mmPrdRs("sDesc") & ""
 mmTopDesc          = mmPrdRs("detailstop") & ""
 mmPcUrl            = mmPrdRs("pcUrl") & ""
@@ -112,6 +116,13 @@ Session("idProductRedirect") = mmIdProduct
 Dim mmBasePriceEx
 mmBasePriceEx = mmBasePriceInc / MM_VAT_RATE
 
+' Per-monitor reference content (eyebrow, inclusion strip,
+' spec tables) — keyed by SKU. Returns Nothing if SKU isn't
+' registered in monitorSpecs.asp; mmMetaStr / spec-table loops
+' fall back to hardcoded defaults in that case.
+Dim mmMeta
+Set mmMeta = mmGetMonitorMeta(mmSku)
+
 ' ------------------------------------------------------------
 ' 2. Helpers
 ' ------------------------------------------------------------
@@ -121,19 +132,51 @@ End Function
 Function mmFormatMoney0(ByVal v)
   mmFormatMoney0 = FormatNumber(v, 0, -1, 0, -1)
 End Function
+Function mmMetaStr(ByVal key, ByVal fallback)
+  If Not mmMeta Is Nothing Then
+    If mmMeta.Exists(key) Then
+      mmMetaStr = mmMeta(key)
+      Exit Function
+    End If
+  End If
+  mmMetaStr = fallback
+End Function
+' Returns True only when mmMeta is a real Dictionary AND has `key`.
+' Standalone helper because VBScript's `And` does not short-circuit —
+' inlining `Not mmMeta Is Nothing And mmMeta.Exists(...)` raises
+' "Object variable not set" when mmMeta is Nothing.
+Function mmMetaHas(ByVal key)
+  mmMetaHas = False
+  If Not mmMeta Is Nothing Then
+    If mmMeta.Exists(key) Then mmMetaHas = True
+  End If
+End Function
 
 Dim mmBasePriceExDisp, mmBasePriceIncDisp
 mmBasePriceExDisp  = mmFormatMoney0(mmBasePriceEx)
 mmBasePriceIncDisp = mmFormatMoney(mmBasePriceInc)
 
-' Resolve main image with fallbacks (matches viewprd-stand-v2.asp)
+' Resolve main hero image: large > standard > small > placeholder.
 Dim mmMainImgSrc
-If mmImageUrl <> "" Then
+If mmLargeImageUrl <> "" Then
+  mmMainImgSrc = "/shop/pc/catalog/" & mmLargeImageUrl
+ElseIf mmImageUrl <> "" Then
   mmMainImgSrc = "/shop/pc/catalog/" & mmImageUrl
 ElseIf mmSmallImageUrl <> "" Then
   mmMainImgSrc = "/shop/pc/catalog/" & mmSmallImageUrl
 Else
   mmMainImgSrc = "/shop/pc/catalog/no_image.gif"
+End If
+
+' Row-0 thumb tile uses the lighter image so we don't load the
+' heavy hero asset twice on first paint.
+Dim mmMainThumbSrc
+If mmImageUrl <> "" Then
+  mmMainThumbSrc = "/shop/pc/catalog/" & mmImageUrl
+ElseIf mmSmallImageUrl <> "" Then
+  mmMainThumbSrc = "/shop/pc/catalog/" & mmSmallImageUrl
+Else
+  mmMainThumbSrc = mmMainImgSrc
 End If
 
 ' Canonical URL + absolute image URL for schema.org / share targets
@@ -144,6 +187,54 @@ Else
   mmCanonicalUrl = "https://www.multiplemonitors.co.uk/shop/pc/viewprd-monitor-v2.asp?idProduct=" & mmIdProduct
 End If
 mmCanonicalImg = "https://www.multiplemonitors.co.uk" & mmMainImgSrc
+
+' ------------------------------------------------------------
+' 2b. Gallery thumbs — row 0 = main product image,
+'     rows 1+ = pcProductsImages ordered by pcProdImage_Order.
+'     Empty result set is valid: only row 0 renders.
+' ------------------------------------------------------------
+Dim mmGalSql, mmGalRs, mmThumbs(), mmThumbCount, i
+Dim mmThumbU, mmThumbL, mmThumbA
+
+mmGalSql = "SELECT pcProdImage_Url, pcProdImage_LargeUrl, pcProdImage_AltTagText " & _
+           "FROM pcProductsImages WHERE idProduct = " & mmIdProduct & _
+           " ORDER BY pcProdImage_Order"
+Set mmGalRs = Server.CreateObject("ADODB.Recordset")
+On Error Resume Next
+mmGalRs.Open mmGalSql, connTemp, adOpenStatic, adLockReadOnly, adCmdText
+If err.number <> 0 Then
+  On Error Goto 0
+  call LogErrorToDatabase()
+  Set mmGalRs = Nothing
+  call closeDB()
+  Response.Redirect "techErr.asp?err=" & pcStrCustRefID
+End If
+On Error Goto 0
+
+mmThumbCount = mmGalRs.RecordCount + 1   ' +1 for synthesised row 0
+ReDim mmThumbs(mmThumbCount - 1, 2)       ' cols: 0=thumbSrc, 1=largeSrc, 2=alt
+
+mmThumbs(0, 0) = mmMainThumbSrc
+mmThumbs(0, 1) = mmMainImgSrc
+mmThumbs(0, 2) = mmName
+
+i = 1
+Do While Not mmGalRs.EOF
+  mmThumbU = mmGalRs("pcProdImage_Url") & ""
+  mmThumbL = mmGalRs("pcProdImage_LargeUrl") & ""
+  mmThumbA = Trim(mmGalRs("pcProdImage_AltTagText") & "")
+  mmThumbs(i, 0) = "/shop/pc/catalog/" & mmThumbU
+  If mmThumbL <> "" Then
+    mmThumbs(i, 1) = "/shop/pc/catalog/" & mmThumbL
+  Else
+    mmThumbs(i, 1) = mmThumbs(i, 0)   ' fall back to small if no large
+  End If
+  If mmThumbA = "" Then mmThumbA = mmName
+  mmThumbs(i, 2) = mmThumbA
+  i = i + 1
+  mmGalRs.MoveNext
+Loop
+mmGalRs.Close : Set mmGalRs = Nothing
 
 ' ------------------------------------------------------------
 ' 3. Page-level metadata consumed by inc_headerV5.asp
@@ -170,7 +261,7 @@ topmenuArrays = " class=""is-trader"""
   "brand": { "@type": "Brand", "name": "Iiyama" },
   "manufacturer": { "@type": "Organization", "name": "Iiyama" },
   "description": "<%= Replace(Replace(mmSDesc, """", "\"""), vbCrLf, " ") %>",
-  "image": [ "<%= mmCanonicalImg %>" ],
+  "image": [<% For i = 0 To UBound(mmThumbs, 1) %>"https://www.multiplemonitors.co.uk<%= mmThumbs(i, 1) %>"<% If i < UBound(mmThumbs, 1) Then %>,<% End If %><% Next %>],
   "offers": {
     "@type": "Offer",
     "url": "<%= mmCanonicalUrl %>",
@@ -472,39 +563,21 @@ topmenuArrays = " class=""is-trader"""
           <% End If %>
         </div>
 
-        <%
-        ' TODO (phase-2): parse mmAdditionalImages (comma-separated)
-        ' to drive these thumbs dynamically. Hardcoded for the
-        ' 27" Iiyama mockup for now — all four thumbs reuse the
-        ' main image since per-monitor angles aren't wired yet.
-        %>
         <div class="pd-gallery__thumbs">
-          <div class="pd-thumb is-active"
-               data-img="<%= mmMainImgSrc %>"
-               title="Front view">
-            <img src="<%= mmMainImgSrc %>" alt="Front view of <%= Server.HTMLEncode(mmName) %>" />
+          <% For i = 0 To UBound(mmThumbs, 1) %>
+          <div class="pd-thumb<% If i = 0 Then %> is-active<% End If %>"
+               data-img="<%= mmThumbs(i, 1) %>"
+               title="<%= Server.HTMLEncode(mmThumbs(i, 2)) %>">
+            <img src="<%= mmThumbs(i, 0) %>"
+                 alt="<%= Server.HTMLEncode(mmThumbs(i, 2)) %>" />
           </div>
-          <div class="pd-thumb"
-               data-img="<%= mmMainImgSrc %>"
-               title="Three-quarter view">
-            <img src="<%= mmMainImgSrc %>" alt="Three-quarter view showing 2 mm frameless bezel" />
-          </div>
-          <div class="pd-thumb"
-               data-img="<%= mmMainImgSrc %>"
-               title="Rear inputs">
-            <img src="<%= mmMainImgSrc %>" alt="Rear view showing HDMI, DisplayPort and USB-C inputs" />
-          </div>
-          <div class="pd-thumb"
-               data-img="<%= mmMainImgSrc %>"
-               title="Height-adjust stand">
-            <img src="<%= mmMainImgSrc %>" alt="Height-adjustable stand with pivot and swivel" />
-          </div>
+          <% Next %>
         </div>
       </div>
 
       <!-- Buy-box column -->
       <aside class="pd-buybox reveal" style="transition-delay:.08s">
-        <div class="eyebrow">Monitor &middot; 27&Prime; Quad HD IPS</div>
+        <div class="eyebrow"><%= mmMetaStr("eyebrow", "Monitor &middot; 27&Prime; Quad HD IPS") %></div>
         <h1><%= mmName %></h1>
         <p class="pitch">
           <% If mmTopDesc <> "" Then %>
@@ -541,11 +614,11 @@ topmenuArrays = " class=""is-trader"""
           </div>
           <div class="item">
             <i class="fa fa-shield"></i>
-            <div><b>3-year warranty</b><small>Iiyama cover</small></div>
+            <div><b><%= mmMetaStr("inclWarrantyTitle", "3-year warranty") %></b><small><%= mmMetaStr("inclWarrantySub", "Iiyama cover") %></small></div>
           </div>
           <div class="item">
             <i class="fa fa-truck"></i>
-            <div><b>2-day dispatch</b><small>UK courier</small></div>
+            <div><b><%= mmMetaStr("inclDispatchTitle", "2-day dispatch") %></b><small><%= mmMetaStr("inclDispatchSub", "UK courier") %></small></div>
           </div>
         </div>
 
@@ -589,30 +662,49 @@ topmenuArrays = " class=""is-trader"""
 
       <div class="ya-specs__col">
         <div class="ya-specs__lbl">Display</div>
-        <h4>27&Prime; Iiyama ProLite XUB2792QSN</h4>
+        <h4><%= mmMetaStr("specDisplayHeading", "27&Prime; Iiyama ProLite XUB2792QSN") %></h4>
         <table class="ya-specs__table">
           <tbody>
+            <%
+            Dim mmRow, mmRows
+            If mmMetaHas("specDisplayRows") Then
+              mmRows = mmMeta("specDisplayRows")
+              For Each mmRow In mmRows
+                Response.Write "<tr><th>" & mmRow(0) & "</th><td>" & mmRow(1) & "</td></tr>" & vbCrLf
+              Next
+            Else
+            %>
             <tr><th>Manufacturer</th>   <td>Iiyama</td></tr>
             <tr><th>Model</th>          <td>ProLite XUB2792QSN</td></tr>
             <tr><th>Size</th>           <td>27&Prime; (27&Prime; diagonal)</td></tr>
             <tr><th>Resolution</th>     <td>2560 &times; 1440 (Quad HD)</td></tr>
-            <tr><th>Refresh rate</th>   <td>100 Hz</td></tr>
-            <tr><th>Response time</th>  <td>4 ms (GtG)</td></tr>
+            <tr><th>Refresh rate</th>   <td>60 Hz</td></tr>
+            <tr><th>Response time</th>  <td>5 ms (GtG)</td></tr>
             <tr><th>Panel type</th>     <td>IPS</td></tr>
+            <% End If %>
           </tbody>
         </table>
       </div>
 
       <div class="ya-specs__col">
         <div class="ya-specs__lbl">Connectivity &amp; build</div>
-        <h4>Ports, mounts &amp; what&rsquo;s in the box</h4>
+        <h4><%= mmMetaStr("specConnHeading", "Ports, mounts &amp; what&rsquo;s in the box") %></h4>
         <table class="ya-specs__table">
           <tbody>
+            <%
+            If mmMetaHas("specConnRows") Then
+              mmRows = mmMeta("specConnRows")
+              For Each mmRow In mmRows
+                Response.Write "<tr><th>" & mmRow(0) & "</th><td>" & mmRow(1) & "</td></tr>" & vbCrLf
+              Next
+            Else
+            %>
             <tr><th>Inputs</th>         <td>HDMI 1.4 &middot; DisplayPort 1.4 &middot; USB-C (65&nbsp;W) &middot; USB-B hub</td></tr>
             <tr><th>Bezel width</th>    <td>2 mm (three-side frameless)</td></tr>
             <tr><th>VESA mount</th>     <td>100 &times; 100</td></tr>
             <tr><th>Warranty</th>       <td>3-year manufacturer (Iiyama)</td></tr>
             <tr><th>Cables included</th><td>3&nbsp;m DisplayPort <em>or</em> HDMI &middot; UK power</td></tr>
+            <% End If %>
           </tbody>
         </table>
       </div>
