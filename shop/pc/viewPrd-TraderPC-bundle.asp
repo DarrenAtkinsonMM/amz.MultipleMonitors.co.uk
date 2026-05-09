@@ -102,98 +102,9 @@ End If
 mmOgRs.Close : Set mmOgRs = Nothing
 
 Dim mmMachineName : mmMachineName = mmName
-
-' ------------------------------------------------------------
-' 3. Sub: render one option-group row + its option buttons.
-'    (Identical to viewPrd-TraderPC-v2.asp.)
-' ------------------------------------------------------------
-Sub mmRenderOptionGroup(ByVal ogId, ByVal ogDesc, ByVal ogIndex)
-  Dim sql, rs, rows, count
-  count = 0
-  sql = "SELECT oog.idoptoptgrp, oog.price, oog.Wprice, oog.sortOrder, " & _
-        "       oog.InActive, o.idOption, o.optionDescrip " & _
-        "FROM options_optionsGroups oog " & _
-        "INNER JOIN options o ON oog.idOption = o.idOption " & _
-        "WHERE oog.idOptionGroup = " & ogId & " " & _
-        "  AND oog.idProduct = " & MM_PRODUCT_ID & " " & _
-        "  AND (oog.InActive = 0 OR oog.InActive IS NULL) " & _
-        "ORDER BY oog.sortOrder, oog.price, o.optionDescrip"
-
-  Set rs = Server.CreateObject("ADODB.Recordset")
-  rs.Open sql, connTemp, adOpenStatic, adLockReadOnly, adCmdText
-  If Not rs.EOF Then
-    rows  = rs.GetRows()
-    count = UBound(rows, 2) + 1
-  End If
-  rs.Close : Set rs = Nothing
-  If count = 0 Then Exit Sub
-
-  Dim priceCol
-  If Session("customerType") = 1 Then priceCol = 2 Else priceCol = 1
-
-  Dim firstPriceInc
-  firstPriceInc = CDbl(rows(priceCol, 0))
-
-  Dim firstDescrip, firstId
-  firstDescrip = rows(6, 0) & ""
-  firstId      = rows(0, 0)
-
-  Dim groupKey
-  groupKey = "g" & ogIndex
 %>
-  <div class="cfg-row" data-group="<%= groupKey %>">
-    <div class="cfg-row__head">
-      <div class="cfg-row__label"><span class="n"><%= ogIndex %></span><%= Server.HTMLEncode(ogDesc) %></div>
-      <div class="cfg-row__selected" data-selected><%= Server.HTMLEncode(firstDescrip) %></div>
-    </div>
-    <div class="cfg-options" role="radiogroup">
+<!--#include file="inc_traderPcConfigurator.asp"-->
 <%
-  Dim j, thisIdOptGrp, thisPriceInc, thisDescrip, deltaInc, deltaEx
-  For j = 0 To count - 1
-    thisIdOptGrp = rows(0, j)
-    thisPriceInc = CDbl(rows(priceCol, j))
-    thisDescrip  = rows(6, j) & ""
-    deltaInc = thisPriceInc - firstPriceInc
-    deltaEx  = CLng(Round(deltaInc / MM_VAT_RATE, 0))
-
-    Dim cls, priceTxt, priceCls
-    If j = 0 Then
-      cls = "cfg-option is-selected"
-    Else
-      cls = "cfg-option"
-    End If
-    If deltaEx <= 0 Then
-      priceTxt = "Included"
-      priceCls = "std"
-    Else
-      priceTxt = "+ &pound;" & deltaEx
-      priceCls = "inc"
-    End If
-%>
-      <button type="button" class="<%= cls %>"
-              data-name="<%= Server.HTMLEncode(thisDescrip) %>"
-              data-delta="<%= deltaEx %>"
-              data-idoptoptgrp="<%= thisIdOptGrp %>">
-        <span class="opt-name"><%= Server.HTMLEncode(thisDescrip) %></span>
-        <span class="opt-price <%= priceCls %>"><%= priceTxt %></span>
-      </button>
-<%
-  Next
-%>
-    </div>
-    <input type="hidden" name="idOption<%= ogIndex %>" value="<%= firstId %>">
-  </div>
-<%
-End Sub
-
-' Display helpers
-Function mmFormatMoney(ByVal v)
-  mmFormatMoney = FormatNumber(v, 2, -1, 0, -1)
-End Function
-Function mmFormatMoney0(ByVal v)
-  mmFormatMoney0 = FormatNumber(v, 0, -1, 0, -1)
-End Function
-
 Dim mmBasePriceExDisp, mmBasePriceIncDisp
 mmBasePriceExDisp  = mmFormatMoney0(mmBasePriceEx)
 mmBasePriceIncDisp = mmFormatMoney(mmBasePriceInc)
@@ -462,8 +373,8 @@ mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & m
 </section>
 
 <!-- ===================================================================
-     CONFIGURATOR - DB-driven option rows. Sidebar is the bundle
-     breakdown (.bp-sidebar), not the standalone PC summary.
+     CONFIGURATOR - accordion option rows (shared include) + hybrid
+     sidebar: PC selections list at top, bundle breakdown below.
      =================================================================== -->
 <section class="configurator" id="configure">
   <div class="container">
@@ -480,22 +391,25 @@ mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & m
       <!-- Options column -->
       <div class="cfg-options-wrap reveal">
 <%
-Dim mmI, mmOgId, mmOgDesc
+Dim mmI, mmOgId, mmOgDesc, mmOgShort, mmOgRaw, mmOgKindStr, mmOgHelpHtml
 For mmI = 0 To mmOgCount - 1
-  mmOgId   = mmOgRows(0, mmI)
-  mmOgDesc = mmOgRows(1, mmI) & ""
-  Call mmRenderOptionGroup(mmOgId, mmOgDesc, mmI + 1)
+  mmOgId       = mmOgRows(0, mmI)
+  mmOgRaw      = mmOgRows(1, mmI) & ""
+  mmOgDesc     = mmFriendlyOgName(mmOgRaw)
+  mmOgShort    = mmFriendlyOgShortName(mmOgRaw)
+  mmOgKindStr  = mmOgKind(mmOgRaw)
+  mmOgHelpHtml = mmOgHelp(mmOgRaw)
+  Call mmRenderOptionGroup(mmOgId, mmOgDesc, mmOgShort, mmI + 1, mmOgKindStr, mmOgHelpHtml)
 Next
 %>
       </div>
 
-      <!-- Bundle sidebar -->
-      <aside class="bp-sidebar reveal" style="transition-delay:.08s">
+      <!-- Hybrid sidebar: PC selections list + bundle breakdown -->
+      <aside class="cfg-summary reveal" style="transition-delay:.08s">
 
-        <div class="cfg-impact cfg-impact--cpu">
+        <div class="cfg-impact cfg-impact--system">
           <div class="cfg-impact__head">
-            <h5>CPU Impact</h5>
-            <span class="cfg-impact__ctx" data-ctx-cpu></span>
+            <h5>System Performance</h5>
           </div>
           <div class="cfg-impact__row">
             <span class="cfg-impact__lbl">CPU Speed</span>
@@ -505,24 +419,13 @@ Next
             <span class="cfg-impact__lbl">Multi-Tasking</span>
             <span class="cfg-impact__stars" data-rating="mt"></span>
           </div>
-        </div>
-
-        <div class="cfg-impact cfg-impact--gpu">
-          <div class="cfg-impact__head">
-            <h5>Graphics Impact</h5>
-            <span class="cfg-impact__ctx" data-ctx-gpu></span>
-          </div>
           <div class="cfg-impact__row">
             <span class="cfg-impact__lbl">Graphics Power</span>
             <span class="cfg-impact__stars" data-rating="gfx"></span>
           </div>
           <div class="cfg-impact__row">
-            <span class="cfg-impact__lbl">AI Performance</span>
-            <span class="cfg-impact__stars" data-rating="ai"></span>
-          </div>
-          <div class="cfg-impact__mon">
-            <div class="cfg-impact__mon-lbl">Supports simultaneously</div>
-            <ul class="cfg-impact__mon-list" data-mons></ul>
+            <span class="cfg-impact__lbl">Monitors Supported</span>
+            <span class="cfg-impact__val" data-rating="screens"></span>
           </div>
         </div>
 
@@ -532,6 +435,10 @@ Next
             <span class="tick"><i class="fa fa-circle" style="color:var(--up); font-size:8px;"></i>LIVE</span>
           </div>
 
+          <!-- PC selections list (driven by data-summary-list) -->
+          <ul class="cfg-summary__list" data-summary-list></ul>
+
+          <!-- Bundle 3-item breakdown -->
           <ul class="bp-items">
             <li>
               <span class="bp-items__ico"><i class="fa fa-cube"></i></span>
@@ -598,6 +505,11 @@ Next
               One delivery. Built to order, typically ships in 3&ndash;5 working days.
             </div>
           </div>
+
+          <a href="#full-spec" class="cfg-summary__speclink">
+            <i class="fa fa-list"></i>View full specification
+            <i class="fa fa-angle-down" aria-hidden="true"></i>
+          </a>
         </div>
       </aside>
 
@@ -606,7 +518,10 @@ Next
 </section>
 
 <!-- ===================================================================
-     FULL SPECIFICATION - live-updating PC spec + bundle build summary
+     FULL SPECIFICATION - live-updating PC spec (data-spec rows fed
+     by traderpc.js metadata) + bundle-aware rows + bundle build
+     summary. Rows with data-spec are populated by renderFullSpec()
+     in the IIFE below; rows without are static / always-included.
      =================================================================== -->
 <section class="full-spec" id="full-spec">
   <div class="container">
@@ -619,24 +534,33 @@ Next
 
     <div class="spec-full reveal">
       <div class="spec-full__grid">
-        <div class="spec-row"><span class="spec-row__lbl">Processor</span><span class="spec-row__val" data-spec="cpu">Intel i5 14400F &middot; 10C/16T</span></div>
-        <div class="spec-row"><span class="spec-row__lbl">CPU cooler</span><span class="spec-row__val" data-spec="cooler">be quiet! Pure Rock 2 silent tower</span></div>
-        <div class="spec-row"><span class="spec-row__lbl">Motherboard</span><span class="spec-row__val" data-spec="mobo">MSI PRO B760M-P DDR4</span></div>
-        <div class="spec-row"><span class="spec-row__lbl">Memory</span><span class="spec-row__val" data-spec="ram">16 GB DDR4 3200 &middot; Corsair Vengeance</span></div>
-        <div class="spec-row"><span class="spec-row__lbl">Graphics</span><span class="spec-row__val" data-spec="gpu">nVidia RTX A400 &middot; 4&nbsp;GB &middot; 4 screens</span></div>
-        <div class="spec-row"><span class="spec-row__lbl">Primary storage</span><span class="spec-row__val" data-spec="storage">500 GB Kingston NVMe &middot; M.2 &middot; 3,500&nbsp;MB/s read</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Processor</span><span class="spec-row__val" data-spec="cpu">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Motherboard</span><span class="spec-row__val" data-spec="mobo">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Memory</span><span class="spec-row__val" data-spec="ram">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Graphics</span><span class="spec-row__val" data-spec="gpu">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Primary storage</span><span class="spec-row__val" data-spec="storage">&mdash;</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Secondary Storage</span><span class="spec-row__val" data-spec="2nddrive">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">CPU cooler</span><span class="spec-row__val" data-spec="cooler">&mdash;</span></div>
         <div class="spec-row"><span class="spec-row__lbl">Case</span><span class="spec-row__val">Fractal Design Core 1100 &middot; sound-dampened</span></div>
-        <div class="spec-row"><span class="spec-row__lbl">Power supply</span><span class="spec-row__val" data-spec="psu">be quiet! Pure Power 12 500&thinsp;W &middot; 80+ Gold</span></div>
-        <div class="spec-row"><span class="spec-row__lbl">Case cooling</span><span class="spec-row__val" data-spec="fans">2&times; be quiet! Silent Wings 4 (140&thinsp;mm)</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Power supply</span><span class="spec-row__val" data-spec="psu">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Audio</span><span class="spec-row__val">8-channel HD audio &middot; on-board</span></div>
         <div class="spec-row"><span class="spec-row__lbl">Monitors</span><span class="spec-row__val"><%= mmBunMonCount %> &times; <%= Server.HTMLEncode(mmBunMonDispName) %></span></div>
         <div class="spec-row"><span class="spec-row__lbl">Stand</span><span class="spec-row__val"><%= Server.HTMLEncode(mmBunStandName) %> &middot; steel &middot; UK-manufactured</span></div>
         <div class="spec-row"><span class="spec-row__lbl">Cables</span><span class="spec-row__val"><%= mmBunMonCount %>&times; premium 3&thinsp;m DisplayPort &middot; included free</span></div>
-        <div class="spec-row"><span class="spec-row__lbl">Network</span><span class="spec-row__val">Gigabit Ethernet LAN &middot; Wi-Fi AX + Bluetooth (bundle)</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Network</span><span class="spec-row__val">Gigabit Ethernet LAN &middot; wired</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Wireless internet</span><span class="spec-row__val" data-spec="wifi">&mdash;</span></div>
         <div class="spec-row"><span class="spec-row__lbl">USB ports</span><span class="spec-row__val">3&times; USB 3.2 &middot; 3&times; USB 2.0 &middot; 1&times; USB-C</span></div>
-        <div class="spec-row"><span class="spec-row__lbl">Operating system</span><span class="spec-row__val" data-spec="os">Windows 11 Home &middot; pre-activated &middot; trader-tuned</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Operating system</span><span class="spec-row__val" data-spec="os">&mdash;</span></div>
         <div class="spec-row"><span class="spec-row__lbl">Included software</span><span class="spec-row__val">DisplayFusion multi-monitor &middot; installed &amp; licensed</span></div>
-        <div class="spec-row"><span class="spec-row__lbl">Warranty</span><span class="spec-row__val" data-spec="warranty">5-year hardware cover &middot; 1-year OnSite</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Microsoft Office</span><span class="spec-row__val" data-spec="office">&mdash;</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Input Devices</span><span class="spec-row__val" data-spec="inputs">&mdash;</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Optical Drive</span><span class="spec-row__val" data-spec="optical">&mdash;</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Speakers</span><span class="spec-row__val" data-spec="speakers">&mdash;</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">BlueTooth</span><span class="spec-row__val" data-spec="bluetooth">&mdash;</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Backup system</span><span class="spec-row__val" data-spec="backup">&mdash;</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Warranty</span><span class="spec-row__val" data-spec="warranty">&mdash;</span></div>
         <div class="spec-row"><span class="spec-row__lbl">Support</span><span class="spec-row__val">Lifetime phone &amp; remote support &middot; no clock</span></div>
+        <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Extras</span><span class="spec-row__val" data-spec="extras">&mdash;</span></div>
       </div>
     </div>
 
@@ -650,7 +574,7 @@ Next
     </div>
 
     <div class="build-cta reveal">
-      <button type="submit" class="btn btn-primary btn-lg">
+      <button type="button" class="btn btn-primary btn-lg" data-build-submit>
         <i class="fa fa-shopping-basket"></i>Add bundle to basket
       </button>
       <a href="#configure" class="btn btn-ghost">
@@ -752,41 +676,174 @@ Next
 
 </div><!-- /.mm-site -->
 
+<!-- Per-option metadata (friendly names, ratings, GPU/CPU specs).
+     Keyed by idoptoptgrp; loaded before the IIFE that reads it.
+     Same metadata file as viewprd-traderpc.asp - the PC inside the
+     bundle is the same idProduct 333 product. -->
+<script src="/js/products/traderpc.js"></script>
+
 <!-- ===================================================================
-     PAGE-SPECIFIC JS - configurator, gallery, sticky CTA, impact stars
+     PAGE-SPECIFIC JS - configurator + bundle math, full-spec live
+     updates, gallery thumbs, sticky CTA, copy-bundle-link toast.
      =================================================================== -->
 <script>
 (function(){
-  // Bundle constants - emitted from VBScript
-  var PC_BASE_EX      = <%= mmBasePriceEx %>;
-  var STAND_PRICE_EX  = <%= mmBunStandPriceEx %>;
-  var SCREENS_EX      = <%= mmBunMonSubtotalEx %>;
-  var BUNDLE_DISCOUNT = <%= mmBunDiscount %>;
-  var MON_COUNT       = <%= mmBunMonCount %>;
-  var VAT_RATE        = <%= MM_VAT_RATE - 1 %>;
-  // Savings shown in the marketing callout - discount plus the value
-  // of the free speakers + wifi + delivery (20+40+20=80).
-  var SAVINGS_FREEBIES = (BUNDLE_DISCOUNT > 0) ? 80 : 0;
+  // ------- Constants emitted from VBScript -------
+  var PC_BASE_EX       = <%= mmBasePriceEx %>;
+  var STAND_EX         = <%= mmBunStandPriceEx %>;
+  var SCREENS_EX       = <%= mmBunMonSubtotalEx %>;     // already includes ×count
+  var BUNDLE_DISCOUNT  = <%= mmBunDiscount %>;
+  var MON_COUNT        = <%= mmBunMonCount %>;
+  var VAT_RATE         = <%= MM_VAT_RATE - 1 %>;        // e.g. 0.20 for 20% VAT
+  // Savings shown in the marketing callout - bundle discount plus the
+  // value of the free wifi card (£40), free speakers (£20) and free
+  // UK delivery (£20).
+  var SAVINGS_EXTRAS   = (BUNDLE_DISCOUNT > 0) ? 80 : 0;
+
+  // ------- Option metadata lookup -------
+  // Per-option overrides + ratings live in /js/products/traderpc.js,
+  // keyed by idoptoptgrp. Missing ids return null and the page falls
+  // back to the DB description with default ratings.
+  function metaFor(id) {
+    var t = window.MM_OPTION_META;
+    return (t && id != null && t[id]) ? t[id] : null;
+  }
 
   // ------- State -------
   var rows = document.querySelectorAll('.cfg-row');
-  var state = {};
+  var state = {}; // group -> { name, delta, idoptoptgrp, meta }
 
   rows.forEach(function(row){
     var group = row.dataset.group;
     var sel   = row.querySelector('.cfg-option.is-selected') || row.querySelector('.cfg-option');
     if (sel) {
       state[group] = {
-        name:  sel.dataset.name,
-        delta: parseInt(sel.dataset.delta || '0', 10),
-        idoptoptgrp: sel.dataset.idoptoptgrp
+        name:        sel.dataset.name,
+        delta:       parseInt(sel.dataset.delta || '0', 10),
+        idoptoptgrp: sel.dataset.idoptoptgrp,
+        meta:        metaFor(sel.dataset.idoptoptgrp)
       };
     }
   });
 
+  // ------- Hide options flagged with meta.hide -------
+  // Removes the option button from the DOM. If the hidden option
+  // was the group's default-selected one, promote the next
+  // remaining option, refresh state, and overwrite the hidden
+  // idOption input so the cart posts what the user actually sees.
+  rows.forEach(function(row){
+    var group = row.dataset.group;
+    var hiddenInput = row.querySelector('input[type="hidden"][name^="idOption"]');
+    var lostSelection = false;
+    row.querySelectorAll('.cfg-option').forEach(function(btn){
+      var m = metaFor(btn.dataset.idoptoptgrp);
+      if (!m || m.hide !== true) return;
+      if (btn.classList.contains('is-selected')) lostSelection = true;
+      btn.parentNode.removeChild(btn);
+    });
+    if (lostSelection) {
+      var next = row.querySelector('.cfg-option');
+      if (next) {
+        next.classList.add('is-selected');
+        state[group] = {
+          name:        next.dataset.name,
+          delta:       parseInt(next.dataset.delta || '0', 10),
+          idoptoptgrp: next.dataset.idoptoptgrp,
+          meta:        metaFor(next.dataset.idoptoptgrp)
+        };
+        if (hiddenInput) hiddenInput.value = next.dataset.idoptoptgrp;
+      }
+    }
+  });
+
+  // ------- Apply friendly names from metadata -------
+  // Override the option-button label and the row's selected caption
+  // when MM_OPTION_META supplies a `name`. DB description stays as
+  // the data-name fallback for any option without a meta entry.
+  document.querySelectorAll('.cfg-option').forEach(function(btn){
+    var m = metaFor(btn.dataset.idoptoptgrp);
+    if (!m || !m.name) return;
+    var nameEl = btn.querySelector('.opt-name');
+    if (nameEl) nameEl.textContent = m.name;
+  });
+  rows.forEach(function(row){
+    var s = state[row.dataset.group];
+    if (!s || !s.meta || !s.meta.name) return;
+    var selectedEl = row.querySelector('[data-selected]');
+    if (selectedEl) selectedEl.textContent = s.meta.name;
+  });
+
+  // ------- GPU group: sort & bucket by meta.screens -------
+  // Reorders the GPU group's option buttons ascending by
+  // meta.screens, then by data-delta (price) within each bucket.
+  // Inserts a "{N} Screen Options" caption before each new bucket.
+  // Options without a screens value fall into an "Other Options"
+  // bucket at the end. No-op if no GPU option has screens set.
+  (function rearrangeGpuByScreens(){
+    var gpuGroup = null;
+    for (var k in state) {
+      if (!state.hasOwnProperty(k)) continue;
+      var sm = state[k] && state[k].meta;
+      if (sm && sm.gpuPower !== undefined) { gpuGroup = k; break; }
+    }
+    if (!gpuGroup) return;
+
+    var row = document.querySelector('.cfg-row[data-group="' + gpuGroup + '"]');
+    if (!row) return;
+    var optsWrap = row.querySelector('.cfg-options');
+    if (!optsWrap) return;
+
+    var buttons = Array.prototype.slice.call(optsWrap.querySelectorAll('.cfg-option'));
+    var hasScreens = buttons.some(function(b){
+      var m = metaFor(b.dataset.idoptoptgrp);
+      return m && typeof m.screens === 'number';
+    });
+    if (!hasScreens) return;
+
+    buttons.sort(function(a, b){
+      var ma = metaFor(a.dataset.idoptoptgrp) || {};
+      var mb = metaFor(b.dataset.idoptoptgrp) || {};
+      var sa = (typeof ma.screens === 'number') ? ma.screens : Infinity;
+      var sb = (typeof mb.screens === 'number') ? mb.screens : Infinity;
+      if (sa !== sb) return sa - sb;
+      return parseInt(a.dataset.delta || '0', 10) - parseInt(b.dataset.delta || '0', 10);
+    });
+
+    optsWrap.innerHTML = '';
+    var lastBucket = undefined;
+    buttons.forEach(function(btn){
+      var m = metaFor(btn.dataset.idoptoptgrp) || {};
+      var thisBucket = (typeof m.screens === 'number') ? m.screens : null;
+      if (thisBucket !== lastBucket) {
+        var heading = document.createElement('p');
+        heading.textContent = (thisBucket !== null) ? (thisBucket + ' Screen Options') : 'Other Options';
+        optsWrap.appendChild(heading);
+        lastBucket = thisBucket;
+      }
+      optsWrap.appendChild(btn);
+    });
+  })();
+
+  // ------- Accordion (one row open at a time) -------
+  document.querySelectorAll('.cfg-row__head').forEach(function(head){
+    head.addEventListener('click', function(){
+      var row = head.closest('.cfg-row');
+      var willOpen = !row.classList.contains('is-open');
+      document.querySelectorAll('.cfg-row.is-open').forEach(function(r){
+        r.classList.remove('is-open');
+        var h = r.querySelector('.cfg-row__head');
+        if (h) h.setAttribute('aria-expanded', 'false');
+      });
+      if (willOpen) {
+        row.classList.add('is-open');
+        head.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
   // ------- Formatting -------
-  function fmt0(n) { return n.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
-  function fmt2(n) { return n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function fmt0(n)  { return n.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
+  function fmt2(n)  { return n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
   function decodeHtml(s) {
     return String(s || '')
       .replace(/&middot;/g, '·')
@@ -797,197 +854,206 @@ Next
       .replace(/&quot;/g,  '"');
   }
 
-  // ------- Live performance ratings (substring matching) -------
-  function getCpuRating(name) {
-    if (/14900KF/.test(name)) return { speed: 5, mtBase: 5 };
-    if (/14700KF/.test(name)) return { speed: 5, mtBase: 4 };
-    if (/14600KF/.test(name)) return { speed: 4, mtBase: 3 };
-    return { speed: 3, mtBase: 3 };
-  }
-  function getRamBonus(name) {
-    if (/64\s?GB/i.test(name)) return 1;
-    if (/32\s?GB/i.test(name)) return 1;
-    return 0;
-  }
-  function getGpuRating(name) {
-    if (/RTX\s?5050/i.test(name)) {
-      return {
-        gfx: 5, ai: 5, label: 'RTX 5050 · 8 screens',
-        mons: [
-          { n: 8, res: '4K @ 120 Hz' },
-          { n: 8, res: '1440p @ 240 Hz' },
-          { n: 8, res: '1080p @ 360 Hz' }
-        ]
-      };
-    }
-    if (/Dual/i.test(name) && /A400/i.test(name)) {
-      return {
-        gfx: 3, ai: 2, label: 'Dual A400 · 8 screens',
-        mons: [
-          { n: 8, res: '4K @ 60 Hz' },
-          { n: 8, res: '1440p @ 144 Hz' },
-          { n: 8, res: '1080p @ 240 Hz' }
-        ]
-      };
-    }
-    return {
-      gfx: 3, ai: 2, label: 'RTX A400 · 4 screens',
-      mons: [
-        { n: 4, res: '4K @ 60 Hz' },
-        { n: 4, res: '1440p @ 144 Hz' },
-        { n: 4, res: '1080p @ 240 Hz' }
-      ]
-    };
-  }
-
   function renderStars(el, n) {
     if (!el) return;
-    var html = '';
-    for (var i = 1; i <= 5; i++) {
-      html += (i <= n) ? '★' : '<span class="faint">★</span>';
+    // Clamp to 0..10 then snap to nearest half so 6.4 and 6.6 both
+    // resolve cleanly to 6.5 / 6 respectively.
+    var clamped = Math.max(0, Math.min(10, Number(n) || 0));
+    var snapped = Math.round(clamped * 2) / 2;
+    var full    = Math.floor(snapped);
+    var half    = (snapped - full) === 0.5;
+    var html    = '';
+    for (var i = 1; i <= 10; i++) {
+      if (i <= full)                    html += '<span class="star">★</span>';
+      else if (i === full + 1 && half)  html += '<span class="star half">★</span>';
+      else                              html += '<span class="star faint">★</span>';
     }
-    var changed = el.dataset.prev !== String(n);
+    var changed = el.dataset.prev !== String(snapped);
     el.innerHTML = html;
     if (changed) {
       el.classList.remove('is-changed');
-      void el.offsetWidth;
+      void el.offsetWidth;                   // force reflow so animation retriggers
       el.classList.add('is-changed');
-      el.dataset.prev = String(n);
+      el.dataset.prev = String(snapped);
     }
   }
 
-  // Identify CPU / RAM / GPU groups by scanning option descriptions.
-  function findGroupByDescrip(test) {
+  function renderNumber(el, n) {
+    if (!el) return;
+    var val = (n == null || isNaN(Number(n))) ? '' : String(Number(n));
+    var changed = el.dataset.prev !== val;
+    el.textContent = val;
+    if (changed) {
+      el.classList.remove('is-changed');
+      void el.offsetWidth;                   // force reflow so animation retriggers
+      el.classList.add('is-changed');
+      el.dataset.prev = val;
+    }
+  }
+
+  // Identify the CPU/RAM/GPU groups by which meta field the
+  // currently-selected option carries. If no option in any group has
+  // meta yet, the helper returns null and updateImpact uses defaults.
+  function findGroupByMetaField(field) {
     for (var k in state) {
-      if (state.hasOwnProperty(k) && test(state[k].name)) return k;
+      if (!state.hasOwnProperty(k)) continue;
+      var m = state[k] && state[k].meta;
+      if (m && m[field] !== undefined) return k;
     }
     return null;
   }
-  function cpuState() {
-    var k = findGroupByDescrip(function(n){ return /\bi[579]\b|Intel\s+(Core|i[3-9])/i.test(n); });
-    return k ? state[k] : null;
-  }
-  function ramState() {
-    var k = findGroupByDescrip(function(n){ return /\d+\s?GB\b/i.test(n) && /DDR/i.test(n); });
-    if (!k) k = findGroupByDescrip(function(n){ return /\b(16|32|64)\s?GB\b/i.test(n); });
-    return k ? state[k] : null;
-  }
-  function gpuState() {
-    var k = findGroupByDescrip(function(n){ return /(RTX|A400|GPU|screen|monitor)/i.test(n); });
-    return k ? state[k] : null;
-  }
-
-  function shortLabel(name) {
-    var s = decodeHtml(name);
-    var dot = s.indexOf('·');
-    if (dot > -1) s = s.slice(0, dot).trim();
-    s = s.replace(/^Intel\s+/, '').replace(/\s+DDR[345]\s*\d*$/, '').trim();
-    return s.length > 28 ? s.slice(0, 26) + '…' : s;
-  }
+  function cpuState() { var k = findGroupByMetaField('cpuSpeed');   return k ? state[k] : null; }
+  function ramState() { var k = findGroupByMetaField('ramMtBonus'); return k ? state[k] : null; }
+  function gpuState() { var k = findGroupByMetaField('gpuPower');   return k ? state[k] : null; }
 
   function updateImpact() {
     var cpu = cpuState(), ram = ramState(), gpu = gpuState();
-    var cpuName = cpu ? cpu.name : '';
-    var ramName = ram ? ram.name : '';
-    var gpuName = gpu ? gpu.name : '';
+    var cpuMeta = cpu && cpu.meta;
+    var ramMeta = ram && ram.meta;
+    var gpuMeta = gpu && gpu.meta;
 
-    var cpuR = getCpuRating(decodeHtml(cpuName));
-    var ramB = getRamBonus(decodeHtml(ramName));
-    var speed = cpuR.speed;
-    var mt    = Math.min(5, cpuR.mtBase + ramB);
-    var gpuR  = getGpuRating(decodeHtml(gpuName));
+    var speed  = (cpuMeta && cpuMeta.cpuSpeed     != null) ? cpuMeta.cpuSpeed     : 5;
+    var mtBase = (cpuMeta && cpuMeta.cpuMultiTask != null) ? cpuMeta.cpuMultiTask : 5;
+    var ramBn  = (ramMeta && ramMeta.ramMtBonus   != null) ? ramMeta.ramMtBonus   : 0;
+    var mt     = Math.min(10, mtBase + ramBn);
+    var gfx    = (gpuMeta && gpuMeta.gpuPower     != null) ? gpuMeta.gpuPower     : 5;
+    var ai     = (gpuMeta && gpuMeta.gpuAi        != null) ? gpuMeta.gpuAi        : 4;
+    var screens = (gpuMeta && gpuMeta.screens     != null) ? gpuMeta.screens      : '';
 
     renderStars(document.querySelector('[data-rating="speed"]'), speed);
     renderStars(document.querySelector('[data-rating="mt"]'),    mt);
-    renderStars(document.querySelector('[data-rating="gfx"]'),   gpuR.gfx);
-    renderStars(document.querySelector('[data-rating="ai"]'),    gpuR.ai);
+    renderStars(document.querySelector('[data-rating="gfx"]'),   gfx);
+    renderNumber(document.querySelector('[data-rating="screens"]'), screens);
 
-    var cpuCtx = document.querySelector('[data-ctx-cpu]');
-    var gpuCtx = document.querySelector('[data-ctx-gpu]');
-    if (cpuCtx) cpuCtx.textContent = shortLabel(cpuName) + (ramName ? ' · ' + shortLabel(ramName) : '');
-    if (gpuCtx) gpuCtx.textContent = gpuR.label;
+    // Inline CPU info card (inside CPU accordion body).
+    var mthread = (cpuMeta && cpuMeta.cpuMultiThread != null) ? cpuMeta.cpuMultiThread : 5;
+    renderStars(document.querySelector('[data-cpu-stat="speed"]'),   speed);
+    renderStars(document.querySelector('[data-cpu-stat="mt"]'),      mt);
+    renderStars(document.querySelector('[data-cpu-stat="mthread"]'), mthread);
+    var ctxCpuEl = document.querySelector('[data-cpu-stat="ctx"]');
+    var coresEl  = document.querySelector('[data-cpu-stat="cores"]');
+    if (ctxCpuEl) ctxCpuEl.textContent = (cpuMeta && (cpuMeta.specText || cpuMeta.name)) || '';
+    if (coresEl)  coresEl.textContent  = (cpuMeta && cpuMeta.coresLabel) || '';
 
-    var monsEl = document.querySelector('[data-mons]');
-    if (monsEl) {
-      monsEl.innerHTML = gpuR.mons.map(function(m){
-        return '<li><b>' + m.n + '×</b><span class="res">' + m.res + '</span></li>';
-      }).join('');
-    }
+    // Inline GPU info card (inside GPU accordion body).
+    renderStars(document.querySelector('[data-gpu-stat="gfx"]'), gfx);
+    renderNumber(document.querySelector('[data-gpu-stat="ai"]'), ai);
+    var ctxGpuEl = document.querySelector('[data-gpu-stat="ctx"]');
+    var vramEl   = document.querySelector('[data-gpu-stat="vram"]');
+    var portsEl  = document.querySelector('[data-gpu-stat="ports"]');
+    var resEl    = document.querySelector('[data-gpu-stat="res"]');
+    if (ctxGpuEl) ctxGpuEl.textContent = (gpuMeta && (gpuMeta.gpuLabel || gpuMeta.name)) || '';
+    if (vramEl)   vramEl.textContent   = (gpuMeta && gpuMeta.vram) || '';
+    if (portsEl)  portsEl.textContent  = (gpuMeta && gpuMeta.outputs) || '';
+    if (resEl)    resEl.textContent    = (gpuMeta && gpuMeta.resolutions) || '';
   }
 
-  // ------- Live full-spec echo (CPU-driven auto-upgrades) ------
-  function setSpecVal(key, value, isUpgraded) {
+  // ------- Summary list -------
+  // Top of the hybrid sidebar - one row per option group with the
+  // short label, currently-selected option name, and price delta.
+  function renderSummary() {
+    var listEl = document.querySelector('[data-summary-list]');
+    if (!listEl) return;
+    var html = '';
+    rows.forEach(function(row){
+      var group = row.dataset.group;
+      var labelText = row.dataset.shortLabel;
+      if (!labelText) {
+        var lbl = row.querySelector('.cfg-row__label');
+        labelText = lbl ? lbl.textContent.replace(/^\d+/, '').trim() : group;
+      }
+      var s = state[group] || { name: '', delta: 0 };
+      var priCls  = s.delta > 0 ? 'pri inc' : 'pri';
+      var priText = s.delta > 0 ? '+ £' + fmt0(s.delta) : 'Inc.';
+      var displayedName = (s.meta && s.meta.name) ? s.meta.name : decodeHtml(s.name);
+      if (displayedName && displayedName.trim().toLowerCase() === 'none') return;
+      html += '<li>' +
+                '<span class="lbl">' + labelText + '</span>' +
+                '<span class="val">' + displayedName + '</span>' +
+                '<span class="' + priCls + '">' + priText + '</span>' +
+              '</li>';
+    });
+    listEl.innerHTML = html;
+  }
+
+  // ------- Full specification (live-updating spec table) -------
+  // Reads each option's meta.specKey / specText to populate the
+  // matching [data-spec="<key>"] cell. CPU and GPU options can also
+  // carry derived-component fields (cooler/mobo/fans on CPU, psu on
+  // GPU) which fill the auto-upgrade rows. lineParts feeds the
+  // bundle-items "Computer" row [data-pc-line]; the build-summary
+  // line is left as the server-rendered bundle line.
+  function setSpecVal(key, value, isUpgraded, hideRow) {
     var el = document.querySelector('[data-spec="' + key + '"]');
     if (!el) return;
-    el.textContent = value;
-    if (isUpgraded) el.classList.add('is-upgraded');
-    else            el.classList.remove('is-upgraded');
-  }
-
-  function updateFullSpec() {
-    var cpu = cpuState(), ram = ramState(), gpu = gpuState();
-    var cpuName = cpu ? decodeHtml(cpu.name) : '';
-    var ramName = ram ? decodeHtml(ram.name) : '';
-    var gpuName = gpu ? decodeHtml(gpu.name) : '';
-
-    var isK       = /14600KF|14700KF|14900KF/.test(cpuName);
-    var isHighK   = /14700KF|14900KF/.test(cpuName);
-    var isRtx5050 = /RTX\s?5050/i.test(gpuName);
-    var isDualGpu = /Dual/i.test(gpuName) && /A400/i.test(gpuName);
-
-    var cooler = 'be quiet! Pure Rock 2 silent tower';
-    var coolerUp = false;
-    if (isHighK)   { cooler = 'be quiet! Dark Rock Pro 5 (135 mm tower)'; coolerUp = true; }
-    else if (isK)  { cooler = 'be quiet! Dark Rock 4 (120 mm tower)';     coolerUp = true; }
-
-    var mobo = 'MSI PRO B760M-P DDR4';
-    var moboUp = false;
-    if (isK) { mobo = 'MSI PRO Z790-P DDR4'; moboUp = true; }
-
-    var psu = 'be quiet! Pure Power 12 500 W · 80+ Gold';
-    var psuUp = false;
-    if (isRtx5050) { psu = 'be quiet! Pure Power 12 650 W · 80+ Gold'; psuUp = true; }
-
-    var fans = '2× be quiet! Silent Wings 4 (140 mm)';
-    var fansUp = false;
-    if (isK) { fans = '3× be quiet! Silent Wings 4 (140 mm)'; fansUp = true; }
-
-    var gpuText;
-    if (isRtx5050)      gpuText = 'nVidia RTX 5050 · 8 GB GDDR7 · 8 screens';
-    else if (isDualGpu) gpuText = 'nVidia RTX A400 (Dual) · 2× 4 GB · 8 screens';
-    else                gpuText = 'nVidia RTX A400 · 4 GB · 4 screens';
-
-    setSpecVal('cpu',     cpuName, false);
-    setSpecVal('cooler',  cooler,  coolerUp);
-    setSpecVal('mobo',    mobo,    moboUp);
-    setSpecVal('ram',     ramName ? ramName + ' · Corsair Vengeance' : '', false);
-    setSpecVal('gpu',     gpuText, false);
-    setSpecVal('psu',     psu,     psuUp);
-    setSpecVal('fans',    fans,    fansUp);
-  }
-
-  // ------- PC "Computer" sidebar row -------
-  function updatePcRow(pcTotal) {
-    var lineEl = document.querySelector('[data-pc-line]');
-    var priEl  = document.querySelector('[data-pc-pri]');
-    if (lineEl) {
-      var cpu = cpuState(), ram = ramState();
-      var parts = [];
-      if (cpu) parts.push(shortLabel(cpu.name));
-      if (ram) parts.push(shortLabel(ram.name));
-      if (parts.length > 0) lineEl.textContent = parts.join(' · ');
+    var row = el.closest('.spec-row');
+    if (hideRow) {
+      if (row) row.hidden = true;
+      return;
     }
-    if (priEl) priEl.textContent = fmt0(pcTotal);
+    if (row) row.hidden = false;
+    el.textContent = value;
+    el.classList.toggle('is-upgraded', !!isUpgraded);
+  }
+  function renderFullSpec() {
+    document.querySelectorAll('.spec-row[data-spec-optional]').forEach(function(r){ r.hidden = true; });
+
+    Object.keys(state).forEach(function(g){
+      var s = state[g], m = s && s.meta;
+      if (!m) return;
+      if (m.specRows) {
+        Object.keys(m.specRows).forEach(function(k){
+          if (m.specSkip) setSpecVal(k, '', false, true);
+          else            setSpecVal(k, m.specRows[k], false, false);
+        });
+        return;
+      }
+      if (!m.specKey) return;
+      if (m.specSkip) { setSpecVal(m.specKey, '', false, true); return; }
+      var text = m.specText || m.name || decodeHtml(s.name);
+      setSpecVal(m.specKey, text, false, false);
+    });
+
+    var cpu = cpuState() && cpuState().meta;
+    if (cpu) {
+      if (cpu.cooler) setSpecVal('cooler', cpu.cooler, !!cpu.coolerUpgraded);
+      if (cpu.mobo)   setSpecVal('mobo',   cpu.mobo,   !!cpu.moboUpgraded);
+    }
+    var gpu = gpuState() && gpuState().meta;
+    if (gpu) {
+      if (gpu.psu)  setSpecVal('psu',  gpu.psu,  !!gpu.psuUpgraded);
+      if (gpu.mobo) setSpecVal('mobo', gpu.mobo, !!gpu.moboUpgraded);
+    }
+
+    // Update the bundle-items "Computer" row label with a short
+    // CPU + RAM + storage summary. The build-summary line stays as
+    // the server-rendered "PC name - with NxMonitor array".
+    var ram = ramState() && ramState().meta;
+    var storage = (function(){
+      for (var k in state) {
+        if (state.hasOwnProperty(k) && state[k].meta && state[k].meta.specKey === 'storage') return state[k].meta;
+      }
+      return null;
+    })();
+    var lineParts = [];
+    if (cpu) lineParts.push((cpu.name || '').replace(/^Intel\s+/, ''));
+    if (ram && (ram.ramShort || ram.name)) lineParts.push(ram.ramShort || ram.name);
+    if (storage && (storage.storageShort || storage.name)) lineParts.push(storage.storageShort || storage.name);
+    var pcLineEl = document.querySelector('[data-pc-line]');
+    if (pcLineEl && lineParts.length > 0) pcLineEl.textContent = lineParts.filter(Boolean).join(' · ');
   }
 
-  // ------- Main recalc -------
+  // ------- Recalc + totals -------
+  // Computes PC ex-VAT then bundle totals (PC + stand + screens -
+  // discount), updates every price hook on the page in one pass.
   function recalc() {
     var pcTotal = PC_BASE_EX;
     Object.keys(state).forEach(function(g){ pcTotal += state[g].delta || 0; });
 
-    var bundleSubtotal = STAND_PRICE_EX + SCREENS_EX + pcTotal;
+    var bundleSubtotal = pcTotal + STAND_EX + SCREENS_EX;
     var bundleTotalEx  = bundleSubtotal - BUNDLE_DISCOUNT;
     var bundleTotalInc = bundleTotalEx * (1 + VAT_RATE);
+    var savedAmt       = BUNDLE_DISCOUNT + SAVINGS_EXTRAS;
 
     // Hero
     var heroEx    = document.querySelector('[data-hero-ex]');
@@ -997,20 +1063,21 @@ Next
     if (heroEx)    heroEx.textContent    = fmt0(bundleTotalEx);
     if (heroInc)   heroInc.textContent   = fmt2(bundleTotalInc);
     if (heroPc)    heroPc.textContent    = '£' + fmt0(pcTotal);
-    if (heroSaved) heroSaved.textContent = fmt0(BUNDLE_DISCOUNT + SAVINGS_FREEBIES);
+    if (heroSaved) heroSaved.textContent = fmt0(savedAmt);
 
-    // Sidebar breakdown
-    updatePcRow(pcTotal);
+    // Sidebar - PC line price + bundle totals
+    var pcPriEl  = document.querySelector('[data-pc-pri]');
     var subEl    = document.querySelector('[data-sub]');
     var bunEx    = document.querySelector('[data-bun-ex]');
     var bunInc   = document.querySelector('[data-bun-inc]');
     var bunSaved = document.querySelector('[data-bun-saved]');
+    if (pcPriEl)  pcPriEl.textContent  = fmt0(pcTotal);
     if (subEl)    subEl.textContent    = fmt0(bundleSubtotal);
     if (bunEx)    bunEx.textContent    = fmt0(bundleTotalEx);
     if (bunInc)   bunInc.textContent   = fmt2(bundleTotalInc);
-    if (bunSaved) bunSaved.textContent = fmt0(BUNDLE_DISCOUNT + SAVINGS_FREEBIES);
+    if (bunSaved) bunSaved.textContent = fmt0(savedAmt);
 
-    // Build summary (bottom of full-spec)
+    // Build summary (bottom of full-spec) - bundle totals
     var buildEx  = document.querySelector('[data-build-ex]');
     var buildInc = document.querySelector('[data-build-inc]');
     if (buildEx)  buildEx.textContent  = fmt0(bundleTotalEx);
@@ -1020,32 +1087,43 @@ Next
     var stickyEl = document.querySelector('[data-sticky-price]');
     if (stickyEl) stickyEl.textContent = fmt0(bundleTotalEx);
 
+    renderSummary();
     updateImpact();
-    updateFullSpec();
+    renderFullSpec();
   }
 
-  // ------- Wire up option clicks -------
+  // ------- Wire up clicks on option buttons -------
   document.querySelectorAll('.cfg-row .cfg-option').forEach(function(btn){
     btn.addEventListener('click', function(){
-      var row = btn.closest('.cfg-row');
+      var row   = btn.closest('.cfg-row');
       if (!row) return;
       var group = row.dataset.group;
       row.querySelectorAll('.cfg-option').forEach(function(b){ b.classList.remove('is-selected'); });
       btn.classList.add('is-selected');
+      var meta = metaFor(btn.dataset.idoptoptgrp);
       state[group] = {
-        name:  btn.dataset.name,
-        delta: parseInt(btn.dataset.delta || '0', 10),
-        idoptoptgrp: btn.dataset.idoptoptgrp
+        name:        btn.dataset.name,
+        delta:       parseInt(btn.dataset.delta || '0', 10),
+        idoptoptgrp: btn.dataset.idoptoptgrp,
+        meta:        meta
       };
       var selectedEl = row.querySelector('[data-selected]');
-      if (selectedEl) selectedEl.innerHTML = btn.dataset.name;
+      if (selectedEl) selectedEl.textContent = (meta && meta.name) ? meta.name : btn.dataset.name;
       var hidden = row.querySelector('input[type="hidden"][name^="idOption"]');
       if (hidden) hidden.value = btn.dataset.idoptoptgrp;
       recalc();
     });
   });
 
+  // Initial paint
   recalc();
+
+  // ------- Spec-panel "Add to basket" submits the configurator form -------
+  var buildSubmit = document.querySelector('[data-build-submit]');
+  var cfgForm     = document.getElementById('cfgForm');
+  if (buildSubmit && cfgForm) {
+    buildSubmit.addEventListener('click', function(){ cfgForm.submit(); });
+  }
 
   // ------- Gallery thumbs (decorative) -------
   document.querySelectorAll('.bp-thumb').forEach(function(t){
