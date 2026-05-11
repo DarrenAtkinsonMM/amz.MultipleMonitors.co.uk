@@ -70,17 +70,75 @@ mmComputers = Array( _
   Array(343, "pro",     "Trader Pro", 65,  175, "Built for Professional Traders", "Run platforms like NinjaTrader & Bloomberg easily", "Intels fastest CPUs & DDR5 RAM",            "/images/bundles/bun-pro-pc.png",     "/images/bundles/case1-bun.png", "/products/trader-pro-pc/")                       _
 )
 
-' ------------------------------------------------------------
-' Deep-link preselect: parse + validate sid/mid/cid.
-' Ordering rules (matches CUSTOMCAT-bundles2.asp / bundles3.asp):
-'   - cid without sid OR without mid        -> 301 /bundles/
-'   - mid without sid                        -> 301 /bundles/
-'   - any id non-numeric                     -> 301 /bundles/
-'   - id not in static array                 -> 301 back to longest
-'                                               valid prefix
+' ============================================================
+' Deep-link preselect pipeline:
+'   1. Hydrate prices + slugs (single SQL round-trip) so we
+'      can resolve slug-form deeplinks before validating.
+'   2. Read slug querystrings (?stand=/?monitor=/?computer=)
+'      from the Bundles N Segments rewrite rules in web.config
+'      and resolve each to an idProduct via mmSlugDict.
+'   3. Numeric ?sid=/?mid=/?cid= querystrings act as fallback
+'      so legacy URLs keep working unchanged.
+'   4. Validate the resolved ids against the static arrays.
+'      Ordering rules (matches CUSTOMCAT-bundles2.asp / bundles3.asp):
+'        - cid without sid OR without mid -> 301 /bundles/
+'        - mid without sid                -> 301 /bundles/
+'        - any id non-numeric             -> 301 /bundles/
+'        - id not in static array         -> 301 to longest
+'                                            valid prefix
 ' Valid ids are emitted as MMB_PRESELECT (below). Zeros mean
 ' "not set" so the JS bootstrap can treat them as falsy.
-' ------------------------------------------------------------
+' ============================================================
+
+' ----- Step 1: single-round-trip price + slug hydration -----
+' Collects every non-zero idProduct referenced in the static
+' arrays and fetches retail price + pcUrlBundle. All IDs are
+' VBScript-numeric (sourced from our own arrays, never user
+' input) so direct string concat is safe.
+Dim mmPriceDict : Set mmPriceDict = Server.CreateObject("Scripting.Dictionary")
+Dim mmSlugDict  : Set mmSlugDict  = Server.CreateObject("Scripting.Dictionary")
+
+Dim mmAllIds, mmRow, mmId
+mmAllIds = ""
+For Each mmRow In mmStands
+    mmId = CLng(mmRow(0))
+    If mmId > 0 Then mmAllIds = mmAllIds & mmId & ","
+Next
+For Each mmRow In mmScreens
+    mmId = CLng(mmRow(0))
+    If mmId > 0 Then mmAllIds = mmAllIds & mmId & ","
+Next
+For Each mmRow In mmComputers
+    mmId = CLng(mmRow(0))
+    If mmId > 0 Then mmAllIds = mmAllIds & mmId & ","
+Next
+
+If Len(mmAllIds) > 0 Then
+    mmAllIds = Left(mmAllIds, Len(mmAllIds) - 1)
+
+    Dim mmSql, mmRs
+    mmSql = "SELECT idProduct, price, pcUrlBundle FROM products " & _
+            "WHERE idProduct IN (" & mmAllIds & ") " & _
+            "  AND active = -1 AND removed = 0"
+
+    On Error Resume Next
+    Set mmRs = connTemp.Execute(mmSql)
+    If err.number <> 0 Then
+        On Error Goto 0
+        Call LogErrorToDatabase()
+    Else
+        On Error Goto 0
+        Do While Not mmRs.EOF
+            mmPriceDict.Add CLng(mmRs("idProduct")), CDbl(mmRs("price"))
+            mmSlugDict.Add  CLng(mmRs("idProduct")), mmRs("pcUrlBundle") & ""
+            mmRs.MoveNext
+        Loop
+        mmRs.Close
+        Set mmRs = Nothing
+    End If
+End If
+
+' ----- Steps 2 + 3: parse querystrings (slug first, then id) -----
 Dim mmPreSid, mmPreMid, mmPreCid
 mmPreSid = 0 : mmPreMid = 0 : mmPreCid = 0
 
@@ -89,6 +147,37 @@ mmRawSid = Trim(Request.QueryString("sid") & "")
 mmRawMid = Trim(Request.QueryString("mid") & "")
 mmRawCid = Trim(Request.QueryString("cid") & "")
 
+Dim mmRawStandSlug, mmRawMonSlug, mmRawCompSlug, mmResolvedId
+mmRawStandSlug = LCase(Trim(Request.QueryString("stand") & ""))
+mmRawMonSlug   = LCase(Trim(Request.QueryString("monitor") & ""))
+mmRawCompSlug  = LCase(Trim(Request.QueryString("computer") & ""))
+
+If mmRawStandSlug <> "" Then
+    mmResolvedId = mmFindIdByBundleSlug(mmStands, mmRawStandSlug)
+    If mmResolvedId > 0 Then mmRawSid = CStr(mmResolvedId)
+End If
+If mmRawMonSlug <> "" Then
+    mmResolvedId = mmFindIdByBundleSlug(mmScreens, mmRawMonSlug)
+    If mmResolvedId > 0 Then mmRawMid = CStr(mmResolvedId)
+End If
+If mmRawCompSlug <> "" Then
+    mmResolvedId = mmFindIdByBundleSlug(mmComputers, mmRawCompSlug)
+    If mmResolvedId > 0 Then mmRawCid = CStr(mmResolvedId)
+End If
+
+' ----- Optional ?edit= querystring: forces the builder to open
+' on a specific stage instead of the default "deepest preselected
+' slot" rule. Used by the bp-picks "Change" links on the final
+' bundle page so clicking Change > Screens lands on the screens
+' panel (otherwise all 3 picks would auto-resolve to 'computer').
+Dim mmRawEdit, mmPreEdit
+mmRawEdit = LCase(Trim(Request.QueryString("edit") & ""))
+mmPreEdit = ""
+If mmRawEdit = "stand" Or mmRawEdit = "screens" Or mmRawEdit = "computer" Then
+    mmPreEdit = mmRawEdit
+End If
+
+' ----- Step 4: validate resolved ids against static arrays -----
 If (mmRawCid <> "" And (mmRawSid = "" Or mmRawMid = "")) _
 Or (mmRawMid <> "" And mmRawSid = "") Then
     Response.Status = "301 Moved Permanently"
@@ -142,57 +231,6 @@ If mmRawCid <> "" Then
 End If
 
 ' ------------------------------------------------------------
-' Single-round-trip price + slug hydration: collect every non-
-' zero idProduct referenced above and fetch retail price and
-' pcUrlBundle. All IDs are VBScript-numeric (sourced from our own
-' arrays, never user input) so direct string concat is safe.
-' pcUrlBundle is the slug used to build the canonical bundle URL
-' (/products/trader-pc/<stand-slug>/<monitor-slug>/).
-' ------------------------------------------------------------
-Dim mmPriceDict : Set mmPriceDict = Server.CreateObject("Scripting.Dictionary")
-Dim mmSlugDict  : Set mmSlugDict  = Server.CreateObject("Scripting.Dictionary")
-
-Dim mmAllIds, mmRow, mmId
-mmAllIds = ""
-For Each mmRow In mmStands
-    mmId = CLng(mmRow(0))
-    If mmId > 0 Then mmAllIds = mmAllIds & mmId & ","
-Next
-For Each mmRow In mmScreens
-    mmId = CLng(mmRow(0))
-    If mmId > 0 Then mmAllIds = mmAllIds & mmId & ","
-Next
-For Each mmRow In mmComputers
-    mmId = CLng(mmRow(0))
-    If mmId > 0 Then mmAllIds = mmAllIds & mmId & ","
-Next
-
-If Len(mmAllIds) > 0 Then
-    mmAllIds = Left(mmAllIds, Len(mmAllIds) - 1)
-
-    Dim mmSql, mmRs
-    mmSql = "SELECT idProduct, price, pcUrlBundle FROM products " & _
-            "WHERE idProduct IN (" & mmAllIds & ") " & _
-            "  AND active = -1 AND removed = 0"
-
-    On Error Resume Next
-    Set mmRs = connTemp.Execute(mmSql)
-    If err.number <> 0 Then
-        On Error Goto 0
-        Call LogErrorToDatabase()
-    Else
-        On Error Goto 0
-        Do While Not mmRs.EOF
-            mmPriceDict.Add CLng(mmRs("idProduct")), CDbl(mmRs("price"))
-            mmSlugDict.Add  CLng(mmRs("idProduct")), mmRs("pcUrlBundle") & ""
-            mmRs.MoveNext
-        Loop
-        mmRs.Close
-        Set mmRs = Nothing
-    End If
-End If
-
-' ------------------------------------------------------------
 ' JS emission helpers. Each returns "" for missing/TBC rows so
 ' the caller can skip them without emitting a trailing comma
 ' that breaks the JS object literal.
@@ -223,6 +261,25 @@ Function mmSlug(ByVal idp)
     If idL <= 0 Then mmSlug = "" : Exit Function
     If Not mmSlugDict.Exists(idL) Then mmSlug = "" : Exit Function
     mmSlug = mmSlugDict(idL) & ""
+End Function
+
+Function mmFindIdByBundleSlug(ByVal arr, ByVal targetSlug)
+    ' Reverse-lookup: scans a static array (mmStands / mmScreens
+    ' / mmComputers), reads each row's idProduct, fetches its
+    ' pcUrlBundle slug from mmSlugDict, returns the idProduct
+    ' whose slug equals targetSlug. Zero if no match.
+    Dim row, idp, slug
+    mmFindIdByBundleSlug = 0
+    For Each row In arr
+        idp = CLng(row(0))
+        If idp > 0 And mmSlugDict.Exists(idp) Then
+            slug = LCase(mmSlugDict(idp) & "")
+            If slug <> "" And slug = targetSlug Then
+                mmFindIdByBundleSlug = idp
+                Exit Function
+            End If
+        End If
+    Next
 End Function
 
 Function mmJsStr(ByVal s)
@@ -378,7 +435,7 @@ End Sub
 
       <!-- LEFT: stand picker -->
       <div class="reveal">
-        <ol class="stepper" id="mmb-stepper">
+        <ol class="stepper" id="mmb-stepper" data-edit-stage="<%= mmPreEdit %>">
           <li class="step is-current" data-step="stand">
             <span class="step-num">1</span>
             <div class="step-body">
@@ -679,6 +736,7 @@ End Sub
 <script>
 (function(){
   const MMB_PRESELECT = { sid: <%= mmPreSid %>, mid: <%= mmPreMid %>, cid: <%= mmPreCid %> };
+  const MMB_EDIT_STAGE = (document.getElementById('mmb-stepper').getAttribute('data-edit-stage') || '');
 
   const BUNDLE_CONFIG = {
     stands: [
@@ -949,7 +1007,7 @@ End Sub
     e.preventDefault();
     if (!isComplete()) return;
     if (state.computer.id === 333 && state.stand.slug && state.screens.slug) {
-      window.location = state.computer.cta + state.stand.slug + '/' + state.screens.slug + '/';
+      window.location = state.computer.cta + state.stand.slug + '/' + state.screens.slug + '/#bp-picks';
       return;
     }
     const sep = state.computer.cta.indexOf('?') > -1 ? '&' : '?';
@@ -992,6 +1050,13 @@ End Sub
   if (state.computer)                   state.view = 'computer';
   else if (state.screens)                state.view = 'screens';
   else if (state.stand)                state.view = 'stand';
+
+  // ?edit=stand|screens|computer (used by bp-picks "Change" links on the
+  // final bundle page) overrides the default deepest-slot view so the
+  // builder opens on the panel the user clicked Change for.
+  if (MMB_EDIT_STAGE === 'stand' || MMB_EDIT_STAGE === 'screens' || MMB_EDIT_STAGE === 'computer') {
+    state.view = MMB_EDIT_STAGE;
+  }
 
   render();
 

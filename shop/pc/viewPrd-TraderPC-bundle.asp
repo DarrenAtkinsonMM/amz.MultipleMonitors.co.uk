@@ -173,8 +173,28 @@ mmBunTotalEx    = mmBunSubtotalEx - mmBunDiscount
 mmBunTotalInc   = mmBunTotalEx * MM_VAT_RATE
 
 ' "Change" URLs back to the builder with current picks preserved.
-Dim mmBunChangeBase
-mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & MM_PRODUCT_ID
+' Prefer slug form (/bundles/<stand>/<monitor>/<pc>/). If any slug
+' is missing/empty (e.g. pcUrlBundle not populated on a product),
+' fall back to the legacy ?sid=&mid=&cid= form so the link still
+' works rather than producing /bundles//acer-24// with a hole.
+Dim mmBunChangeBase, mmBunPcSlug
+mmBunPcSlug = mmLookupPcUrlBundle(MM_PRODUCT_ID)
+If mmBunStandSlug <> "" And mmBunMonSlug <> "" And mmBunPcSlug <> "" Then
+    mmBunChangeBase = "/bundles/" & mmBunStandSlug & "/" & mmBunMonSlug & "/" & mmBunPcSlug & "/"
+Else
+    mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & MM_PRODUCT_ID
+End If
+
+Function mmBunEditSep()
+    ' Returns "?" for slug-path URLs (no existing querystring) or
+    ' "&" for the ID-querystring fallback so the Change link
+    ' templates emit a single well-formed URL in either branch.
+    If InStr(mmBunChangeBase, "?") = 0 Then
+        mmBunEditSep = "?"
+    Else
+        mmBunEditSep = "&"
+    End If
+End Function
 %>
 <!--#include file="header_wrapper.asp"-->
 
@@ -334,7 +354,7 @@ mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & M
 <!-- ===================================================================
      YOUR-BUNDLE PICKS - three completed picks, swappable
      =================================================================== -->
-<section class="bp-picks">
+<section class="bp-picks" id="bp-picks">
   <div class="container">
     <div class="bp-picks__head reveal">
       <div class="eyebrow">Your bundle &middot; three picks</div>
@@ -343,7 +363,7 @@ mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & M
     </div>
 
     <div class="bp-picks__grid reveal">
-      <a class="bp-pick-card" href="<%= mmBunChangeBase %>&edit=stand">
+      <a class="bp-pick-card" href="<%= mmBunChangeBase %><%= mmBunEditSep() %>edit=stand">
         <div class="bp-pick-card__vis">
           <img src="<%= mmBunStandImgSrc %>" alt="<%= Server.HTMLEncode(mmBunStandDispName) %>">
           <span class="bp-pick-card__tick"><i class="fa fa-check"></i></span>
@@ -360,7 +380,7 @@ mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & M
         <span class="bp-pick-card__change">Change <i class="fa fa-arrow-right"></i></span>
       </a>
 
-      <a class="bp-pick-card" href="<%= mmBunChangeBase %>&edit=screens">
+      <a class="bp-pick-card" href="<%= mmBunChangeBase %><%= mmBunEditSep() %>edit=screens">
         <div class="bp-pick-card__vis">
           <img src="<%= mmBunMonImgSrc %>" alt="<%= Server.HTMLEncode(mmBunMonDispName) %>">
           <span class="bp-pick-card__tick"><i class="fa fa-check"></i></span>
@@ -377,7 +397,7 @@ mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & M
         <span class="bp-pick-card__change">Change <i class="fa fa-arrow-right"></i></span>
       </a>
 
-      <a class="bp-pick-card" href="<%= mmBunChangeBase %>&edit=computer">
+      <a class="bp-pick-card" href="<%= mmBunChangeBase %><%= mmBunEditSep() %>edit=computer">
         <div class="bp-pick-card__vis">
           <img src="<%= mmMainImgSrc %>" alt="<%= Server.HTMLEncode(mmName) %>">
           <span class="bp-pick-card__tick"><i class="fa fa-check"></i></span>
