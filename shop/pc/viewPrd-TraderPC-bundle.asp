@@ -30,6 +30,47 @@ pcStrPageName = "viewPrd-TraderPC-bundle-v2.asp"
 ' ------------------------------------------------------------
 Const MM_PRODUCT_ID = 333
 Const MM_VAT_RATE   = 1.2
+
+' ------------------------------------------------------------
+' Legacy querystring URL (?sid=&mid=&cid=) -> 301 to slug URL.
+' Old bookmarks and search-engine hits land here via the
+' "Trader PC Bundle" rewrite rule in web.config; we look up
+' the stand + monitor slugs by id and bounce to the canonical
+' /products/trader-pc/<stand>/<monitor>/ form before
+' inc_bundleContext.asp runs (it only knows the slug shape).
+' cid is stripped silently - the URL path already implies PC.
+' ------------------------------------------------------------
+If Request.QueryString("sid") <> "" Then
+  Dim mmLegacySid, mmLegacyMid, mmLegacyStandSlug, mmLegacyMonSlug
+  mmLegacySid = Request.QueryString("sid") & ""
+  mmLegacyMid = Request.QueryString("mid") & ""
+  If Not IsNumeric(mmLegacySid) Or Not IsNumeric(mmLegacyMid) Or mmLegacyMid = "" Then
+    Response.Status = "301 Moved Permanently"
+    Response.AddHeader "Location", "/bundles/"
+    Response.End
+  End If
+  mmLegacyStandSlug = mmLookupPcUrlBundle(CLng(mmLegacySid))
+  mmLegacyMonSlug   = mmLookupPcUrlBundle(CLng(mmLegacyMid))
+  If mmLegacyStandSlug = "" Or mmLegacyMonSlug = "" Then
+    Response.Status = "301 Moved Permanently"
+    Response.AddHeader "Location", "/bundles/"
+    Response.End
+  End If
+  Response.Status = "301 Moved Permanently"
+  Response.AddHeader "Location", "/products/trader-pc/" & mmLegacyStandSlug & "/" & mmLegacyMonSlug & "/"
+  Response.End
+End If
+
+Function mmLookupPcUrlBundle(ByVal idp)
+  Dim sql, rs
+  mmLookupPcUrlBundle = ""
+  sql = "SELECT pcUrlBundle FROM products " & _
+        "WHERE idProduct = " & CLng(idp) & _
+        "  AND active = -1 AND removed = 0"
+  Set rs = connTemp.Execute(sql)
+  If Not rs.EOF Then mmLookupPcUrlBundle = rs("pcUrlBundle") & ""
+  rs.Close : Set rs = Nothing
+End Function
 %>
 <!--#include file="inc_bundleContext.asp"-->
 <%
@@ -133,7 +174,7 @@ mmBunTotalInc   = mmBunTotalEx * MM_VAT_RATE
 
 ' "Change" URLs back to the builder with current picks preserved.
 Dim mmBunChangeBase
-mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & mmBunCid
+mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & MM_PRODUCT_ID
 %>
 <!--#include file="header_wrapper.asp"-->
 

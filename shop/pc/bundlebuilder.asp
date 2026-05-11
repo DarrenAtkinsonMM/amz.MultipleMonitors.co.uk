@@ -66,7 +66,7 @@ Dim mmComputers
 mmComputers = Array( _
   Array(306, "ultra",   "Ultra PC",   165, 165, "Fast everyday computer",         "Perfect for business / office use",           "Multi-screen ready out of the box",         "/images/bundles/bun-ultra-pc.png",   "/images/bundles/case1-bun.png", "/products/ultra-multi-monitor-pc/"),             _
   Array(307, "extreme", "Extreme PC",  65, 175, "High-end workstation",           "Powerful Intel or AMD CPUs",                  "Highly configurable, support up to 12 screens", "/images/bundles/bun-extreme-pc.png", "/images/bundles/case1-bun.png", "/products/extreme-multi-screen-computer/"),      _
-  Array(333, "trader",  "Trader PC",  165, 165, "Designed for multi-screen trading", "Great for MT4, TradingView & broker platforms", "Quiet, stable & fast performance",          "/images/bundles/bun-trader-pc.png",  "/images/bundles/case1-bun.png", "/shop/pc/viewPrd-TraderPC-bundle-v2.asp"),       _
+  Array(333, "trader",  "Trader PC",  165, 165, "Designed for multi-screen trading", "Great for MT4, TradingView & broker platforms", "Quiet, stable & fast performance",          "/images/bundles/bun-trader-pc.png",  "/images/bundles/case1-bun.png", "/products/trader-pc/"),       _
   Array(343, "pro",     "Trader Pro", 65,  175, "Built for Professional Traders", "Run platforms like NinjaTrader & Bloomberg easily", "Intels fastest CPUs & DDR5 RAM",            "/images/bundles/bun-pro-pc.png",     "/images/bundles/case1-bun.png", "/products/trader-pro-pc/")                       _
 )
 
@@ -142,12 +142,15 @@ If mmRawCid <> "" Then
 End If
 
 ' ------------------------------------------------------------
-' Single-round-trip price hydration: collect every non-zero
-' idProduct referenced above and fetch retail price. All IDs
-' are VBScript-numeric (sourced from our own arrays, never
-' user input) so direct string concat is safe.
+' Single-round-trip price + slug hydration: collect every non-
+' zero idProduct referenced above and fetch retail price and
+' pcUrlBundle. All IDs are VBScript-numeric (sourced from our own
+' arrays, never user input) so direct string concat is safe.
+' pcUrlBundle is the slug used to build the canonical bundle URL
+' (/products/trader-pc/<stand-slug>/<monitor-slug>/).
 ' ------------------------------------------------------------
 Dim mmPriceDict : Set mmPriceDict = Server.CreateObject("Scripting.Dictionary")
+Dim mmSlugDict  : Set mmSlugDict  = Server.CreateObject("Scripting.Dictionary")
 
 Dim mmAllIds, mmRow, mmId
 mmAllIds = ""
@@ -168,7 +171,7 @@ If Len(mmAllIds) > 0 Then
     mmAllIds = Left(mmAllIds, Len(mmAllIds) - 1)
 
     Dim mmSql, mmRs
-    mmSql = "SELECT idProduct, price FROM products " & _
+    mmSql = "SELECT idProduct, price, pcUrlBundle FROM products " & _
             "WHERE idProduct IN (" & mmAllIds & ") " & _
             "  AND active = -1 AND removed = 0"
 
@@ -181,6 +184,7 @@ If Len(mmAllIds) > 0 Then
         On Error Goto 0
         Do While Not mmRs.EOF
             mmPriceDict.Add CLng(mmRs("idProduct")), CDbl(mmRs("price"))
+            mmSlugDict.Add  CLng(mmRs("idProduct")), mmRs("pcUrlBundle") & ""
             mmRs.MoveNext
         Loop
         mmRs.Close
@@ -211,6 +215,16 @@ Function mmPriceEx(ByVal idp)
     mmPriceEx = Int((mmPriceDict(idL) / MM_VAT_RATE) + 0.5)
 End Function
 
+Function mmSlug(ByVal idp)
+    ' Returns the Bundle slug for an id, or "" if missing.
+    ' Used by mmEmitStand / mmEmitScreen so the JS CTA can
+    ' build /products/trader-pc/<stand-slug>/<monitor-slug>/.
+    Dim idL : idL = CLng(idp)
+    If idL <= 0 Then mmSlug = "" : Exit Function
+    If Not mmSlugDict.Exists(idL) Then mmSlug = "" : Exit Function
+    mmSlug = mmSlugDict(idL) & ""
+End Function
+
 Function mmJsStr(ByVal s)
     ' JS-string escape: backslash, double quote, then strip
     ' newlines defensively. Mockup content is plain text so
@@ -229,6 +243,7 @@ Sub mmEmitStand(ByVal row)
     px  = mmPriceEx(idp)
     If px < 0 Then Exit Sub
     Response.Write "      { id:" & idp & _
+                   ", slug:""" & mmJsStr(mmSlug(idp)) & """" & _
                    ", name:""" & mmJsStr(row(2)) & """" & _
                    ", price:" & px & _
                    ", screens:" & row(3) & _
@@ -243,6 +258,7 @@ Sub mmEmitScreen(ByVal row)
     px  = mmPriceEx(idp)
     If px < 0 Then Exit Sub
     Response.Write "      { id:" & idp & _
+                   ", slug:""" & mmJsStr(mmSlug(idp)) & """" & _
                    ", name:""" & mmJsStr(row(2)) & """" & _
                    ", price:" & px & _
                    ", desc1:""" & mmJsStr(row(3)) & """" & _
@@ -924,12 +940,18 @@ End Sub
     render();
   });
 
-  // Final CTA -- compose the per-computer target URL and append the
-  // sid/mid/cid querystring. Trader PC goes to the new v2 bundle end-
-  // page; other computers fall through to their legacy product pages.
+  // Final CTA -- compose the per-computer target URL.
+  // Trader PC (id 333) uses the canonical slug URL
+  //   /products/trader-pc/<stand-slug>/<monitor-slug>/
+  // Other PCs still use the legacy ?sid=&mid=&cid= form because
+  // their bundle end-pages haven't been rebuilt yet.
   document.getElementById('mmb-cta').addEventListener('click', function(e){
     e.preventDefault();
     if (!isComplete()) return;
+    if (state.computer.id === 333 && state.stand.slug && state.screens.slug) {
+      window.location = state.computer.cta + state.stand.slug + '/' + state.screens.slug + '/';
+      return;
+    }
     const sep = state.computer.cta.indexOf('?') > -1 ? '&' : '?';
     window.location = state.computer.cta + sep +
       'sid=' + state.stand.id +

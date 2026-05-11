@@ -3,72 +3,69 @@
 ' inc_bundleContext.asp
 ' 2026 redesign - bundle end-page shared context.
 '
-' Included by viewPrd-<machine>-bundle-v2.asp after common.asp.
-' Validates sid/mid/cid querystrings, queries products for live
-' stand + monitor rows, derives monitor count, maps to bundle
-' discount, and exposes VBScript variables used throughout the
-' bundle page. Also provides mmEmitBundleHiddenInputs() which
-' writes the hidden <input> fields instPrd.asp consumes to
-' process the add-to-cart as a bundle (pCnt=3 + idproduct2/3).
+' Included by viewPrd-<machine>-bundle.asp after common.asp.
+' Reads the stand + monitor slugs from the URL (rewritten by IIS
+' from /products/<machine>/<stand-slug>/<monitor-slug>/ into the
+' querystring pair stand=&monitor=), looks up the products by
+' pcUrlBundle, derives monitor count, maps to bundle discount, and
+' exposes VBScript variables used throughout the bundle page.
+' Also provides mmEmitBundleHiddenInputs() which writes the
+' hidden <input> fields instPrd.asp consumes to process the
+' add-to-cart as a bundle (pCnt=3 + idproduct2/3).
 '
 ' Prerequisites - the including page must define BEFORE the
 ' include directive:
 '   Const MM_PRODUCT_ID = <pc idProduct>
 '   Const MM_VAT_RATE   = 1.2
+' The PC identity comes from the page (and the URL path segment
+' that the IIS rewrite matched), so no querystring carries it.
 ' ==============================================================
 
 ' ------------------------------------------------------------
-' 1. Parse + validate querystrings
+' 1. Parse + validate slug querystrings (set by IIS rewrite)
+'    Slug format guard: lowercase alphanumeric + hyphen only.
+'    Anything else -> /bundles/ (treat as garbage).
 ' ------------------------------------------------------------
-Dim mmBunSid, mmBunMid, mmBunCid
+Dim mmBunStandSlug, mmBunMonSlug
+mmBunStandSlug = LCase(Trim(Request.QueryString("stand") & ""))
+mmBunMonSlug   = LCase(Trim(Request.QueryString("monitor") & ""))
 
-If Request.QueryString("sid") = "" Then
+If mmBunStandSlug = "" Then
   Response.Redirect "/bundles/"
 End If
-If Not IsNumeric(Request.QueryString("sid")) Then
-  Response.Redirect "/404.html"
+If Not mmBunIsValidSlug(mmBunStandSlug) Then
+  Response.Redirect "/bundles/"
 End If
-mmBunSid = CLng(Request.QueryString("sid"))
-
-If Request.QueryString("mid") = "" Then
-  Response.Redirect "/bundles/?sid=" & mmBunSid
+If mmBunMonSlug = "" Then
+  Response.Redirect "/bundles/"
 End If
-If Not IsNumeric(Request.QueryString("mid")) Then
-  Response.Redirect "/404.html"
-End If
-mmBunMid = CLng(Request.QueryString("mid"))
-
-If Request.QueryString("cid") = "" Then
-  Response.Redirect "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid
-End If
-If Not IsNumeric(Request.QueryString("cid")) Then
-  Response.Redirect "/404.html"
-End If
-mmBunCid = CLng(Request.QueryString("cid"))
-
-' The including page sets MM_PRODUCT_ID to its PC. If cid does
-' not match, the URL is for the wrong bundle page - send the
-' customer back to the builder with the stand+monitor preserved.
-If mmBunCid <> MM_PRODUCT_ID Then
-  Response.Redirect "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid
+If Not mmBunIsValidSlug(mmBunMonSlug) Then
+  Response.Redirect "/bundles/"
 End If
 
 ' ------------------------------------------------------------
-' 2. Stand + monitor DB lookup (live prices + images)
+' 2. Stand + monitor DB lookup by slug (live prices + images).
+'    pcprod_DisplayLayout filter rejects cross-type matches -
+'    e.g. /products/trader-pc/trader-pc/anything/ wouldn't return
+'    the Trader PC row as a stand.
 ' ------------------------------------------------------------
+Dim mmBunSid, mmBunMid
 Dim mmBunStandName, mmBunStandPriceInc, mmBunStandImg, mmBunStandSku
 Dim mmBunMonName,   mmBunMonPriceInc,   mmBunMonImg,   mmBunMonSku
+mmBunSid = 0 : mmBunMid = 0
 mmBunStandName = "" : mmBunStandPriceInc = 0 : mmBunStandImg = "" : mmBunStandSku = ""
 mmBunMonName   = "" : mmBunMonPriceInc   = 0 : mmBunMonImg   = "" : mmBunMonSku   = ""
 
 Dim mmBunSql, mmBunRs
 
-mmBunSql = "SELECT description, sku, price, smallImageUrl " & _
+mmBunSql = "SELECT idProduct, description, sku, price, smallImageUrl " & _
            "FROM products " & _
-           "WHERE idProduct = " & mmBunSid & _
+           "WHERE pcUrlBundle = '" & Replace(mmBunStandSlug, "'", "''") & "'" & _
+           "  AND pcprod_DisplayLayout = 'stand'" & _
            "  AND active = -1 AND removed = 0"
 Set mmBunRs = connTemp.Execute(mmBunSql)
 If Not mmBunRs.EOF Then
+  mmBunSid           = CLng(mmBunRs("idProduct"))
   mmBunStandName     = mmBunRs("description") & ""
   mmBunStandSku      = mmBunRs("sku") & ""
   mmBunStandPriceInc = CDbl(mmBunRs("price"))
@@ -80,12 +77,14 @@ If mmBunStandName = "" Then
   Response.Redirect "/bundles/"
 End If
 
-mmBunSql = "SELECT description, sku, price, smallImageUrl " & _
+mmBunSql = "SELECT idProduct, description, sku, price, smallImageUrl " & _
            "FROM products " & _
-           "WHERE idProduct = " & mmBunMid & _
+           "WHERE pcUrlBundle = '" & Replace(mmBunMonSlug, "'", "''") & "'" & _
+           "  AND pcprod_DisplayLayout = 'monitor'" & _
            "  AND active = -1 AND removed = 0"
 Set mmBunRs = connTemp.Execute(mmBunSql)
 If Not mmBunRs.EOF Then
+  mmBunMid         = CLng(mmBunRs("idProduct"))
   mmBunMonName     = mmBunRs("description") & ""
   mmBunMonSku      = mmBunRs("sku") & ""
   mmBunMonPriceInc = CDbl(mmBunRs("price"))
@@ -213,4 +212,17 @@ Sub mmSetBundleSeo(byVal machineName)
     Trim(mmBunMonDispName) & ", " & Trim(mmBunStandDispName) & _
     " and " & machineName & ". Free UK delivery, built to order."
 End Sub
+
+' Slug guard - matches the URL segment shape we accept from IIS.
+Function mmBunIsValidSlug(ByVal s)
+  Dim i, ch, ok
+  mmBunIsValidSlug = False
+  If Len(s) = 0 Or Len(s) > 80 Then Exit Function
+  For i = 1 To Len(s)
+    ch = Mid(s, i, 1)
+    ok = (ch >= "a" And ch <= "z") Or (ch >= "0" And ch <= "9") Or ch = "-"
+    If Not ok Then Exit Function
+  Next
+  mmBunIsValidSlug = True
+End Function
 %>
