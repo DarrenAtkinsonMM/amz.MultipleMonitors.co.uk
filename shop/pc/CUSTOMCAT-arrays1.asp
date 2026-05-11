@@ -346,6 +346,11 @@ SET rs=nothing
 '*******************************
 ' End get sub-categories array
 '*******************************
+
+' Page-level metadata consumed by inc_headerV5.asp + GenerateMetaTags
+Dim pcv_PageName, pcv_DefaultDescription
+pcv_PageName = "Monitor Display Systems &mdash; Choose Your Stand | Multiple Monitors"
+pcv_DefaultDescription = "Build your multi-monitor display array: stand and matched monitors at a discount. Step 1 - pick the stand for your setup, dual to eight screens supported."
 %>
 
 <!--#include file="header_wrapper.asp"-->

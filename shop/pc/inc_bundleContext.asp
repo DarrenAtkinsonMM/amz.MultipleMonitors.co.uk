@@ -111,7 +111,7 @@ If InStr(mmBunStandName, "Six")    > 0 Then mmBunMonCount = 6
 If InStr(mmBunStandName, "Eight")  > 0 Then mmBunMonCount = 8
 
 ' ------------------------------------------------------------
-' 4. Bundle discount by monitor count
+' 4. Bundle discount & Cable cost by monitor count
 '    (matches inc_headerDAJS.asp numBunDiscount)
 ' ------------------------------------------------------------
 Dim mmBunDiscount
@@ -121,6 +121,9 @@ Select Case mmBunMonCount
   Case 6, 8 : mmBunDiscount = 100
   Case Else : mmBunDiscount = 0
 End Select
+
+Dim mmCableCost 
+mmCableCost = mmBunMonCount * 15
 
 ' ------------------------------------------------------------
 ' 5. Derived totals - ex-VAT values used throughout the page
@@ -138,7 +141,7 @@ mmBunMonSubtotalInc = mmBunMonPriceInc   * mmBunMonCount
 Dim mmBunStandDispName, mmBunMonDispName
 mmBunStandDispName = Replace(mmBunStandName, "Synergy ", "")
 mmBunStandDispName = Replace(mmBunStandDispName, "Monitor ", "")
-mmBunMonDispName   = mmBunMonName
+mmBunMonDispName   = Replace(mmBunMonName, "Monitor", "") 
 
 ' ------------------------------------------------------------
 ' 7. Image URLs with fallback
@@ -168,5 +171,46 @@ Sub mmEmitBundleHiddenInputs()
   <input type="hidden" name="QtyM<%= mmBunMid %>" value="<%= mmBunMonCount %>">
   <input type="hidden" name="pCnt" value="3">
 <%
+End Sub
+
+' ------------------------------------------------------------
+' 9. SEO helpers - <title> + meta description for bundle pages
+'    pcv_PageName drives inc_headerV5.asp's <title> output.
+'    pcv_DefaultDescription is picked up by GenerateMetaTags()
+'    in include-metatags.asp because bundle pages don't pass
+'    idproduct/idcategory in the querystring, so its product/
+'    category branches all skip and execution lands on the
+'    default-description fallback.
+'
+'    Dim'd at script scope here so mmSetBundleSeo's assignments
+'    modify the page-level variables. Without these Dims VBScript
+'    (no Option Explicit) would create sub-local variables that
+'    vanish when the sub returns - and inc_headerV5.asp would see
+'    pcv_PageName as empty, skipping the <title> output.
+' ------------------------------------------------------------
+Dim pcv_PageName, pcv_DefaultDescription
+pcv_PageName = ""
+pcv_DefaultDescription = ""
+
+Function mmBunScreenWord(n)
+  Select Case n
+    Case 1 : mmBunScreenWord = "Single"
+    Case 2 : mmBunScreenWord = "Dual"
+    Case 3 : mmBunScreenWord = "Triple"
+    Case 4 : mmBunScreenWord = "Quad"
+    Case 5 : mmBunScreenWord = "Five"
+    Case 6 : mmBunScreenWord = "Six"
+    Case 8 : mmBunScreenWord = "Eight"
+    Case Else : mmBunScreenWord = CStr(n)
+  End Select
+End Function
+
+Sub mmSetBundleSeo(byVal machineName)
+  Dim word : word = mmBunScreenWord(mmBunMonCount)
+  pcv_PageName = machineName & " " & word & " Screen Bundle | Multiple Monitors"
+  pcv_DefaultDescription = "Save £" & mmBunDiscount & _
+    " on a complete trading setup: " & mmBunMonCount & " x " & _
+    Trim(mmBunMonDispName) & ", " & Trim(mmBunStandDispName) & _
+    " and " & machineName & ". Free UK delivery, built to order."
 End Sub
 %>

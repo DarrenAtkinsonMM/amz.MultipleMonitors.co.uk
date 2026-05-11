@@ -384,6 +384,11 @@ SET rs=nothing
 '*******************************
 ' End get sub-categories array
 '*******************************
+
+' Page-level metadata consumed by inc_headerV5.asp + GenerateMetaTags
+Dim pcv_PageName, pcv_DefaultDescription
+pcv_PageName = "Trading Bundles &mdash; Choose Your Monitors | Multiple Monitors"
+pcv_DefaultDescription = "Step 2 of the trading bundle builder. Choose the monitors to pair with your selected stand. 24-inch to 32-inch 4K options with free UK delivery."
 %>
 
 <!--#include file="header_wrapper.asp"-->

@@ -3002,7 +3002,7 @@ footer a:hover { color:var(--accent); }
 }
 .mm-site .cfg-summary__list {
   list-style:none; padding:0; margin:0 0 14px;
-  display:flex; flex-direction:column; gap:8px;
+  display:flex; flex-direction:column; gap:2px;
 }
 .mm-site .cfg-summary__list li {
   display:grid; grid-template-columns:72px 1fr auto;
@@ -3100,7 +3100,7 @@ footer a:hover { color:var(--accent); }
 }
 .mm-site .cfg-impact__row {
   display:grid; grid-template-columns:1fr auto;
-  align-items:center; gap:12px; padding:5px 0;
+  align-items:center; gap:12px; padding:3px 0;
   font-size:13px;
 }
 .mm-site .cfg-impact__lbl { color:var(--ink); font-weight:500; }
@@ -3861,13 +3861,13 @@ footer a:hover { color:var(--accent); }
 .mm-site .bp-card__head .tick .fa { font-size:10px; }
 
 .mm-site .bp-items {
-  list-style:none; padding:0; margin:0 0 12px;
+  list-style:none; padding:0; margin:0 0 6px;
   display:flex; flex-direction:column; gap:0;
 }
 .mm-site .bp-items li {
   display:grid; grid-template-columns:32px 1fr auto;
   gap:10px; align-items:center;
-  padding:10px 0; border-bottom:1px solid var(--line);
+  padding:8px 0; border-bottom:1px solid var(--line);
 }
 .mm-site .bp-items li:last-child { border-bottom:none; }
 .mm-site .bp-items__ico {

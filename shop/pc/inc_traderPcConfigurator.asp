@@ -26,6 +26,23 @@
 ' and have an open ADO connection in connTemp (from common.asp).
 ' ==============================================================
 
+' Module-level - bundle page sets this before the option-group loop
+' to force a specific GPU option to render selected (e.g. when the
+' bundle's monitor count exceeds the default GPU's screen capacity).
+' Standalone product page leaves it at 0 and gets today's behaviour.
+Dim mmGpuPreselectIdoptoptgrp : mmGpuPreselectIdoptoptgrp = 0
+
+' Per-PC GPU lookup. The Trader PC's default GPU drives 4 screens, so
+' bundles of 1-4 monitors keep the default. 5/6/8-screen bundles must
+' upgrade to a GPU that can physically drive the stand.
+Function mmTraderPcGpuIdForMonCount(ByVal monCount)
+  Select Case monCount
+    Case 5, 6 : mmTraderPcGpuIdForMonCount = 18519   ' nVidia RTX 5050 x2
+    Case 8    : mmTraderPcGpuIdForMonCount = 18519   ' nVidia RTX A400 x2
+    Case Else : mmTraderPcGpuIdForMonCount = 0       ' no override (1-4 mons)
+  End Select
+End Function
+
 Sub mmRenderOptionGroup(ByVal ogId, ByVal ogDesc, ByVal ogShort, ByVal ogIndex, ByVal ogKind, ByVal ogHelpHtml)
   Dim sql, rs, rows, count
   count = 0
@@ -53,9 +70,24 @@ Sub mmRenderOptionGroup(ByVal ogId, ByVal ogDesc, ByVal ogShort, ByVal ogIndex, 
   Dim firstPriceInc
   firstPriceInc = CDbl(rows(priceCol, 0))
 
-  Dim firstDescrip, firstId
-  firstDescrip = rows(6, 0) & ""
-  firstId      = rows(0, 0)
+  ' Default selection is the first/cheapest row. When ogKind = "gpu"
+  ' and the bundle page has set a preselect idoptoptgrp, find that
+  ' row and select it instead - the firstPriceInc baseline above is
+  ' unchanged so the override option still renders with its real
+  ' upgrade delta.
+  Dim selectedIdx, selectedDescrip, selectedIdoptoptgrp
+  selectedIdx = 0
+  If ogKind = "gpu" And mmGpuPreselectIdoptoptgrp > 0 Then
+    Dim k
+    For k = 0 To count - 1
+      If CLng(rows(0, k)) = CLng(mmGpuPreselectIdoptoptgrp) Then
+        selectedIdx = k
+        Exit For
+      End If
+    Next
+  End If
+  selectedDescrip     = rows(6, selectedIdx) & ""
+  selectedIdoptoptgrp = rows(0, selectedIdx)
 
   Dim groupKey, openCls, ariaExpanded
   groupKey = "g" & ogIndex
@@ -73,7 +105,7 @@ Sub mmRenderOptionGroup(ByVal ogId, ByVal ogDesc, ByVal ogShort, ByVal ogIndex, 
             aria-controls="cfg-body-<%= groupKey %>">
       <span class="cfg-row__head-main">
         <span class="cfg-row__label"><span class="n"><%= ogIndex %></span><%= Server.HTMLEncode(ogDesc) %></span>
-        <span class="cfg-row__selected" data-selected><%= Server.HTMLEncode(firstDescrip) %></span>
+        <span class="cfg-row__selected" data-selected><%= Server.HTMLEncode(selectedDescrip) %></span>
       </span>
       <i class="fa fa-chevron-down cfg-row__chev" aria-hidden="true"></i>
     </button>
@@ -93,7 +125,7 @@ Sub mmRenderOptionGroup(ByVal ogId, ByVal ogDesc, ByVal ogShort, ByVal ogIndex, 
     deltaEx  = CLng(Round(deltaInc / MM_VAT_RATE, 0))
 
     Dim cls, priceTxt, priceCls
-    If j = 0 Then
+    If j = selectedIdx Then
       cls = "cfg-option is-selected"
     Else
       cls = "cfg-option"
@@ -117,7 +149,7 @@ Sub mmRenderOptionGroup(ByVal ogId, ByVal ogDesc, ByVal ogShort, ByVal ogIndex, 
   Next
 %>
         </div>
-        <input type="hidden" name="idOption<%= ogIndex %>" value="<%= firstId %>">
+        <input type="hidden" name="idOption<%= ogIndex %>" value="<%= selectedIdoptoptgrp %>">
 <%
   If ogKind = "cpu" Then
 %>

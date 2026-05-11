@@ -240,8 +240,9 @@ mmGalRs.Close : Set mmGalRs = Nothing
 ' 3. Page-level metadata consumed by inc_headerV5.asp
 '    (set BEFORE the header_wrapper include so it wins)
 ' ------------------------------------------------------------
-Dim pcv_PageName
+Dim pcv_PageName, pcv_DefaultDescription
 pcv_PageName = mmName & " — UK monitor for multi-screen setups | Multiple Monitors"
+pcv_DefaultDescription = mmName & " - matched-bezel monitor for multi-screen trading arrays. Built to pair with our Synergy stands, free UK delivery, configurable in our bundle builder."
 
 ' Highlight the Monitor Arrays tab in the main nav
 topmenuArrays = " class=""is-trader"""

@@ -346,6 +346,11 @@ SET rs=nothing
 '*******************************
 ' End get sub-categories array
 '*******************************
+
+' Page-level metadata consumed by inc_headerV5.asp + GenerateMetaTags
+Dim pcv_PageName, pcv_DefaultDescription
+pcv_PageName = "Monitors for Multi-Screen Setups &mdash; UK Specialist | Multiple Monitors"
+pcv_DefaultDescription = "Trading-grade monitors from 24-inch to 32-inch 4K. Bezel-thin panels matched to our stands for clean multi-screen arrays. Free UK delivery."
 %>
 
 <!--#include file="header_wrapper.asp"-->

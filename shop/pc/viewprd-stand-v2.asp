@@ -243,8 +243,9 @@ mmGalRs.Close : Set mmGalRs = Nothing
 ' 3. Page-level metadata consumed by inc_headerV5.asp
 '    (set BEFORE the header_wrapper include so it wins)
 ' ------------------------------------------------------------
-Dim pcv_PageName
+Dim pcv_PageName, pcv_DefaultDescription
 pcv_PageName = mmName & " &mdash; UK monitor stand for multi-screen setups | Multiple Monitors"
+pcv_DefaultDescription = mmName & " - UK-built monitor stand for multi-screen trading desks. Configurations from dual to eight screens, free UK delivery, 5-year structural guarantee."
 
 ' Highlight the Stands tab in the main nav
 topmenuStands = " class=""is-trader"""

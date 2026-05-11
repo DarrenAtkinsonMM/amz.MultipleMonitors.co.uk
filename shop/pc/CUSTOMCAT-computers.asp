@@ -83,6 +83,11 @@ Function mmPcHref(ByVal purl, ByVal idProd)
         mmPcHref = "/shop/pc/viewPrd.asp?idproduct=" & idProd
     End If
 End Function
+
+' Page-level metadata consumed by inc_headerV5.asp + GenerateMetaTags
+Dim pcv_PageName, pcv_DefaultDescription
+pcv_PageName = "Multi-Monitor Computers &mdash; UK Built | Multiple Monitors"
+pcv_DefaultDescription = "PCs built for multi-screen setups: trading workstations, ultra and extreme multi-monitor computers. Configure online with free UK delivery."
 %>
 <!--#include file="header_wrapper.asp"-->
 

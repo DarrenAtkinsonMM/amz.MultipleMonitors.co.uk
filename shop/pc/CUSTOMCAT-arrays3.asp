@@ -48,6 +48,11 @@ pTempIntSubCategory=67
 		pTempIntSubCategory=1
 	end if
 intIdCategory=pTempIntSubCategory
+
+' Page-level metadata consumed by inc_headerV5.asp + GenerateMetaTags
+Dim pcv_PageName, pcv_DefaultDescription
+pcv_PageName = "Monitor Display Systems &mdash; Confirm Your Setup | Multiple Monitors"
+pcv_DefaultDescription = "Step 3 of the monitor display array builder. Review your multi-monitor configuration and add to cart. Free UK delivery on every array."
 %>
 
 <!--#include file="header_wrapper.asp"-->

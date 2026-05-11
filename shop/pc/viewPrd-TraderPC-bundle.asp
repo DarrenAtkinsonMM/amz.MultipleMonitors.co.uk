@@ -102,9 +102,16 @@ End If
 mmOgRs.Close : Set mmOgRs = Nothing
 
 Dim mmMachineName : mmMachineName = mmName
+mmSetBundleSeo mmName
 %>
 <!--#include file="inc_traderPcConfigurator.asp"-->
 <%
+' Auto-pick a GPU that supports the bundle's monitor count. The
+' Trader PC's default GPU drives 4 screens, so 5/6/8-screen bundles
+' need an upgrade picked before mmRenderOptionGroup runs. Returns 0
+' for 1-4 monitors, leaving the default option selected.
+mmGpuPreselectIdoptoptgrp = mmTraderPcGpuIdForMonCount(mmBunMonCount)
+
 Dim mmBasePriceExDisp, mmBasePriceIncDisp
 mmBasePriceExDisp  = mmFormatMoney0(mmBasePriceEx)
 mmBasePriceIncDisp = mmFormatMoney(mmBasePriceInc)
@@ -146,9 +153,9 @@ mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & m
 </nav>
 
 <form method="post" action="/shop/pc/instPrd.asp" id="cfgForm">
-  <input type="hidden" name="idproduct"        value="<%= MM_PRODUCT_ID %>">
-  <input type="hidden" name="quantity"         value="1">
-  <input type="hidden" name="OptionGroupCount" value="<%= mmOgCount %>">
+  <input type="hidden" name="idproduct1"                value="<%= MM_PRODUCT_ID %>">
+  <input type="hidden" name="QtyM<%= MM_PRODUCT_ID %>"  value="1">
+  <input type="hidden" name="OptionGroupCount"          value="<%= mmOgCount %>">
   <% mmEmitBundleHiddenInputs() %>
 
 <!-- ===================================================================
@@ -232,13 +239,14 @@ mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & m
         <div class="bp-savings">
           <p class="bp-savings__line">
             You&rsquo;re saving <b>&pound;<span data-hero-saved><%= mmBunDiscount + 80 %></span></b>
-            vs piecing this together from separate suppliers.
+            vs piecing this together separately.
           </p>
           <div class="bp-savings__pills">
-            <span>Bundle discount <b>&minus;&pound;<%= mmBunDiscount %></b></span>
-            <span>Free Wi-Fi card <b>&pound;40</b></span>
+            <span>Free Wi-Fi / BT card <b>&pound;40</b></span>
             <span>Free speakers <b>&pound;20</b></span>
+            <span>Free premium cables <b>&pound;<%= mmCableCost %></b></span>
             <span>Free UK delivery <b>&pound;20</b></span>
+            <span>Bundle discount <b>&pound;<%= mmBunDiscount %></b></span>
           </div>
         </div>
         <% End If %>
@@ -306,7 +314,7 @@ mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & m
             <span>Stand</span>
           </div>
           <div class="bp-pick-card__name"><%= Server.HTMLEncode(mmBunStandDispName) %></div>
-          <div class="bp-pick-card__desc"><%= mmBunMonCount %>-screen steel array &middot; UK-made Synergy</div>
+          <div class="bp-pick-card__desc"><%= mmBunMonCount %>-Screen Synergy Stand</div>
         </div>
         <span class="bp-pick-card__change">Change <i class="fa fa-arrow-right"></i></span>
       </a>
@@ -320,10 +328,10 @@ mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & m
           <div class="bp-pick-card__meta">
             <span class="step">Step 2</span>
             <span class="sep">&middot;</span>
-            <span>Screens &middot; <%= mmBunMonCount %> &times;</span>
+            <span>Screens</span>
           </div>
-          <div class="bp-pick-card__name"><%= Server.HTMLEncode(mmBunMonDispName) %></div>
-          <div class="bp-pick-card__desc">Matched for multi-screen arrays &middot; thin bezel</div>
+          <div class="bp-pick-card__name"><%= mmBunMonDispName %></div>
+          <div class="bp-pick-card__desc"></div>
         </div>
         <span class="bp-pick-card__change">Change <i class="fa fa-arrow-right"></i></span>
       </a>
@@ -340,7 +348,7 @@ mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & m
             <span>Computer</span>
           </div>
           <div class="bp-pick-card__name"><%= Server.HTMLEncode(mmName) %></div>
-          <div class="bp-pick-card__desc">UK-built &middot; i5 14th gen &middot; tune below</div>
+          <div class="bp-pick-card__desc">UK Custom Built</div>
         </div>
         <span class="bp-pick-card__change">Change <i class="fa fa-arrow-right"></i></span>
       </a>
@@ -365,8 +373,8 @@ mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & m
         We&rsquo;ve checked
       </span>
       <p class="bp-compat__copy">
-        <strong>VESA plates matched, graphics card spec&rsquo;d for <%= mmBunMonCount %> screens, every cable the right length.</strong>
-        Your bundle is bench-tested <em>before</em> it ships &mdash; one delivery, one invoice, one UK phone number if anything isn&rsquo;t right.
+        <strong>VESA plates matched, graphics setup ready for <%= mmBunMonCount %> screens, the right premium cables included.</strong>
+        Your bundle is stress-tested <em>before</em> it ships. One delivery, one invoice, one UK phone number if anything isn&rsquo;t right.
       </p>
     </div>
   </div>
@@ -381,7 +389,7 @@ mmBunChangeBase = "/bundles/?sid=" & mmBunSid & "&mid=" & mmBunMid & "&cid=" & m
     <div class="cfg-head reveal">
       <div>
         <h5>Tune the PC to your workload</h5>
-        <h2>Customise the PC the way you&rsquo;ll <em>actually use it</em>.</h2>
+        <h2>Customise the PC <em>for your needs</em>.</h2>
       </div>
       <a href="tel:03302236655" class="talk-link"><i class="fa fa-phone"></i>Or call &mdash; 0330 223 66 55</a>
     </div>
@@ -441,28 +449,28 @@ Next
           <!-- Bundle 3-item breakdown -->
           <ul class="bp-items">
             <li>
-              <span class="bp-items__ico"><i class="fa fa-cube"></i></span>
+              <span class="bp-items__ico"><i class="fa fa-check"></i></span>
               <span class="bp-items__body">
-                <span class="bp-items__role">Stand &middot; <%= Server.HTMLEncode(mmBunStandDispName) %></span>
+                <span class="bp-items__role">Multi Screen Computer</span>
+                <span class="bp-items__name"><%= Server.HTMLEncode(mmName) %> (Live total)</span>
+              </span>
+              <span class="bp-items__pri">&pound;<span data-pc-pri><%= mmBasePriceExDisp %></span></span>
+            </li>
+            <li>
+              <span class="bp-items__ico"><i class="fa fa-check"></i></span>
+              <span class="bp-items__body">
+                <span class="bp-items__role">Multi Screen Stand</span>
                 <span class="bp-items__name"><%= Server.HTMLEncode(mmBunStandName) %></span>
               </span>
               <span class="bp-items__pri">&pound;<%= mmFormatMoney0(mmBunStandPriceEx) %></span>
             </li>
             <li>
-              <span class="bp-items__ico"><i class="fa fa-desktop"></i></span>
+              <span class="bp-items__ico"><i class="fa fa-check"></i></span>
               <span class="bp-items__body">
-                <span class="bp-items__role">Screens &middot; <%= mmBunMonCount %> &times; <%= Server.HTMLEncode(mmBunMonDispName) %></span>
-                <span class="bp-items__name"><%= mmBunMonCount %> &times; &pound;<%= mmFormatMoney0(mmBunMonPriceEx) %></span>
+                <span class="bp-items__role">Screens &middot; (&pound;<%= mmFormatMoney0(mmBunMonPriceEx) %> each)</span>
+                <span class="bp-items__name"><%= mmBunMonDispName %> &times; <%= mmBunMonCount %></span>
               </span>
               <span class="bp-items__pri">&pound;<%= mmFormatMoney0(mmBunMonSubtotalEx) %></span>
-            </li>
-            <li class="is-live">
-              <span class="bp-items__ico"><i class="fa fa-microchip"></i></span>
-              <span class="bp-items__body">
-                <span class="bp-items__role">Computer &middot; <%= Server.HTMLEncode(mmName) %> (live)</span>
-                <span class="bp-items__name" data-pc-line><%= Server.HTMLEncode(mmName) %></span>
-              </span>
-              <span class="bp-items__pri">&pound;<span data-pc-pri><%= mmBasePriceExDisp %></span></span>
             </li>
           </ul>
 
@@ -507,7 +515,7 @@ Next
           </div>
 
           <a href="#full-spec" class="cfg-summary__speclink">
-            <i class="fa fa-list"></i>View full specification
+            <i class="fa fa-list"></i>View full bundle specification
             <i class="fa fa-angle-down" aria-hidden="true"></i>
           </a>
         </div>
@@ -527,8 +535,8 @@ Next
   <div class="container">
 
     <div class="section-head-narrow reveal">
-      <h5>Full PC specification</h5>
-      <h2>Everything in <span class="display-em">the <%= Server.HTMLEncode(mmName) %> inside your bundle</span>.</h2>
+      <h5>Full PC &amp; Bundle Specification</h5>
+      <h2>Everything included in <span class="display-em">the <%= Server.HTMLEncode(mmName) %> and your bundle</span>.</h2>
       <p>Every component &mdash; the ones you just picked, and the ones we include as standard. When you choose a CPU that needs a bigger board, quieter cooler or more power, the affected parts auto-upgrade with it.</p>
     </div>
 
@@ -544,9 +552,9 @@ Next
         <div class="spec-row"><span class="spec-row__lbl">Case</span><span class="spec-row__val">Fractal Design Core 1100 &middot; sound-dampened</span></div>
         <div class="spec-row"><span class="spec-row__lbl">Power supply</span><span class="spec-row__val" data-spec="psu">&mdash;</span></div>
         <div class="spec-row"><span class="spec-row__lbl">Audio</span><span class="spec-row__val">8-channel HD audio &middot; on-board</span></div>
-        <div class="spec-row"><span class="spec-row__lbl">Monitors</span><span class="spec-row__val"><%= mmBunMonCount %> &times; <%= Server.HTMLEncode(mmBunMonDispName) %></span></div>
-        <div class="spec-row"><span class="spec-row__lbl">Stand</span><span class="spec-row__val"><%= Server.HTMLEncode(mmBunStandName) %> &middot; steel &middot; UK-manufactured</span></div>
-        <div class="spec-row"><span class="spec-row__lbl">Cables</span><span class="spec-row__val"><%= mmBunMonCount %>&times; premium 3&thinsp;m DisplayPort &middot; included free</span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Monitors</span><span class="spec-row__val"><%= mmBunMonCount %>&times; <%= mmBunMonDispName %></span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Stand</span><span class="spec-row__val"><%= Server.HTMLEncode(mmBunStandName) %></span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Cables</span><span class="spec-row__val"><%= mmBunMonCount %>&times; 3m Long Premium Digital Cables (Free)</span></div>
         <div class="spec-row"><span class="spec-row__lbl">Network</span><span class="spec-row__val">Gigabit Ethernet LAN &middot; wired</span></div>
         <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Wireless internet</span><span class="spec-row__val" data-spec="wifi">&mdash;</span></div>
         <div class="spec-row"><span class="spec-row__lbl">USB ports</span><span class="spec-row__val">3&times; USB 3.2 &middot; 3&times; USB 2.0 &middot; 1&times; USB-C</span></div>
@@ -679,7 +687,11 @@ Next
 <!-- Per-option metadata (friendly names, ratings, GPU/CPU specs).
      Keyed by idoptoptgrp; loaded before the IIFE that reads it.
      Same metadata file as viewprd-traderpc.asp - the PC inside the
-     bundle is the same idProduct 333 product. -->
+     bundle is the same idProduct 333 product.
+     The bundle flag is set BEFORE the metadata file loads so the
+     hide loop in the IIFE below picks the right hideOnBundle /
+     hideOnStandalone branch. -->
+<script>window.MM_IS_BUNDLE = true;</script>
 <script src="/js/products/traderpc.js"></script>
 
 <!-- ===================================================================
@@ -699,6 +711,7 @@ Next
   // value of the free wifi card (£40), free speakers (£20) and free
   // UK delivery (£20).
   var SAVINGS_EXTRAS   = (BUNDLE_DISCOUNT > 0) ? 80 : 0;
+  var CABLE_COST = MON_COUNT * 15
 
   // ------- Option metadata lookup -------
   // Per-option overrides + ratings live in /js/products/traderpc.js,
@@ -726,18 +739,26 @@ Next
     }
   });
 
-  // ------- Hide options flagged with meta.hide -------
-  // Removes the option button from the DOM. If the hidden option
-  // was the group's default-selected one, promote the next
-  // remaining option, refresh state, and overwrite the hidden
-  // idOption input so the cart posts what the user actually sees.
+  // ------- Hide options flagged in metadata -------
+  // Removes the option button from the DOM when its meta entry
+  // sets hide:true (everywhere), hideOnBundle:true (this page),
+  // or hideOnStandalone:true (the standalone product page only,
+  // never matches here). If the hidden option was the group's
+  // default-selected one, promote the next remaining option,
+  // refresh state, and overwrite the hidden idOption input so
+  // the cart posts what the user actually sees.
+  var isBundle = window.MM_IS_BUNDLE === true;
   rows.forEach(function(row){
     var group = row.dataset.group;
     var hiddenInput = row.querySelector('input[type="hidden"][name^="idOption"]');
     var lostSelection = false;
     row.querySelectorAll('.cfg-option').forEach(function(btn){
       var m = metaFor(btn.dataset.idoptoptgrp);
-      if (!m || m.hide !== true) return;
+      if (!m) return;
+      var shouldHide = m.hide === true
+        || (isBundle  && m.hideOnBundle     === true)
+        || (!isBundle && m.hideOnStandalone === true);
+      if (!shouldHide) return;
       if (btn.classList.contains('is-selected')) lostSelection = true;
       btn.parentNode.removeChild(btn);
     });
@@ -1053,7 +1074,7 @@ Next
     var bundleSubtotal = pcTotal + STAND_EX + SCREENS_EX;
     var bundleTotalEx  = bundleSubtotal - BUNDLE_DISCOUNT;
     var bundleTotalInc = bundleTotalEx * (1 + VAT_RATE);
-    var savedAmt       = BUNDLE_DISCOUNT + SAVINGS_EXTRAS;
+    var savedAmt       = BUNDLE_DISCOUNT + SAVINGS_EXTRAS + CABLE_COST;
 
     // Hero
     var heroEx    = document.querySelector('[data-hero-ex]');

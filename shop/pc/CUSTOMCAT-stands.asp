@@ -179,6 +179,11 @@ Sub mmRenderStandGroup(ByVal allowed)
         End If
     Next
 End Sub
+
+' Page-level metadata consumed by inc_headerV5.asp + GenerateMetaTags
+Dim pcv_PageName, pcv_DefaultDescription
+pcv_PageName = "Multiple Monitor Stands - UK Modular Multi-Screen Mounts | Multiple Monitors"
+pcv_DefaultDescription = "Synergy multi-monitor stands for trading desks. Dual to eight-screen configurations, freestanding and clamp-on. UK-built with a 5-year structural guarantee."
 %>
 <!--#include file="header_wrapper.asp"-->
 

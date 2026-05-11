@@ -63,6 +63,11 @@ Function mmTcPrice(ByVal vatIncPrice)
         mmTcPrice = ""
     End If
 End Function
+
+' Page-level metadata consumed by inc_headerV5.asp + GenerateMetaTags
+Dim pcv_PageName, pcv_DefaultDescription
+pcv_PageName = "Trading Computers &mdash; UK Specialist | Multiple Monitors"
+pcv_DefaultDescription = "Trader PC and Trader Pro PC: dedicated trading workstations for multi-screen charting and execution. Configure your spec online, free UK delivery."
 %>
 <!--#include file="header_wrapper.asp"-->
 

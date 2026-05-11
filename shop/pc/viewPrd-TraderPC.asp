@@ -105,6 +105,11 @@ ElseIf mmSmallImageUrl <> "" Then
 Else
   mmMainImgSrc = "/shop/pc/catalog/no_image.gif"
 End If
+
+' Page-level metadata consumed by inc_headerV5.asp + GenerateMetaTags
+Dim pcv_PageName, pcv_DefaultDescription
+pcv_PageName = "The Trader PC a Multi Screen Trading PC | Multiple Monitors"
+pcv_DefaultDescription = "For serious traders only, the Trader PC uses only the best performing processors which gives you un-matched trading performance levels. If you want the best performance levels possible then come to the UK's only dedicated trading and multi-screen computer experts."
 %>
 <!--#include file="header_wrapper.asp"-->
 
@@ -693,18 +698,26 @@ Next
     }
   });
 
-  // ------- Hide options flagged with meta.hide -------
-  // Removes the option button from the DOM. If the hidden option
-  // was the group's default-selected one, promote the next
-  // remaining option, refresh state, and overwrite the hidden
-  // idOption input so the cart posts what the user actually sees.
+  // ------- Hide options flagged in metadata -------
+  // Removes the option button from the DOM when its meta entry
+  // sets hide:true (everywhere), hideOnStandalone:true (this
+  // page), or hideOnBundle:true (the bundle end-page only,
+  // never matches here). If the hidden option was the group's
+  // default-selected one, promote the next remaining option,
+  // refresh state, and overwrite the hidden idOption input so
+  // the cart posts what the user actually sees.
+  var isBundle = window.MM_IS_BUNDLE === true;
   rows.forEach(function(row){
     var group = row.dataset.group;
     var hiddenInput = row.querySelector('input[type="hidden"][name^="idOption"]');
     var lostSelection = false;
     row.querySelectorAll('.cfg-option').forEach(function(btn){
       var m = metaFor(btn.dataset.idoptoptgrp);
-      if (!m || m.hide !== true) return;
+      if (!m) return;
+      var shouldHide = m.hide === true
+        || (isBundle  && m.hideOnBundle     === true)
+        || (!isBundle && m.hideOnStandalone === true);
+      if (!shouldHide) return;
       if (btn.classList.contains('is-selected')) lostSelection = true;
       btn.parentNode.removeChild(btn);
     });

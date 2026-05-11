@@ -21,6 +21,17 @@
                       option is promoted to selected. Omit or
                       set false to show normally.
 
+     hideOnStandalone true to hide this option only when
+                      window.MM_IS_BUNDLE is not set — i.e. on
+                      the regular product page. Use for free
+                      bundle-only options that shouldn't appear
+                      to standalone shoppers.
+     hideOnBundle     true to hide this option only when
+                      window.MM_IS_BUNDLE === true — i.e. on the
+                      bundle end-page. Use for paid / None
+                      options that bundles auto-replace with the
+                      free equivalent.
+
      -- Full Specification panel --
      specKey          which row in the Full Spec table this option
                       drives. Required rows: 'cpu', 'ram', 'gpu',
@@ -325,16 +336,29 @@ window.MM_OPTION_META = {
      The "Wifi 6 with Bluetooth" combo card drives BOTH the
      wifi spec row and the bluetooth spec row via specRows.
      The "None" choice has no specKey, so both rows stay
-     hidden when it's selected. */
-  '18133': { hide: true },
-  '17966': {
-    name:     'Wifi 6 with BlueTooth',
+     hidden when it's selected.
+
+     18133 is the free bundle-only version of the same card —
+     hidden on the standalone page so customers there see the
+     paid + None choice. On bundle pages 17966 + 18112 are
+     hidden instead, leaving only 18133 visible. */
+  '18133': {
+    name:             'Wifi 6 with BlueTooth (Free)',
+    hideOnStandalone: true,
     specRows: {
       wifi:      'Wi-Fi 6 (802.11ax) · dual-band',
       bluetooth: 'Bluetooth 5.2'
     }
   },
-  '18112': { name: 'None' },
+  '17966': {
+    name:         'Wifi 6 with BlueTooth',
+    hideOnBundle: true,
+    specRows: {
+      wifi:      'Wi-Fi 6 (802.11ax) · dual-band',
+      bluetooth: 'Bluetooth 5.2'
+    }
+  },
+  '18112': { name: 'None', hideOnBundle: true },
 
   /* ---------- Microsoft Office ----------
      Replace placeholder ids with real `idoptoptgrp` values
@@ -372,13 +396,23 @@ window.MM_OPTION_META = {
     specText: 'Logitech Wireless Keyboard / Mouse Set'
   },
 
-  /* ---------- Speakers ---------- */
-  '18132': { hide: true },
-  '18111': { name: 'None' },
+  /* ---------- Speakers ----------
+     18132 is the free bundle-only speaker option. On standalone
+     pages 18132 is hidden and customers see the paid + None
+     choice; on bundle pages 18111 + 17897 are hidden, leaving
+     only 18132 visible. */
+  '18132': {
+    name:             'Desktop Speakers (Free)',
+    hideOnStandalone: true,
+    specKey:          'speakers',
+    specText:         'Logitech USB desktop speakers'
+  },
+  '18111': { name: 'None', hideOnBundle: true },
   '17897': {
-    name:     'Desktop Speakers',
-    specKey:  'speakers',
-    specText: 'Logitech USB desktop speakers'
+    name:         'Desktop Speakers',
+    hideOnBundle: true,
+    specKey:      'speakers',
+    specText:     'Logitech USB desktop speakers'
   },
 
   /* ---------- Optical ---------- */

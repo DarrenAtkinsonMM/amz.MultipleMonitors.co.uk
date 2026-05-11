@@ -485,6 +485,11 @@ SET rs=nothing
 '*******************************
 ' End get sub-categories array
 '*******************************
+
+' Page-level metadata consumed by inc_headerV5.asp + GenerateMetaTags
+Dim pcv_PageName, pcv_DefaultDescription
+pcv_PageName = "Trading Bundles &mdash; Choose Your PC | Multiple Monitors"
+pcv_DefaultDescription = "Step 3 of the trading bundle builder. Pair your stand and monitors with a Trader PC or other multi-screen workstation. Bundle discount applied at checkout."
 %>
 
 <!--#include file="header_wrapper.asp"-->
