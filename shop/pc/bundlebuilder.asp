@@ -495,13 +495,30 @@ pcv_DefaultDescription = "Save up to £300 with a multi-screen computer, stand a
             <span class="bsb-pct num" id="mmb-pct">0%</span>
           </div>
           <div class="bsb-viz" id="mmb-viz">
-            <svg width="160" height="112" viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
-              <rect x="30" y="58" width="40" height="3" fill="var(--ink)"></rect>
-              <rect x="48.5" y="26" width="3" height="32" fill="var(--ink)"></rect>
-              <g><rect x="11" y="22" width="18" height="12" fill="transparent" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="12.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-              <g><rect x="31" y="22" width="18" height="12" fill="transparent" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="32.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-              <g><rect x="51" y="22" width="18" height="12" fill="transparent" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="52.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
-              <g><rect x="71" y="22" width="18" height="12" fill="transparent" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="72.5" y="23.5" width="15" height="9" fill="var(--ink)" opacity=".6"></rect></g>
+            <svg width="220" height="160" viewBox="0 0 110 80" xmlns="http://www.w3.org/2000/svg">
+              <!-- Stand base + pole -->
+              <rect x="13" y="68" width="42" height="3" fill="var(--ink)"></rect>
+              <rect x="32.5" y="12" width="3" height="56" fill="var(--ink)"></rect>
+              <!-- 2x2 monitor array -->
+              <g><rect x="5.5" y="18" width="28" height="18" fill="transparent" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="8.5" y="21" width="22" height="12" fill="var(--ink)" opacity=".6"></rect></g>
+              <g><rect x="34.5" y="18" width="28" height="18" fill="transparent" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="37.5" y="21" width="22" height="12" fill="var(--ink)" opacity=".6"></rect></g>
+              <g><rect x="5.5" y="37" width="28" height="18" fill="transparent" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="8.5" y="40" width="22" height="12" fill="var(--ink)" opacity=".6"></rect></g>
+              <g><rect x="34.5" y="37" width="28" height="18" fill="transparent" stroke="var(--ink)" stroke-width="1.2"></rect><rect x="37.5" y="40" width="22" height="12" fill="var(--ink)" opacity=".6"></rect></g>
+              <!-- Computer case (front view, tall) -->
+              <g>
+                <rect x="84" y="32" width="22" height="36" fill="transparent" stroke="var(--ink)" stroke-width="1.2"></rect>
+                <rect x="85.5" y="33.5" width="19" height="33" fill="var(--ink)" opacity=".6"></rect>
+                <rect x="85.5" y="33.5" width="19" height="4" fill="var(--ink)"></rect>
+                <circle cx="101" cy="35.5" r="0.9" fill="#fff" opacity=".9"></circle>
+                <rect x="87.5" y="35" width="2" height="1" fill="#fff" opacity=".6"></rect>
+                <rect x="90.5" y="35" width="2" height="1" fill="#fff" opacity=".6"></rect>
+                <line x1="87.5" y1="42" x2="102.5" y2="42" stroke="#fff" stroke-width="0.4" opacity=".55"></line>
+                <line x1="87.5" y1="46" x2="102.5" y2="46" stroke="#fff" stroke-width="0.4" opacity=".5"></line>
+                <line x1="87.5" y1="50" x2="102.5" y2="50" stroke="#fff" stroke-width="0.4" opacity=".5"></line>
+                <line x1="87.5" y1="54" x2="102.5" y2="54" stroke="#fff" stroke-width="0.4" opacity=".5"></line>
+                <line x1="87.5" y1="58" x2="102.5" y2="58" stroke="#fff" stroke-width="0.4" opacity=".5"></line>
+                <line x1="87.5" y1="62" x2="102.5" y2="62" stroke="#fff" stroke-width="0.4" opacity=".5"></line>
+              </g>
             </svg>
           </div>
           <ol class="bsb-list" id="mmb-list">

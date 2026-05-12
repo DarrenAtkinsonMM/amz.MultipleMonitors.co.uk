@@ -163,6 +163,34 @@ Else
   mmBunStandImgLgSrc = "/shop/pc/catalog/no_image.gif"
 End If
 
+'DA Edit - Build up array picture based off product IDs
+Dim mmBunArrImgSrc, mmBunArrMonCode, mmBunArrStdCode
+Select Case mmBunSid
+  Case 326 : mmBunArrStdCode = "s2v"
+  Case 287 : mmBunArrStdCode = "s2h"
+  Case 312 : mmBunArrStdCode = "s3h"
+  Case 324 : mmBunArrStdCode = "s3p"
+  Case 313 : mmBunArrStdCode = "s4s"
+  Case 337 : mmBunArrStdCode = "s4sp"
+  Case 325 : mmBunArrStdCode = "s4p"
+  Case 327 : mmBunArrStdCode = "s4h"
+  Case 318 : mmBunArrStdCode = "s5p"
+  Case 338 : mmBunArrStdCode = "s6r"
+  Case 314 : mmBunArrStdCode = "s6rp"
+  Case 319 : mmBunArrStdCode = "s8r"
+End Select
+
+Select Case mmBunMid
+  Case 304 : mmBunArrMonCode = "a22"
+  Case 317 : mmBunArrMonCode = "a24"
+  Case 328 : mmBunArrMonCode = "a27"
+  Case 320 : mmBunArrMonCode = "i23"
+  Case 344 : mmBunArrMonCode = "i27"
+  Case 345 : mmBunArrMonCode = "i27"
+End Select
+
+mmBunArrImgSrc = "/images/bundles/" & mmBunArrStdCode & "-" & mmBunArrMonCode & "-blg.png"
+
 ' ------------------------------------------------------------
 ' 8. Hidden form inputs - emit inside the cart <form>.
 '    instPrd.asp reads these and processes as a 3-item bundle.

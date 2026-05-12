@@ -1530,12 +1530,12 @@ footer a:hover { color:var(--accent); }
 /* Reassurance pill next to the section head */
 .mm-site .ab-reassure {
   display:inline-flex; align-items:center; gap:10px;
-  background:var(--brand-soft); color:var(--brand-deep);
-  border:1px solid #D5E4F0;
+  background:linear-gradient(90deg, rgba(33,166,122,.12), rgba(33,166,122,.04)); color:var(--up);
+  border:1px solid rgba(33,166,122,.25);
   padding:10px 16px; border-radius:999px;
   font-size:13.5px; font-weight:500; max-width:460px;
 }
-.mm-site .ab-reassure .fa { color:var(--brand); font-size:14px; }
+.mm-site .ab-reassure .fa { color:var(--up); font-size:14px; }
 
 /* Three-step indicator */
 .mm-site .stepper {

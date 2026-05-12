@@ -233,7 +233,7 @@ End Function
             <span class="dot"></span><span class="acc">BUNDLE</span>TESTED&nbsp;TOGETHER
           </span>
           <img class="bp-gallery__array"
-               src="<%= mmBunStandImgLgSrc %>"
+               src="<%= mmBunArrImgSrc %>"
                alt="<%= Server.HTMLEncode(mmBunStandDispName) %>" />
           <img class="bp-gallery__pc"
                src="<%= mmMainImgSrc %>"
@@ -244,8 +244,8 @@ End Function
         </div>
         <div class="bp-gallery__thumbs">
           <div class="bp-thumb is-active">
-            <img src="<%= mmBunStandImgSrc %>" alt="Full bundle composite" />
-            <span class="bp-thumb__lbl">Bundle</span>
+            <img src="<%= mmBunArrImgSrc %>" alt="Full bundle composite" />
+            <span class="bp-thumb__lbl">Array</span>
           </div>
           <div class="bp-thumb">
             <img src="<%= mmMainImgSrc %>" alt="<%= Server.HTMLEncode(mmName) %>" />
@@ -271,7 +271,7 @@ End Function
         <div class="eyebrow">Your bundle &middot; <%= mmBunMonCount %>-screen trader setup</div>
         <h1>Your <em>Trader&nbsp;Bundle</em></h1>
         <p class="pitch">
-          <%= mmBunMonCount %>&times; <%= mmBunMonDispName %> on the <%= Server.HTMLEncode(mmBunStandDispName) %> stand,
+          <%= mmBunMonCount %>&times; <%= mmBunMonDispName %> on the <%= Server.HTMLEncode(mmBunStandDispName) %>,
           plus a UK-built <%= Server.HTMLEncode(mmName) %> &mdash; tested together, shipped together,
           with every cable you need. Customise the PC below; the rest of the bundle is already sorted.
         </p>
