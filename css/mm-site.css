@@ -679,13 +679,14 @@ footer a:hover { color:var(--accent); }
   border-bottom:1px solid var(--line); background:#fff;
 }
 .mm-site .truststrip .inner { display:grid; grid-template-columns:1fr; gap:22px; align-items:center; }
-@media (min-width:768px) { .mm-site .truststrip .inner { grid-template-columns:repeat(4, 1fr); gap:20px; } }
+@media (min-width:768px) { .mm-site .truststrip .inner { grid-template-columns:repeat(2, 1fr); gap:20px; } }
+@media (min-width:1024px) { .mm-site .truststrip .inner { grid-template-columns:repeat(4, 1fr); gap:20px; } }
 .mm-site .trust-item {
   display:flex; align-items:center; gap:14px;
   border-left:1px solid var(--line); padding-left:18px;
 }
 .mm-site .trust-item:first-child { border-left:none; padding-left:0; }
-@media (max-width:767px) { .mm-site .trust-item { border-left:none; padding-left:0; } }
+@media (max-width:1023px) { .mm-site .trust-item { border-left:none; padding-left:0; } }
 .mm-site .trust-item .icon {
   width:44px; height:44px; border-radius:10px;
   background:var(--brand-soft); color:var(--brand);
@@ -911,7 +912,7 @@ footer a:hover { color:var(--accent); }
   display:grid; grid-template-columns:repeat(2, 1fr); gap:16px 34px;
   align-items:center; justify-items:center;
 }
-@media (min-width:768px) { .mm-site .logos-row { grid-template-columns:repeat(6, 1fr); } }
+@media (min-width:768px) { .mm-site .logos-row { grid-template-columns:repeat(5, 1fr); } }
 .mm-site .logos-row .logo {
   font-family:'EB Garamond', 'Georgia', serif; font-weight:500; font-size:18px;
   letter-spacing:-.01em; color:var(--muted);
@@ -1139,12 +1140,12 @@ footer a:hover { color:var(--accent); }
 .mm-site .guide-card h3 { color:#fff; }
 .mm-site .guide-card p { color:#B6C3D1; }
 .mm-site .guide-card h5 { color:var(--accent); }
-.mm-site .guide-form { display:flex; gap:8px; margin-top:6px; }
+.mm-site .guide-form { gap:8px; margin-top:6px; }
 .mm-site .guide-form input {
   flex:1; padding:13px 14px;
   border:1px solid rgba(255,255,255,.15); border-radius:var(--radius);
   background:rgba(255,255,255,.05); color:#fff;
-  font-family:inherit; font-size:14px;
+  font-family:inherit; font-size:14px; margin-bottom:12px;
 }
 .mm-site .guide-form input::placeholder { color:#7A8699; }
 .mm-site .guide-form input:focus { outline:none; border-color:var(--accent); background:rgba(255,255,255,.08); }
@@ -1171,6 +1172,27 @@ footer a:hover { color:var(--accent); }
 .mm-site .blog-card .read {
   margin-top:auto; color:var(--brand); font-weight:500; font-size:14px;
   display:inline-flex; align-items:center; gap:7px;
+}
+
+/* Depth teasers — mobile sizing fixes
+   Grid + flex children default to min-width:auto, which lets wide
+   content (the email input, the 110px name column in .ts-bar, etc.)
+   push cards past the viewport. Constrain everything and reflow the
+   email form to stacked on narrow screens. */
+.mm-site .depth-grid { grid-template-columns:minmax(0,1fr); }
+@media (min-width:768px)  { .mm-site .depth-grid { grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); } }
+@media (min-width:1100px) { .mm-site .depth-grid { grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr); } }
+.mm-site .depth-grid > .card { min-width:0; max-width:100%; }
+
+@media (max-width:600px) {
+  .mm-site .depth .card { padding:22px; }
+  .mm-site .ts-bar { grid-template-columns:90px minmax(0,1fr) 36px; gap:8px; }
+  .mm-site .ts-bar .name { font-size:12.5px; }
+  .mm-site .guide-form { flex-wrap:wrap; }
+  .mm-site .guide-form input { flex:1 1 100%; min-width:0; }
+  .mm-site .guide-form .btn { width:100%; }
+  .mm-site .blog-card .body { padding:20px; }
+  .mm-site .blog-card h3 { font-size:18px; }
 }
 
 /* ============================================================
@@ -3616,6 +3638,13 @@ footer a:hover { color:var(--accent); }
   display:flex; align-items:center; justify-content:center;
   padding:8px; position:relative;
 }
+@media (min-width:760px) {
+  .mm-site .bp-pick-card__vis { width:72px; height:72px; flex:0 0 72px; }
+}
+@media (min-width:1024px) {
+  .mm-site .bp-pick-card__vis { width:122px; height:112px; flex:0 0 122px; }
+}
+
 .mm-site .bp-pick-card__vis img { max-width:100%; max-height:100%; object-fit:contain; }
 .mm-site .bp-pick-card__tick {
   position:absolute; top:-6px; right:-6px;
@@ -3627,7 +3656,7 @@ footer a:hover { color:var(--accent); }
 }
 .mm-site .bp-pick-card__change {
   font-family:'Geist', sans-serif;
-  font-size:13px; color:var(--brand); font-weight:500;
+  font-size:12px; color:var(--brand); font-weight:500;
   padding:7px 12px; margin-top:12px; border-radius:var(--radius);
   border:1px solid rgba(15,110,168,.22);
   background:rgba(15,110,168,.05);

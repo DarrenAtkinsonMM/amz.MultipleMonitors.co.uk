@@ -50,7 +50,7 @@ End If
 '    the Trader PC row as a stand.
 ' ------------------------------------------------------------
 Dim mmBunSid, mmBunMid
-Dim mmBunStandName, mmBunStandPriceInc, mmBunStandImg, mmBunStandSku
+Dim mmBunStandName, mmBunStandPriceInc, mmBunStandImg, mmBunStandImgLg, mmBunStandSku
 Dim mmBunMonName,   mmBunMonPriceInc,   mmBunMonImg,   mmBunMonSku
 mmBunSid = 0 : mmBunMid = 0
 mmBunStandName = "" : mmBunStandPriceInc = 0 : mmBunStandImg = "" : mmBunStandSku = ""
@@ -58,7 +58,7 @@ mmBunMonName   = "" : mmBunMonPriceInc   = 0 : mmBunMonImg   = "" : mmBunMonSku 
 
 Dim mmBunSql, mmBunRs
 
-mmBunSql = "SELECT idProduct, description, sku, price, smallImageUrl " & _
+mmBunSql = "SELECT idProduct, description, sku, price, smallImageUrl, imageUrl " & _
            "FROM products " & _
            "WHERE pcUrlBundle = '" & Replace(mmBunStandSlug, "'", "''") & "'" & _
            "  AND pcprod_DisplayLayout = 'stand'" & _
@@ -70,6 +70,7 @@ If Not mmBunRs.EOF Then
   mmBunStandSku      = mmBunRs("sku") & ""
   mmBunStandPriceInc = CDbl(mmBunRs("price"))
   mmBunStandImg      = mmBunRs("smallImageUrl") & ""
+  mmBunStandImgLg    = mmBunRs("imageUrl") & ""
 End If
 mmBunRs.Close : Set mmBunRs = Nothing
 
@@ -145,7 +146,7 @@ mmBunMonDispName   = Replace(mmBunMonName, "Monitor", "")
 ' ------------------------------------------------------------
 ' 7. Image URLs with fallback
 ' ------------------------------------------------------------
-Dim mmBunStandImgSrc, mmBunMonImgSrc
+Dim mmBunStandImgSrc, mmBunMonImgSrc, mmBunStandImgLgSrc
 If mmBunStandImg <> "" Then
   mmBunStandImgSrc = "/shop/pc/catalog/" & mmBunStandImg
 Else
@@ -155,6 +156,11 @@ If mmBunMonImg <> "" Then
   mmBunMonImgSrc = "/shop/pc/catalog/" & mmBunMonImg
 Else
   mmBunMonImgSrc = "/shop/pc/catalog/no_image.gif"
+End If
+If mmBunStandImgLg <> "" Then
+  mmBunStandImgLgSrc = "/shop/pc/catalog/" & mmBunStandImgLg
+Else
+  mmBunStandImgLgSrc = "/shop/pc/catalog/no_image.gif"
 End If
 
 ' ------------------------------------------------------------

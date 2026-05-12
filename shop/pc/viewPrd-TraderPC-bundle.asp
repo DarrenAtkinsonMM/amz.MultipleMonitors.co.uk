@@ -233,7 +233,7 @@ End Function
             <span class="dot"></span><span class="acc">BUNDLE</span>TESTED&nbsp;TOGETHER
           </span>
           <img class="bp-gallery__array"
-               src="<%= mmBunStandImgSrc %>"
+               src="<%= mmBunStandImgLgSrc %>"
                alt="<%= Server.HTMLEncode(mmBunStandDispName) %>" />
           <img class="bp-gallery__pc"
                src="<%= mmMainImgSrc %>"

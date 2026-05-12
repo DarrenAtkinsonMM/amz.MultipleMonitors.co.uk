@@ -74,9 +74,9 @@ Select Case lcase(Request.ServerVariables("SCRIPT_NAME"))
 		End Select
 	Case "/shop/pc/customcat-stands.asp"
 		topmenuStands = " class=""is-trader"""
-	Case "/shop/pc/customcat-computers.asp","/shop/pc/customcat-tradingcomputers.asp"
+	Case "/shop/pc/customcat-computers.asp","/shop/pc/customcat-tradingcomputers.asp","/shop/pc/viewprd-traderpc.asp"
 		topmenuComputers = " class=""is-trader"""
-	Case "/shop/pc/customcat-bundles1.asp","/shop/pc/customcat-bundles2.asp","/shop/pc/customcat-bundles3.asp"
+	Case "/shop/pc/bundlebuilder.asp","/shop/pc/viewprd-traderpc-bundle.asp"
 		topmenuBundles = " class=""is-trader"""
 	Case "/shop/pc/customcat-arrays1.asp","/shop/pc/customcat-arrays2.asp","/shop/pc/customcat-arrays3.asp"
 		topmenuArrays = " class=""is-trader"""

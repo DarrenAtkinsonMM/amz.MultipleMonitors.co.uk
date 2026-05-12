@@ -342,6 +342,11 @@ Sub mmEmitComputer(ByVal row)
                    ", bunimg:""" & mmJsStr(row(9)) & """" & _
                    ", cta:""" & mmJsStr(row(10)) & """ }," & vbCrLf
 End Sub
+
+' Page-level metadata consumed by inc_headerV5.asp + GenerateMetaTags
+Dim pcv_PageName, pcv_DefaultDescription
+pcv_PageName = "Multiple Monitor Bundles - PC, Stand & Screens | Multiple Monitors"
+pcv_DefaultDescription = "Save up to £300 with a multi-screen computer, stand and screen bundle. Includes free PC upgrades, free premium cabling, free delivery and a bundle discount."
 %>
 <!--#include file="header_wrapper.asp"-->
 
@@ -760,14 +765,14 @@ End Sub
   const STAGES = {
     stand: {
       title: 'Start with the stand. <span class="muted">Everything else flexes around it.</span>',
-      next:  { goto:'screens',  label:'Next: Screens <i class="fa fa-arrow-right"></i>' },
+      next:  { goto:'screens',  label:'Next: Pick Screens <i class="fa fa-arrow-right"></i>' },
       cols:  4,
       items: () => BUNDLE_CONFIG.stands,
       meta:  s => '&pound;' + s.price + ' &middot; ' + s.screens + ' screens',
     },
     screens: {
       title: 'Now pick your screens. <span class="muted">Same model across the stand.</span>',
-      next:  { goto:'computer', label:'Next: Computer <i class="fa fa-arrow-right"></i>' },
+      next:  { goto:'computer', label:'Next: Pick Computer <i class="fa fa-arrow-right"></i>' },
       cols:  3,
       items: () => BUNDLE_CONFIG.screens,
       meta:  (s, state) => {
@@ -952,13 +957,39 @@ End Sub
     const done = [state.stand, state.screens, state.computer].filter(Boolean).length;
     $('mmb-pct').textContent = Math.round((done / 3) * 100) + '%';
 
+    // Sidebar CTA. Label advertises the deepest unpicked slot (or
+    // "Configure..." when complete). Enabled state is driven off the
+    // currently viewed stage's pick - the user has to make a selection
+    // on the stage they're looking at before the button activates, even
+    // if that stage isn't the deepest unpicked one.
     const cta = $('mmb-cta');
+    cta.classList.remove('is-disabled');
+    delete cta.dataset.goto;
+
+    let ctaHtml, ctaGoto;
     if (isComplete()) {
-      cta.classList.remove('is-disabled');
-      cta.innerHTML = 'Configure PC &amp; Order Bundle<i class="fa fa-arrow-right"></i>';
+      ctaHtml = 'Configure PC &amp; Order Bundle <i class="fa fa-arrow-right"></i>';
+      ctaGoto = null;
+    } else if (!state.stand) {
+      ctaHtml = 'Pick a stand <i class="fa fa-arrow-right"></i>';
+      ctaGoto = null;
+    } else if (!state.screens) {
+      ctaHtml = 'Next: Pick Screens <i class="fa fa-arrow-right"></i>';
+      ctaGoto = 'screens';
     } else {
+      ctaHtml = 'Next: Pick Computer <i class="fa fa-arrow-right"></i>';
+      ctaGoto = 'computer';
+    }
+
+    const viewStage = currentStage();
+    const viewSlot  = viewStage === 'done' ? 'computer' : viewStage;
+    const viewReady = !!state[viewSlot];
+
+    cta.innerHTML = ctaHtml;
+    if (!viewReady) {
       cta.classList.add('is-disabled');
-      cta.innerHTML = 'Keep building <i class="fa fa-arrow-right"></i>';
+    } else if (ctaGoto) {
+      cta.dataset.goto = ctaGoto;
     }
 
      // Inline info-row CTA on the computer stage — mirrors the sidebar
@@ -1055,7 +1086,21 @@ End Sub
       '&mid=' + state.screens.id +
       '&cid=' + state.computer.id;
   }
-  document.getElementById('mmb-cta').addEventListener('click', gotoBundle);
+  // Sidebar CTA: when bundle isn't complete, the renderSidebar block
+  // stashes the next stage on dataset.goto so the same button can
+  // advance the view rather than no-op. When complete, dataset.goto is
+  // cleared and we fall through to gotoBundle.
+  document.getElementById('mmb-cta').addEventListener('click', function(e){
+    if (this.classList.contains('is-disabled')) { e.preventDefault(); return; }
+    const goto = this.dataset.goto;
+    if (goto) {
+      e.preventDefault();
+      state.view = goto;
+      render();
+      return;
+    }
+    gotoBundle(e);
+  });
   document.getElementById('mmb-info-cta').addEventListener('click', gotoBundle);
 
   // Scroll-reveal animation -- same pattern as the redesigned

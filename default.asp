@@ -199,7 +199,6 @@ pcStrPageName = "home.asp"
       <div class="logo mono">MERIDIAN&nbsp;FX</div>
       <div class="logo">Blakemore Analytics</div>
       <div class="logo sans">Arden Quant</div>
-      <div class="logo mono">VERTEX&nbsp;DESK</div>
     </div>
     <div class="title" style="margin-top:14px; color:var(--muted); font-style:italic; letter-spacing:.02em; font-family:'Fraunces',serif; text-transform:none; font-size:13px;">Representative placeholder &mdash; real customer logos subject to permission.</div>
   </div>
