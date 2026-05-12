@@ -1698,6 +1698,10 @@ footer a:hover { color:var(--accent); }
   color:var(--brand); font-size:16px;
   margin-top:3px; flex-shrink:0;
 }
+.mm-site .mmb-info .mmb-info__cta .fa-arrow-right {
+  color:#fff; font-size:16px;
+  margin-top:0px; flex-shrink:0;
+}
 .mm-site .mmb-info__cta { flex-shrink:0; }
 .mm-site .mmb-info__cta.is-disabled {
   opacity:.55; cursor:not-allowed; pointer-events:none;
@@ -3568,8 +3572,8 @@ footer a:hover { color:var(--accent); }
 }
 .mm-site .bp-pick-card {
   position:relative; overflow:hidden;
-  display:flex; align-items:center; gap:16px;
-  padding:20px 22px;
+  display:flex; align-items:flex-start; gap:16px;
+  padding:18px 12px 18px 16px;
   background:#fff; border:1px solid var(--line);
   border-radius:var(--radius-lg); box-shadow:var(--shadow-sm);
   text-decoration:none;
@@ -3587,8 +3591,26 @@ footer a:hover { color:var(--accent); }
   background:var(--brand); color:#fff; border-color:var(--brand);
 }
 .mm-site .bp-pick-card:hover .bp-pick-card__change .fa { transform:translateX(3px); }
+.mm-site .bp-pick-card__body { flex:1 1 auto; min-width:0; }
+.mm-site .bp-pick-card__meta {
+  display:flex; align-items:center; gap:7px;
+  font-family:'JetBrains Mono', monospace; font-size:10px;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:var(--muted);
+}
+.mm-site .bp-pick-card__meta .step { color:var(--up); font-weight:500; padding:8px 0 8px 2px; }
+.mm-site .bp-pick-card__meta .sep { opacity:.4; }
+.mm-site .bp-pick-card__name {
+  font-family:'EB Garamond', 'Georgia', serif;
+  font-size:20px; font-weight:500; color:var(--ink);
+  line-height:1.2; letter-spacing:-.008em;
+  
+}
+.mm-site .bp-pick-card__desc {
+  font-size:12.5px; color:var(--slate); line-height:1.4; margin-top:4px;
+}
 .mm-site .bp-pick-card__vis {
-  width:72px; height:72px; flex:0 0 72px;
+  width:122px; height:112px; flex:0 0 122px;
   background:linear-gradient(160deg, #F4F8FB, #E8F1F8);
   border:1px solid var(--line); border-radius:var(--radius);
   display:flex; align-items:center; justify-content:center;
@@ -3603,54 +3625,48 @@ footer a:hover { color:var(--accent); }
   font-size:10px; border:2px solid #fff;
   box-shadow:0 2px 4px rgba(14,27,44,.15);
 }
-.mm-site .bp-pick-card__body { flex:1 1 auto; min-width:0; }
-.mm-site .bp-pick-card__meta {
-  display:flex; align-items:center; gap:7px;
-  font-family:'JetBrains Mono', monospace; font-size:10px;
-  letter-spacing:.16em; text-transform:uppercase;
-  margin-bottom:4px; color:var(--muted);
-}
-.mm-site .bp-pick-card__meta .step { color:var(--up); font-weight:500; }
-.mm-site .bp-pick-card__meta .sep { opacity:.4; }
-.mm-site .bp-pick-card__name {
-  font-family:'EB Garamond', 'Georgia', serif;
-  font-size:19px; font-weight:500; color:var(--ink);
-  line-height:1.2; letter-spacing:-.008em;
-}
-.mm-site .bp-pick-card__desc {
-  font-size:12.5px; color:var(--slate); line-height:1.35; margin-top:4px;
-}
 .mm-site .bp-pick-card__change {
   font-family:'Geist', sans-serif;
-  font-size:12.5px; color:var(--brand); font-weight:500;
-  padding:9px 13px; border-radius:var(--radius);
+  font-size:13px; color:var(--brand); font-weight:500;
+  padding:7px 12px; margin-top:12px; border-radius:var(--radius);
   border:1px solid rgba(15,110,168,.22);
   background:rgba(15,110,168,.05);
   display:inline-flex; align-items:center; gap:6px;
-  flex-shrink:0;
+  white-space:nowrap;
   transition:all .22s ease;
 }
 .mm-site .bp-pick-card__change .fa {
   font-size:10px; transition:transform .2s ease;
 }
-.mm-site .bp-picks__foot {
-  margin-top:26px; display:flex;
-  align-items:center; justify-content:center; gap:14px;
-  flex-wrap:wrap;
-  font-family:'JetBrains Mono', monospace; font-size:11px;
-  letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+.mm-site .bp-picks__back {
+  display:flex; justify-content:flex-start;
+  margin:0 0 14px;
 }
-.mm-site .bp-picks__foot .bar { height:1px; width:40px; background:var(--line); }
-.mm-site .bp-picks__foot a {
+.mm-site .bp-picks__back a {
   display:inline-flex; align-items:center; gap:8px;
   font-family:'Geist', sans-serif; font-size:13.5px;
-  letter-spacing:0; text-transform:none;
   color:var(--brand); font-weight:500;
-  padding:8px 14px; border-radius:var(--radius);
+  padding:8px 14px; margin-left:-14px;
+  border-radius:var(--radius);
   transition:all .2s ease;
 }
-.mm-site .bp-picks__foot a:hover { background:var(--sand); color:var(--brand-deep); }
-.mm-site .bp-picks__foot a .fa { font-size:11px; }
+.mm-site .bp-picks__back a:hover { background:#fff; color:var(--brand-deep); }
+.mm-site .bp-picks__back a .fa { font-size:11px; transition:transform .2s ease; }
+.mm-site .bp-picks__back a:hover .fa { transform:translateX(-3px); }
+
+.mm-site .bp-picks__cta {
+  margin-top:32px;
+  display:flex; justify-content:center;
+}
+.mm-site .bp-picks__cta .btn-primary {
+  display:inline-flex; align-items:center; gap:12px;
+  text-align:center;
+}
+.mm-site .bp-picks__cta .btn-primary .fa { font-size:13px; transition:transform .2s ease; }
+.mm-site .bp-picks__cta .btn-primary:hover .fa.fa-arrow-down { transform:translateY(3px); }
+@media (max-width:600px) {
+  .mm-site .bp-picks__cta .btn-primary { width:100%; justify-content:center; }
+}
 
 /* -- Bundle hero price / savings / CTA / inclusions ------------ */
 .mm-site .bp-price {

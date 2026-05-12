@@ -259,10 +259,6 @@ End Function
             <img src="<%= mmBunMonImgSrc %>" alt="<%= Server.HTMLEncode(mmBunMonDispName) %>" />
             <span class="bp-thumb__lbl">Screens</span>
           </div>
-          <div class="bp-thumb placeholder">
-            <i class="fa fa-play-circle-o"></i>
-            <span>60-sec<br>unbox</span>
-          </div>
         </div>
       </div>
 
@@ -275,7 +271,7 @@ End Function
         <div class="eyebrow">Your bundle &middot; <%= mmBunMonCount %>-screen trader setup</div>
         <h1>Your <em>Trader&nbsp;Bundle</em></h1>
         <p class="pitch">
-          <%= mmBunMonCount %>&times; <%= Server.HTMLEncode(mmBunMonDispName) %> on the <%= Server.HTMLEncode(mmBunStandDispName) %> stand,
+          <%= mmBunMonCount %>&times; <%= mmBunMonDispName %> on the <%= Server.HTMLEncode(mmBunStandDispName) %> stand,
           plus a UK-built <%= Server.HTMLEncode(mmName) %> &mdash; tested together, shipped together,
           with every cable you need. Customise the PC below; the rest of the bundle is already sorted.
         </p>
@@ -328,10 +324,9 @@ End Function
         </div>
 
         <div class="bp-cta">
-          <button type="submit" class="btn btn-primary btn-lg">
-            <i class="fa fa-shopping-basket"></i>Add bundle to basket
-          </button>
-          <a href="#configure" class="ghost-link"><i class="fa fa-sliders"></i>Customise the PC</a>
+          <a href="#configure" class="btn btn-primary btn-lg">
+            <i class="fa fa-sliders"></i>Customise Your PC &amp; Order<i class="fa fa-arrow-down"></i>
+          </a>
           <a class="ghost-link" id="copyBundleLink"><i class="fa fa-link"></i>Copy bundle link</a>
         </div>
 
@@ -362,12 +357,12 @@ End Function
       <p>You completed these three steps in the builder. Everything else &mdash; cables, stand hardware, graphics-card spec &mdash; is sorted automatically. Swap any of them before you check out.</p>
     </div>
 
+    <div class="bp-picks__back reveal">
+      <a href="<%= mmBunChangeBase %>"><i class="fa fa-arrow-left"></i>Back to the bundle builder</a>
+    </div>
+
     <div class="bp-picks__grid reveal">
       <a class="bp-pick-card" href="<%= mmBunChangeBase %><%= mmBunEditSep() %>edit=stand">
-        <div class="bp-pick-card__vis">
-          <img src="<%= mmBunStandImgSrc %>" alt="<%= Server.HTMLEncode(mmBunStandDispName) %>">
-          <span class="bp-pick-card__tick"><i class="fa fa-check"></i></span>
-        </div>
         <div class="bp-pick-card__body">
           <div class="bp-pick-card__meta">
             <span class="step">Step 1</span>
@@ -375,16 +370,15 @@ End Function
             <span>Stand</span>
           </div>
           <div class="bp-pick-card__name"><%= Server.HTMLEncode(mmBunStandDispName) %></div>
-          <div class="bp-pick-card__desc"><%= mmBunMonCount %>-Screen Synergy Stand</div>
+          <span class="bp-pick-card__change">Change <i class="fa fa-arrow-right"></i></span>
         </div>
-        <span class="bp-pick-card__change">Change <i class="fa fa-arrow-right"></i></span>
+        <div class="bp-pick-card__vis">
+          <img src="<%= mmBunStandImgSrc %>" alt="<%= Server.HTMLEncode(mmBunStandDispName) %>">
+          <span class="bp-pick-card__tick"><i class="fa fa-check"></i></span>
+        </div>
       </a>
 
       <a class="bp-pick-card" href="<%= mmBunChangeBase %><%= mmBunEditSep() %>edit=screens">
-        <div class="bp-pick-card__vis">
-          <img src="<%= mmBunMonImgSrc %>" alt="<%= Server.HTMLEncode(mmBunMonDispName) %>">
-          <span class="bp-pick-card__tick"><i class="fa fa-check"></i></span>
-        </div>
         <div class="bp-pick-card__body">
           <div class="bp-pick-card__meta">
             <span class="step">Step 2</span>
@@ -392,16 +386,15 @@ End Function
             <span>Screens</span>
           </div>
           <div class="bp-pick-card__name"><%= mmBunMonDispName %></div>
-          <div class="bp-pick-card__desc"></div>
+          <span class="bp-pick-card__change">Change <i class="fa fa-arrow-right"></i></span>
         </div>
-        <span class="bp-pick-card__change">Change <i class="fa fa-arrow-right"></i></span>
+        <div class="bp-pick-card__vis">
+          <img src="<%= mmBunMonImgSrc %>" alt="<%= Server.HTMLEncode(mmBunMonDispName) %>">
+          <span class="bp-pick-card__tick"><i class="fa fa-check"></i></span>
+        </div>
       </a>
 
       <a class="bp-pick-card" href="<%= mmBunChangeBase %><%= mmBunEditSep() %>edit=computer">
-        <div class="bp-pick-card__vis">
-          <img src="<%= mmMainImgSrc %>" alt="<%= Server.HTMLEncode(mmName) %>">
-          <span class="bp-pick-card__tick"><i class="fa fa-check"></i></span>
-        </div>
         <div class="bp-pick-card__body">
           <div class="bp-pick-card__meta">
             <span class="step">Step 3</span>
@@ -409,16 +402,19 @@ End Function
             <span>Computer</span>
           </div>
           <div class="bp-pick-card__name"><%= Server.HTMLEncode(mmName) %></div>
-          <div class="bp-pick-card__desc">UK Custom Built</div>
+          <span class="bp-pick-card__change">Change <i class="fa fa-arrow-right"></i></span>
         </div>
-        <span class="bp-pick-card__change">Change <i class="fa fa-arrow-right"></i></span>
+        <div class="bp-pick-card__vis">
+          <img src="<%= mmMainImgSrc %>" alt="<%= Server.HTMLEncode(mmName) %>">
+          <span class="bp-pick-card__tick"><i class="fa fa-check"></i></span>
+        </div>
       </a>
     </div>
 
-    <div class="bp-picks__foot reveal">
-      <span class="bar"></span>
-      <a href="<%= mmBunChangeBase %>"><i class="fa fa-arrow-left"></i>Back to the bundle builder</a>
-      <span class="bar"></span>
+    <div class="bp-picks__cta reveal">
+      <a href="#configure" class="btn btn-primary btn-lg">
+        <i class="fa fa-sliders"></i>Customise Your PC &amp; Order<i class="fa fa-arrow-down"></i>
+      </a>
     </div>
   </div>
 </section>
@@ -603,6 +599,9 @@ Next
 
     <div class="spec-full reveal">
       <div class="spec-full__grid">
+        <div class="spec-row"><span class="spec-row__lbl">Stand</span><span class="spec-row__val"><%= Server.HTMLEncode(mmBunStandName) %></span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Monitors</span><span class="spec-row__val"><%= mmBunMonCount %>&times; <%= mmBunMonDispName %></span></div>
+        <div class="spec-row"><span class="spec-row__lbl">Computer</span><span class="spec-row__val"><%= Server.HTMLEncode(mmName) %></span></div>
         <div class="spec-row"><span class="spec-row__lbl">Processor</span><span class="spec-row__val" data-spec="cpu">&mdash;</span></div>
         <div class="spec-row"><span class="spec-row__lbl">Motherboard</span><span class="spec-row__val" data-spec="mobo">&mdash;</span></div>
         <div class="spec-row"><span class="spec-row__lbl">Memory</span><span class="spec-row__val" data-spec="ram">&mdash;</span></div>
@@ -613,8 +612,6 @@ Next
         <div class="spec-row"><span class="spec-row__lbl">Case</span><span class="spec-row__val">Fractal Design Core 1100 &middot; sound-dampened</span></div>
         <div class="spec-row"><span class="spec-row__lbl">Power supply</span><span class="spec-row__val" data-spec="psu">&mdash;</span></div>
         <div class="spec-row"><span class="spec-row__lbl">Audio</span><span class="spec-row__val">8-channel HD audio &middot; on-board</span></div>
-        <div class="spec-row"><span class="spec-row__lbl">Monitors</span><span class="spec-row__val"><%= mmBunMonCount %>&times; <%= mmBunMonDispName %></span></div>
-        <div class="spec-row"><span class="spec-row__lbl">Stand</span><span class="spec-row__val"><%= Server.HTMLEncode(mmBunStandName) %></span></div>
         <div class="spec-row"><span class="spec-row__lbl">Cables</span><span class="spec-row__val"><%= mmBunMonCount %>&times; 3m Long Premium Digital Cables (Free)</span></div>
         <div class="spec-row"><span class="spec-row__lbl">Network</span><span class="spec-row__val">Gigabit Ethernet LAN &middot; wired</span></div>
         <div class="spec-row" data-spec-optional hidden><span class="spec-row__lbl">Wireless internet</span><span class="spec-row__val" data-spec="wifi">&mdash;</span></div>
@@ -635,7 +632,7 @@ Next
 
     <div class="build-summary reveal">
       <div class="build-summary__label">Your bundle</div>
-      <div class="build-summary__line" data-build-line><%= Server.HTMLEncode(mmName) %> &mdash; with <%= mmBunMonCount %>&times; <%= Server.HTMLEncode(mmBunMonDispName) %> array</div>
+      <div class="build-summary__line" data-build-line><%= Server.HTMLEncode(mmName) %> &amp; <%= mmBunMonCount %>&times; <%= mmBunMonDispName %> <%= Server.HTMLEncode(mmBunStandName) %> Array</div>
       <div class="build-summary__price">
         <span class="price-main"><span class="sym">&pound;</span><span data-build-ex><%= mmFormatMoney0(mmBunTotalEx) %></span></span>
         <span class="price-vat">+ VAT &middot; inc &pound;<span data-build-inc><%= mmFormatMoney(mmBunTotalInc) %></span></span>

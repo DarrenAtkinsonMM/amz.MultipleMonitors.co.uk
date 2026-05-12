@@ -470,8 +470,14 @@ End Sub
           </div>
 
           <div class="mmb-info" id="mmb-info" style="display:none">
-            <i class="fa fa-info-circle" aria-hidden="true"></i>
-            <span>Computers can be customised after clicking the <strong>Configure PC &amp; Order Bundle</strong> button.</span>
+            <div class="mmb-info__msg">
+              <i class="fa fa-arrow-right" aria-hidden="true"></i>
+              <div class="mmb-info__copy">
+                <strong>Next: customise the PC (CPU, RAM, storage).</strong>
+                <span>Your stand, screens<span id="mmb-info-savings"></span> stay locked in.</span>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary mmb-info__cta is-disabled" id="mmb-info-cta">Pick a PC to continue <i class="fa fa-arrow-right"></i></button>
           </div>
         </div>
       </div>
@@ -527,7 +533,7 @@ End Sub
             <p class="bsb-vat-note">All prices exclude VAT</p>
           </div>
           <button class="btn btn-primary btn-lg bsb-cta is-disabled" id="mmb-cta">Keep building <i class="fa fa-arrow-right"></i></button>
-          <div class="bsb-trust">
+          <div class="bsb-trust" id="mmb-trust">
             <i class="fa fa-shield"></i>
             <span>5-year PC cover &middot; Lifetime UK support &middot; 30-day money-back guarantee</span>
           </div>
@@ -879,7 +885,7 @@ End Sub
       );
     }).join('');
 
-    $('mmb-info').style.display = (stageKey === 'computer') ? '' : 'none';
+    $('mmb-info').style.display = (isComplete()) ? '' : 'none';
   }
 
   function renderStepper() {
@@ -954,6 +960,39 @@ End Sub
       cta.classList.add('is-disabled');
       cta.innerHTML = 'Keep building <i class="fa fa-arrow-right"></i>';
     }
+
+     // Inline info-row CTA on the computer stage — mirrors the sidebar
+    // CTA's state so a user looking at PC cards has the next-step
+    // action right under the grid, not just in the right rail.
+    const infoCta = $('mmb-info-cta');
+    const trust = $('mmb-trust');
+    if (infoCta) {
+      if (isComplete()) {
+        infoCta.classList.remove('is-disabled');
+        infoCta.innerHTML = 'Configure PC &amp; Order Bundle <i class="fa fa-arrow-right"></i>';
+        trust.classList.add('bsb-trust--next');
+        trust.innerHTML =
+          '<ul>' +
+            '<li><i class="fa fa-check-circle"></i><span>Now pick your CPU, RAM, &amp; other options</span></li>' +
+            '<li><i class="fa fa-check-circle"></i><span>Bundle savings of ' + fmt(savings) + ' stay locked in</span></li>' +
+          '</ul>';
+      } else {
+        infoCta.classList.add('is-disabled');
+        infoCta.innerHTML = 'Pick a PC to continue <i class="fa fa-arrow-right"></i>';
+        trust.classList.remove('bsb-trust--next');
+        trust.innerHTML =
+          '<i class="fa fa-shield"></i>' +
+          '<span>5-year PC cover &middot; Lifetime UK support &middot; 30-day money-back guarantee</span>';
+      }
+    }
+
+    // Inline savings figure — only meaningful once a stand is picked
+    // (which is always true on the computer stage, but guarded for
+    // safety in case the banner is ever shown earlier).
+    const infoSavings = $('mmb-info-savings');
+    if (infoSavings) {
+      infoSavings.innerHTML = state.stand ? ' and ' + fmt(savings) + ' saving' : '';
+    }
   }
 
   function render() {
@@ -1003,7 +1042,7 @@ End Sub
   //   /products/trader-pc/<stand-slug>/<monitor-slug>/
   // Other PCs still use the legacy ?sid=&mid=&cid= form because
   // their bundle end-pages haven't been rebuilt yet.
-  document.getElementById('mmb-cta').addEventListener('click', function(e){
+  function gotoBundle(e) {
     e.preventDefault();
     if (!isComplete()) return;
     if (state.computer.id === 333 && state.stand.slug && state.screens.slug) {
@@ -1015,7 +1054,9 @@ End Sub
       'sid=' + state.stand.id +
       '&mid=' + state.screens.id +
       '&cid=' + state.computer.id;
-  });
+  }
+  document.getElementById('mmb-cta').addEventListener('click', gotoBundle);
+  document.getElementById('mmb-info-cta').addEventListener('click', gotoBundle);
 
   // Scroll-reveal animation -- same pattern as the redesigned
   // stands/home pages.

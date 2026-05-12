@@ -879,7 +879,7 @@
     // anchor. Green ticks deliberately echo the "Total savings" row.
     const trust = $('mmb-trust');
     if (trust) {
-      if (stage === 'computer' || stage === 'done') {
+      if (isComplete()) {
         trust.classList.add('bsb-trust--next');
         trust.innerHTML =
           '<ul>' +
