@@ -557,7 +557,7 @@ pcv_DefaultDescription = "Synergy multi-monitor stands for trading desks. Dual t
         <h3 style="margin:0;">Dual &amp; Triple-screen stands</h3>
         <span class="eyebrow" style="margin:0;">2 - 3 screens</span>
       </div>
-      <div class="bundle-cards">
+      <div class="bundle-cards stand-cards">
 <% mmRenderStandGroup "2,3" %>
       </div>
     </div>
@@ -568,7 +568,7 @@ pcv_DefaultDescription = "Synergy multi-monitor stands for trading desks. Dual t
         <h3 style="margin:0;">Quad-screen stands</h3>
         <span class="eyebrow" style="margin:0;">4 screens</span>
       </div>
-      <div class="bundle-cards">
+      <div class="bundle-cards stand-cards">
 <% mmRenderStandGroup "4" %>
       </div>
     </div>
@@ -579,7 +579,7 @@ pcv_DefaultDescription = "Synergy multi-monitor stands for trading desks. Dual t
         <h3 style="margin:0;">Five, Six &amp; Eight-screen stands</h3>
         <span class="eyebrow" style="margin:0;">5 - 8 screens</span>
       </div>
-      <div class="bundle-cards">
+      <div class="bundle-cards stand-cards">
 <% mmRenderStandGroup "5,6,8" %>
       </div>
     </div>

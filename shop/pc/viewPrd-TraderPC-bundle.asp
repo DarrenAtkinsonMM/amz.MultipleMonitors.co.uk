@@ -672,47 +672,65 @@ Next
       <details class="faq-item" open>
         <summary>Can I swap the stand or screens in this bundle?</summary>
         <div class="faq-body">
-          <p><strong>Yes &mdash; nothing is locked in until you complete checkout.</strong> Use the &ldquo;Change&rdquo; link on any of the three chips near the top of this page to go back into the builder with your current picks preserved. Swap the stand size, change screen model, even change PC &mdash; the bundle discount and free extras recalculate automatically.</p>
-          <p>If you just want to keep this bundle but tune the PC spec, use the configurator above &mdash; the bundle total updates live with every choice.</p>
+          <p><strong>Yes nothing is locked in until you complete checkout.</strong> Simply scroll up to the 'The bundle you built' section near the top and use the 'Change' links to go back into the bundle builder with your current picks preserved. Swap the stand size and layout, change screen model, even change PC. Your bundle discount and free extras recalculate automatically.</p>
+          <p>If you just want to keep this bundle but tune the PC spec, use the 'Customise the PC' section above.</p>
         </div>
       </details>
 
       <details class="faq-item">
         <summary>Can I upgrade the CPU, RAM or storage later?</summary>
         <div class="faq-body">
-          <p><strong>Yes &mdash; every Trader PC is designed for upgrades.</strong> The motherboard supports every 14th-gen Intel CPU option we sell (up to the i9 14900KF), so you can start with the i5 14400F now and upgrade later without changing the board.</p>
-          <p>RAM is straightforward &mdash; two DIMM slots, up to 64&nbsp;GB DDR4 3200. Storage adds the same way: a second M.2 slot and 4 SATA ports for extra SSDs or HDDs. We&rsquo;ll walk you through any upgrade on the phone &mdash; usually a 15-minute job.</p>
+          <p><strong>Yes all of our computers are designed ready for future upgrades.</strong> Some upgrades are easier than others though. Things like RAM and hard drives are pretty straight forward. Swapping to a new CPU often involves a new motherboard though which leads to a full rebuild, certainly possible but not at 5 minute job either.</p>
+          <p>Graphics cards can usually be swapped easily however if you intend to add extra graphics cards to increase the number of monitors supported you should let us know before or immediately after ordering so we can make sure your new PC can support that future upgrade.</p>
         </div>
       </details>
 
       <details class="faq-item">
-        <summary>Does Windows come pre-installed and activated?</summary>
+        <summary>Do I have to install Windows myself?</summary>
         <div class="faq-body">
-          <p>Yes. Every machine ships with Windows 11 Home fully installed, activated, and tuned for trading workloads &mdash; Windows Defender exclusions for your platforms, telemetry minimised, power plan set to high-performance, scheduled updates set for out-of-hours. DisplayFusion is also pre-installed and licensed.</p>
-          <p>Windows 11 Pro is available at +&pound;45 if you need BitLocker, Remote Desktop host, or domain join.</p>
+          <p>No, we do it for you. Every Trader PC ships with Windows 11 Home fully installed, activated, with all the latest updates and security patches applied. Windows Defender is also updated so it is fully secure right out of the box. Your Windows license code is either stuck to the back of the PC or emailed across on the delivery day. DisplayFusion is also pre-installed and licensed.</p>
+          <p>Windows 11 Pro is an available option in the configuration section if you need that.</p>
         </div>
       </details>
 
       <details class="faq-item">
         <summary>What exactly arrives in the bundle delivery?</summary>
         <div class="faq-body">
-          <p>Your <%= Server.HTMLEncode(mmName) %> (configured as above), <%= mmBunMonCount %> <%= Server.HTMLEncode(mmBunMonDispName) %> monitors, the <%= Server.HTMLEncode(mmBunStandDispName) %> Synergy Stand with all mount plates and assembly hardware, <%= mmBunMonCount %> premium 3&thinsp;m DisplayPort cables, a Wi-Fi / Bluetooth card (fitted), a pair of desktop speakers, a UK power lead, a printed setup guide, and a recovery USB drive.</p>
-          <p>Everything in one delivery. If you&rsquo;re missing so much as a screw, call us and we&rsquo;ll courier it next day.</p>
+          <p>Your <%= Server.HTMLEncode(mmName) %> (configured as above), <%= mmBunMonCount %>&nbsp; <%= mmBunMonDispName %> monitors, the Synergy  <%= Server.HTMLEncode(mmBunStandDispName) %> with all mount plates and assembly hardware, <%= mmBunMonCount %> premium 3m video cables, a Wi-Fi / Bluetooth card (fitted), a pair of desktop speakers and a UK power lead.</p>
+          <p>Everything in one easy straightforward delivery.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How difficult is it to set this bundle up?</summary>
+        <div class="faq-body">
+          <p>It is easier than you think. In terms of time the longest setup is building your stand and mounting the screens. We include everything needed and send a guide and also have a video setup guide. Depending on the size of the stand you are looking at between 20 - 60 minutes for this.</p>
+          <p>Once your stand and screens are setup it's then just a case of plugging cables in, again we supply them all along with a guide. Once you have this done you just connect your power leads, mouse and keyboard, and then power on the PC. It will boot straight into Windows with all screens working.</p>
+          <p>Genuinely you do not need any technical skills to get up and running, and if you do get stuck we are only a phone call away.</p>
+        </div>
+      </details>
+      
+      <details class="faq-item">
+        <summary>Do I need to buy any cables or adapters to connect everything up?</summary>
+        <div class="faq-body">
+          <p>No, every cable required to get up and running is included, these will be packaged in with your new Synergy Stand. We make sure you have the right cables based on your selected graphics card and screens when you purchase a bundle from us. Nice and simple.</p>
         </div>
       </details>
 
       <details class="faq-item">
         <summary>What happens if something fails under warranty?</summary>
         <div class="faq-body">
-          <p>In year one on the PC, we come to you (OnSite) or collect and repair &mdash; at our discretion, usually depending on what&rsquo;s failed. Years two to five are collection or return-to-base. You can extend OnSite to year two (+&pound;75) or year three (+&pound;150) at checkout.</p>
-          <p>Stand: multi-year warranty (frame is typically covered for life). Screens: manufacturer warranty, typically 3 years. Any failed component across the whole bundle &mdash; one number to call.</p>
+          <p>In year one on the PC your on-site cover means we try and fix at your location without you needing to return the PC to us. Years two to five are covered by a labour only hardware warranty. You can extend on-site to 2 or 3 years in the configurator above.</p>
+          <p>Stand: Lifetime warranty on all parts. Screens: Manufacturer warranty, typically 3 years. Any failed component across the whole bundle you have just one number to call.</p>
+          <p>You can see our full <a href="/pages/warranty/">warranty details page here</a>.</p>
         </div>
       </details>
 
       <details class="faq-item">
         <summary>How do I move my trading software across from my old PC?</summary>
         <div class="faq-body">
-          <p>We do this for free as part of lifetime support. Phone or email us the day your bundle arrives &mdash; we&rsquo;ll remote-connect (TeamViewer or similar), help you install MT4/MT5/NinjaTrader/TradingView, migrate your templates, indicators, EAs and chart layouts, and get your broker connections back up. Usually takes 45&ndash;90 minutes depending on how much you&rsquo;re moving.</p>
+          <p>It depends on your specific software. If you access your trading platform via a website then there is nothing to move, you literally just login again on the new PC. For platforms which are downloaded like MT4/5, TradeStation, NinjaTrader, or Bloomberg you should be able to export your configuration from your old PC, save it to a memory stick, then re-import your settings after reinstalling the platform on your new PC.</p>
+          <p>If you get stuck we are happy to advise, just give us a call.</p>
         </div>
       </details>
     </div>

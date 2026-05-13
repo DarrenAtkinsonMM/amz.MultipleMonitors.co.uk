@@ -594,64 +594,100 @@ pcv_DefaultDescription = "Save up to £300 with a multi-screen computer, stand a
     </div>
 
     <div class="bundle-cards">
-      <a href="#builder" class="bundle-card reveal">
+      <a href="/products/trader-pc/quad-pyramid-stand/27-iiyama-qhd/" class="bundle-card reveal bundle-card-bg">
         <div class="bundle-card__media">
           <img src="/images/bundles/dual-tra-bundle.jpg" alt="Dual-screen trader bundle">
         </div>
-        <div class="bundle-card__body">
-          <div class="bundle-card__eyebrow">2-Screens &middot; Trader PC</div>
-          <h4 class="bundle-card__title">21.5" Dual Horizontal Array &amp; Trader PC</h4>
-          <div class="bundle-card__price">
-            <span class="bundle-card__from">From</span>
-            <span class="bundle-card__amount">&pound;795</span>
-          </div>
-          <span class="btn btn-primary bundle-card__cta">View bundle <i class="fa fa-arrow-right"></i></span>
+        <div class="bundle-card__lines">
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>2&times; 21.5" Screens</div>
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>Dual Horizontal Stand</div>
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>Ultra PC</div>
         </div>
+        <div class="bundle-card__price">
+          <span class="bundle-card__from">From</span>
+          <span class="bundle-card__amount">&pound;1,195</span>
+        </div>
+        <span class="btn btn-primary bundle-card__cta">View bundle <i class="fa fa-arrow-right"></i></span>
       </a>
 
-      <a href="#builder" class="bundle-card reveal" style="transition-delay:.06s">
+      <a href="/products/trader-pc/triple-pyramid-stand/24-acer/" class="bundle-card reveal bundle-card-bg" style="transition-delay:.06s">
         <div class="bundle-card__media">
-          <img src="/images/bundles/quad-tra-bundle.jpg" alt="Quad-screen trader bundle">
+          <img src="/images/bundles/3pyr-tra-bundle.jpg" alt="Triple Pyrmaid Trader bundle">
         </div>
-        <div class="bundle-card__body">
-          <div class="bundle-card__eyebrow">4-Screen &middot; Trader PC</div>
-          <h4 class="bundle-card__title">Quad Horizontal &amp; Trader PC</h4>
-          <div class="bundle-card__price">
-            <span class="bundle-card__from">From</span>
-            <span class="bundle-card__amount">&pound;1,745</span>
-          </div>
-          <span class="btn btn-primary bundle-card__cta">View bundle <i class="fa fa-arrow-right"></i></span>
+        <div class="bundle-card__lines">
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>3&times; 24" Screens</div>
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>Triple Pyramid Stand</div>
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>Trader PC</div>
         </div>
+        <div class="bundle-card__price">
+          <span class="bundle-card__from">From</span>
+          <span class="bundle-card__amount">&pound;1,465</span>
+        </div>
+        <span class="btn btn-primary bundle-card__cta">View bundle <i class="fa fa-arrow-right"></i></span>
       </a>
 
-      <a href="#builder" class="bundle-card reveal" style="transition-delay:.12s">
+      <a href="#builder" class="bundle-card reveal bundle-card-bg" style="transition-delay:.12s">
         <div class="bundle-card__media">
-          <img src="/images/bundles/six-ult-bundle.jpg" alt="Six-screen ultra bundle">
+          <img src="/images/bundles/triple-pro-bundle.jpg" alt="Triple screen extreme bundle">
         </div>
-        <div class="bundle-card__body">
-          <div class="bundle-card__eyebrow">6-Screen &middot; Trader Pro</div>
-          <h4 class="bundle-card__title">Six Triple-Pole &amp; Trader Pro</h4>
-          <div class="bundle-card__price">
-            <span class="bundle-card__from">From</span>
-            <span class="bundle-card__amount">&pound;2,395</span>
-          </div>
-          <span class="btn btn-primary bundle-card__cta">View bundle <i class="fa fa-arrow-right"></i></span>
+        <div class="bundle-card__lines">
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>3&times; 21.5" Screens</div>
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>Triple Screen Stand</div>
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>Extreme PC</div>
         </div>
+        <div class="bundle-card__price">
+          <span class="bundle-card__from">From</span>
+          <span class="bundle-card__amount">&pound;1,600</span>
+        </div>
+        <span class="btn btn-primary bundle-card__cta">View bundle <i class="fa fa-arrow-right"></i></span>
       </a>
 
-      <a href="#builder" class="bundle-card reveal" style="transition-delay:.18s">
+      <a href="#builder" class="bundle-card reveal bundle-card-bg" style="transition-delay:.18s">
         <div class="bundle-card__media">
-          <img src="/images/bundles/bun-eight-stand.jpg" alt="Eight-screen desk bundle">
+          <img src="/images/bundles/qpyr-ult-bundle.jpg" alt="Four pyramid Trader Pro bundle">
         </div>
-        <div class="bundle-card__body">
-          <div class="bundle-card__eyebrow">8-Screen &middot; Trader Pro</div>
-          <h4 class="bundle-card__title">Eight Quad-Pole &amp; Trader Pro</h4>
-          <div class="bundle-card__price">
-            <span class="bundle-card__from">From</span>
-            <span class="bundle-card__amount">&pound;3,095</span>
-          </div>
-          <span class="btn btn-primary bundle-card__cta">View bundle <i class="fa fa-arrow-right"></i></span>
+        <div class="bundle-card__lines">
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>4&times; 24" Screens</div>
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>Quad Pyramid Stand</div>
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>Trader Pro PC</div>
         </div>
+        <div class="bundle-card__price">
+          <span class="bundle-card__from">From</span>
+          <span class="bundle-card__amount">&pound;1,880</span>
+        </div>
+        <span class="btn btn-primary bundle-card__cta">View bundle <i class="fa fa-arrow-right"></i></span>
+      </a>
+
+      <a href="/products/trader-pc/six-stand/24-acer/" class="bundle-card reveal bundle-card-bg" style="transition-delay:.18s">
+        <div class="bundle-card__media">
+          <img src="/images/bundles/six-ult-bundle.jpg" alt="Six screen trader bundle">
+        </div>
+        <div class="bundle-card__lines">
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>6&times; 24" Screens</div>
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>Six Screen Stand</div>
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>Trader PC</div>
+        </div>
+        <div class="bundle-card__price">
+          <span class="bundle-card__from">From</span>
+          <span class="bundle-card__amount">&pound;1,925</span>
+        </div>
+        <span class="btn btn-primary bundle-card__cta">View bundle <i class="fa fa-arrow-right"></i></span>
+      </a>
+
+      <a href="#builder" class="bundle-card reveal bundle-card-bg" style="transition-delay:.18s">
+        <div class="bundle-card__media">
+          <img src="/images/bundles/quad-tra-bundle.jpg" alt="Four Square Trader Pro bundle">
+        </div>
+        <div class="bundle-card__lines">
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>4&times; 27" QHD Screens</div>
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>Quad Square Stand</div>
+          <div class="bundle-card__desc"><i class="fa fa-check-circle"></i>Trader Pro PC</div>
+        </div>
+        <div class="bundle-card__price">
+          <span class="bundle-card__from">From</span>
+          <span class="bundle-card__amount">&pound;2,140</span>
+        </div>
+        <span class="btn btn-primary bundle-card__cta">View bundle <i class="fa fa-arrow-right"></i></span>
       </a>
     </div>
 
@@ -674,53 +710,73 @@ pcv_DefaultDescription = "Save up to £300 with a multi-screen computer, stand a
 
     <div class="faq-list reveal">
       <details class="faq-item" open>
-        <summary>Do all your stands work with all your computers?</summary>
+        <summary>Are all of your stands, screens and computers compatible?</summary>
         <div class="faq-body">
-          <p>Yes &mdash; every Synergy stand we sell is compatible with every PC in our range. Pick whichever order you like: choose the stand for the screen layout you want, and we&rsquo;ll match the graphics card on the PC side to drive the right number of screens. You can&rsquo;t paint yourself into a corner.</p>
+          <p>Yes, every Synergy stand we sell is compatible with every monitor we offer and all of our PC options. Pick any stand layout that you like with any screen size / resolution that fits your needs, and when you select the PC we automatically select a graphics setup that is fully capable of powering your monitor array.</p>
+          <p>This is why bundles are so popular, we have taken all the headaches and guesswork out of it for you.</p>
         </div>
       </details>
 
       <details class="faq-item">
         <summary>What&rsquo;s actually included for free in a bundle?</summary>
         <div class="faq-body">
-          <p>Every bundle ships with: a long-length high-quality video cable for every screen (3m DisplayPort or HDMI as needed), a wifi card, a pair of desktop speakers, and free UK mainland delivery. On top of that the bundle discount kicks in automatically &mdash; typically &pound;50&ndash;&pound;100 off depending on size.</p>
+          <p>Every bundle ships with: a premium quality digital 3m long video cable for each screen, a free high speed wifi card which also has Bluetooth functionality, a free set of desktop speakers, and free UK mainland delivery.</p><p>On top of that we also automatically apply a bundle discount ranging from &pound;25 &ndash; &pound;100 off depending on the bundle size.</p>
           <p>On a 6-screen bundle this works out to around &pound;270 of included value vs. sourcing the same parts separately.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>How long does a bundle take to build and deliver?</summary>
-        <div class="faq-body">
-          <p>Standard bundles ship in 5&ndash;7 working days from order. Custom specs (bigger RAM, specific GPU, specific storage layout) add another 2&ndash;4 working days. We always tell you up front at order &mdash; we don&rsquo;t take your money and email you about delays.</p>
-          <p>Everything arrives in one delivery, so you&rsquo;re not chasing boxes from three different suppliers.</p>
         </div>
       </details>
 
       <details class="faq-item">
         <summary>Can I change a bundle after I&rsquo;ve picked one of your starting points?</summary>
         <div class="faq-body">
-          <p>Absolutely. The popular starting points are just that &mdash; starting points. You can swap the stand, change screen size, pick a different PC, bump the RAM, switch the CPU, anything. Nothing is locked in until you complete checkout.</p>
+          <p>Absolutely. The popular starting points are just that, starting points. You can swap the stand, change screen size, pick a different PC, bump the RAM, switch the CPU, anything. Nothing is locked in until you complete checkout.</p>
+          <p>An easy way to customise your bundle is to use the bundle configurator towards the top pof this page, just pick a stand layout to get started then move through the three steps.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>I already have a couple of screens, can I use them with a new bundle?</summary>
+        <div class="faq-body">
+          <p>If your screens have a digital monitor port (HDMI, DisplayPort or DVI) then they should be compatible with any of our computers. To mount them on a Synergy Stand they would also need a VESA interface, the four screw holes on the back of the screen.</p>
+          <p>If you want to buy a bundle with fewer screens the best thing to do is configure the bundle normally, add it to the basket and then you can reduce the number of screens in the basket before placing the order.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How long does a bundle take to build and deliver?</summary>
+        <div class="faq-body">
+          <p>We build all computers up for each order, this build and testing process takes around 4 - 5 days to complete. This includes a 32 hour stress-test for the computer. We then dispatch everything together on a pre-12 next working day basis for all UK mainland orders. Basically if you order on a Monday then you are usually accepting the delivery the following Monday.</p>
+          <p>We do show a delivery estimate on the bundle pages and in the checkout, this is usually very accurate. If you need a specific delivery date you can just let us know, we can usually hit it with enough notice.</p>
+          <p>Also, everything arrives in one delivery, so you&rsquo;re not chasing boxes from three different suppliers.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Do you delivery bundles internationally?</summary>
+        <div class="faq-body">
+          <p>Yes, we have delivered bundles internationally a number of times. Some locations combined with a higher number of screens can result in very high delivery costs. Whilst we can always provide a quote we may sometimes advise that you purchase screens locally with Multiple Monitors suppling just the computer and the stand.</p>
+          <p>Doing this can result in large delivery cost savings. In these cases we are happy to advise on computer and stand compatibility and we can also supply the right cables if required. If you are unsure then talk to us before ordering.</p>
         </div>
       </details>
 
       <details class="faq-item">
         <summary>Can I save my bundle and share it with someone else?</summary>
         <div class="faq-body">
-          <p>Yes. Every configured bundle has its own shareable URL &mdash; use the &ldquo;Copy link to this bundle&rdquo; button in the running summary on the right. Useful if you want to discuss it with a business partner, get sign-off, or come back to it later.</p>
+          <p>Yes. Once yolu have selected your stand, screens and PC you will arrive on the bundle page. In the top section of this page is a 'Copy Bundle Link' button which you can then paste into an email or save it to your browser favourites.</p>
         </div>
       </details>
 
       <details class="faq-item">
         <summary>What does the warranty cover?</summary>
         <div class="faq-body">
-          <p>Every PC in a bundle is covered by our 5-year hardware warranty and lifetime UK phone support. The Synergy stand carries a separate multi-year warranty (usually lifetime on the frame), and the screens are covered by the manufacturer&rsquo;s warranty (typically 3 years). The full breakdown is shown on every configured bundle before checkout.</p>
+          <p>Every PC in a bundle is covered by an enhanced onsite warranty for 1 - 3 years which runs alongside a 5-year hardware labour warranty. You also get lifetime UK phone, email and remote desktop support. The Synergy Stand carries a separate lifetime warranty on all parts, and the screens are covered by the screen original manufacturer&rsquo;s warranty (which is typically 3 years).</p>
+          <p>You can view our full <a href="/pages/warranty/">warranty details here</a>.</p>
         </div>
       </details>
 
       <details class="faq-item">
         <summary>Can I return a bundle if it&rsquo;s not right?</summary>
         <div class="faq-body">
-          <p>30-day money-back guarantee on the whole bundle. If it arrives and isn&rsquo;t right &mdash; wrong size, wrong layout, whatever &mdash; we collect it, refund you, no paperwork dance.</p>
+          <p>We offer a 30-day money-back guarantee on all of our computer sales. Stands and screens can be returned up to 14 days from point of delivery. You can view our full <a href="/pages/returns/">returns policy here</a>.</p>
         </div>
       </details>
     </div>
